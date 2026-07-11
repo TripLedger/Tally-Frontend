@@ -1,0 +1,64 @@
+import { cn } from "@/lib/utils";
+import {
+  getAvatarColorForUser,
+  getMemberInitial,
+} from "@/lib/avatar-colors";
+import type { TripMember } from "@/types";
+
+interface MemberRowProps {
+  member: TripMember;
+  isEntering?: boolean;
+  showDivider?: boolean;
+}
+
+export function MemberRow({
+  member,
+  isEntering = false,
+  showDivider = true,
+}: MemberRowProps) {
+  const bgColor = getAvatarColorForUser(member.userId);
+  const initial = getMemberInitial(member.displayName);
+
+  return (
+    <div
+      className={cn(
+        isEntering && "animate-member-row-enter",
+        showDivider && "border-b border-[#ffffff0f]"
+      )}
+    >
+      <div className="flex h-16 items-center">
+        {member.avatarUrl ? (
+          <img
+            src={member.avatarUrl}
+            alt={member.displayName}
+            className="h-10 w-10 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[16px] font-semibold text-[#F8F8FF]"
+            style={{ backgroundColor: bgColor }}
+            aria-hidden
+          >
+            {initial}
+          </div>
+        )}
+
+        <div className="ml-3 flex min-w-0 flex-1 items-center gap-2">
+          <span className="truncate text-[16px] font-medium text-[#F8F8FF]">
+            {member.displayName}
+          </span>
+          {member.role === "organizer" && (
+            <span
+              className={cn(
+                "shrink-0 rounded-pill bg-[#7C3AED1a] px-2 py-[3px]",
+                "text-[11px] font-semibold uppercase tracking-[0.03em] text-[#7C3AED]"
+              )}
+            >
+              Organizer
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
