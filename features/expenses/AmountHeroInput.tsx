@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AlertTriangle, ChevronDown, X } from "lucide-react";
 import {
   formatAmountInputDisplay,
   getCurrencySymbol,
@@ -15,6 +15,56 @@ interface AmountHeroInputProps {
   onAmountChange: (value: string) => void;
   onCurrencyClick: () => void;
   decimalError?: string | null;
+  /** OCR returned an unrecognized currency — show the review notice. */
+  showCurrencyReview?: boolean;
+  onDismissCurrencyReview?: () => void;
+}
+
+/**
+ * Inline notice pinned under the currency pill when the scanned receipt's
+ * currency couldn't be matched to a supported code (4.4 edge case). Reuses
+ * the tinted-rose treatment from the scan-failure banner, scoped to a small
+ * auto-width pill. Dismisses with a 200ms fade.
+ */
+function CurrencyReviewNotice({ onDismiss }: { onDismiss: () => void }) {
+  const [leaving, setLeaving] = useState(false);
+
+  const dismiss = () => {
+    if (leaving) return;
+    setLeaving(true);
+    setTimeout(onDismiss, 200);
+  };
+
+  return (
+    <div
+      role="status"
+      className={cn(
+        "mt-2 flex items-center rounded-[8px] bg-[#F43F5E1a] py-1.5 pl-[10px] pr-2",
+        "transition-opacity duration-[200ms] ease-tally",
+        leaving ? "opacity-0" : "opacity-100"
+      )}
+    >
+      <AlertTriangle
+        className="h-3 w-3 shrink-0 text-[#F43F5E]"
+        strokeWidth={2}
+        aria-hidden
+      />
+      <span className="ml-1.5 text-[12px] font-medium leading-none text-[#F43F5E]">
+        Currency unclear — please confirm
+      </span>
+      <button
+        type="button"
+        onClick={dismiss}
+        aria-label="Dismiss currency notice"
+        className={cn(
+          "ml-2 flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+        )}
+      >
+        <X className="h-2.5 w-2.5 text-[#F43F5E]" strokeWidth={2.5} />
+      </button>
+    </div>
+  );
 }
 
 export function AmountHeroInput({
@@ -23,6 +73,8 @@ export function AmountHeroInput({
   onAmountChange,
   onCurrencyClick,
   decimalError,
+  showCurrencyReview = false,
+  onDismissCurrencyReview,
 }: AmountHeroInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -63,6 +115,10 @@ export function AmountHeroInput({
         {currency}
         <ChevronDown className="h-3 w-3" />
       </button>
+
+      {showCurrencyReview && onDismissCurrencyReview && (
+        <CurrencyReviewNotice onDismiss={onDismissCurrencyReview} />
+      )}
 
       <div
         role="presentation"

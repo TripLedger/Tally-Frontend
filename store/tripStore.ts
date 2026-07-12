@@ -97,6 +97,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       startDate: input.startDate,
       endDate: input.endDate,
       baseCurrency: input.baseCurrency,
+      baseCurrencyLockedAt: null,
       inviteToken: generateInviteToken(),
       createdBy: user.id,
       createdAt: now,

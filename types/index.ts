@@ -15,6 +15,12 @@ export interface Trip {
   startDate: string;
   endDate: string;
   baseCurrency: string;
+  /**
+   * Set (server-side, once) when the trip's first expense is logged.
+   * While non-null the base currency can never change — enforced by a
+   * DB trigger, surfaced as microcopy on the Create Trip screen.
+   */
+  baseCurrencyLockedAt: string | null;
   inviteToken: string;
   createdBy: string;
   createdAt: string;
@@ -49,16 +55,32 @@ export interface ExpenseSplit {
   amountMinorUnits: number;
 }
 
+export type FxRateSource = "live" | "cached";
+
 export interface Expense {
   id: string;
   tripId: string;
   payerId: string;
   createdBy: string;
+  /** Original amount, integer minor units of `currency`. */
   amountMinorUnits: number;
+  /** Original (paid-in) currency. */
   currency: string;
+  /**
+   * Converted amount, integer minor units of the trip's base currency.
+   * BALANCES (4.6): always sum this via getExpenseAmountForBalances() —
+   * never amountMinorUnits.
+   */
   baseCurrencyAmount: number;
-  fxRate: number;
+  /** Exchange rate as a decimal string (e.g. "1543.20") — never a float. */
+  fxRate: string;
+  /** Convenience mirror of rateSource === "cached". */
   fxCached: boolean;
+  /** When the rate was fetched live, or when the cached rate was stored. */
+  rateTimestamp: string;
+  rateSource: FxRateSource;
+  /** OCR produced an unrecognized currency code; defaulted to trip base. */
+  needsCurrencyReview: boolean;
   category: ExpenseCategory | null;
   note?: string;
   merchant?: string;
@@ -80,6 +102,14 @@ export interface AddExpenseInput {
   category: ExpenseCategory | null;
   note?: string;
   receiptImageUrl?: string;
+  /** Resolved server-side before save — see /api/fx/rate. */
+  fx: {
+    convertedAmountMinorUnits: number;
+    rate: string;
+    rateTimestamp: string;
+    rateSource: FxRateSource;
+  };
+  needsCurrencyReview: boolean;
 }
 
 export interface Settlement {
@@ -107,7 +137,8 @@ export interface SimplifiedPayment {
 export interface FXRate {
   baseCurrency: string;
   targetCurrency: string;
-  rate: number;
+  /** Decimal string, e.g. "1543.20" — never a float. */
+  rate: string;
   fetchedAt: string;
   cached: boolean;
 }

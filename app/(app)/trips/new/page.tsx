@@ -259,7 +259,8 @@ export default function NewTripPage() {
           />
           <p className="mt-2 max-w-[340px] text-[13px] leading-[1.4] text-[#475569]">
             All expenses in this trip will convert to this currency for the
-            group ledger.
+            group ledger. This can&apos;t be changed once your first expense is
+            logged.
           </p>
           {errors.baseCurrency && (
             <p className="mt-1.5 text-[13px] text-[#F43F5E]">

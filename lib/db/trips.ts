@@ -13,6 +13,7 @@ interface TripRow {
   start_date: string | null;
   end_date: string | null;
   base_currency: string;
+  base_currency_locked_at: string | null;
   organizer_id: string;
   invite_token: string;
   created_at: string;
@@ -26,6 +27,8 @@ function mapTripRow(row: TripRow): Trip {
     startDate: row.start_date ?? "",
     endDate: row.end_date ?? "",
     baseCurrency: row.base_currency,
+    // Set once by a DB trigger when the first expense lands; never cleared.
+    baseCurrencyLockedAt: row.base_currency_locked_at ?? null,
     inviteToken: row.invite_token,
     createdBy: row.organizer_id,
     createdAt: row.created_at,

@@ -1,3 +1,7 @@
+import {
+  getExpenseAmountForBalances,
+  scaleSplitsToBaseCurrency,
+} from "@/lib/fx-math";
 import type { SimplifiedPayment } from "@/types";
 
 interface BalanceEntry {
@@ -52,10 +56,18 @@ export function simplifyDebts(
   return payments;
 }
 
+/**
+ * BALANCES (4.6) — multi-currency invariant:
+ * every number in this ledger is TRIP BASE CURRENCY minor units. The payer is
+ * credited with the expense's CONVERTED amount (getExpenseAmountForBalances,
+ * never amountMinorUnits) and split shares — stored in the original currency —
+ * are scaled into base currency before being debited.
+ */
 export function computeNetBalances(
   memberIds: string[],
   expenses: {
     payerId: string;
+    amountMinorUnits: number;
     baseCurrencyAmount: number;
     splitMap: { userId: string; amountMinorUnits: number }[];
   }[],
@@ -72,9 +84,9 @@ export function computeNetBalances(
 
   for (const expense of expenses) {
     balances[expense.payerId] =
-      (balances[expense.payerId] ?? 0) + expense.baseCurrencyAmount;
+      (balances[expense.payerId] ?? 0) + getExpenseAmountForBalances(expense);
 
-    for (const split of expense.splitMap) {
+    for (const split of scaleSplitsToBaseCurrency(expense)) {
       balances[split.userId] =
         (balances[split.userId] ?? 0) - split.amountMinorUnits;
     }

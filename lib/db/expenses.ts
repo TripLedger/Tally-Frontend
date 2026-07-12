@@ -1,6 +1,12 @@
 import { createClient } from "@/lib/supabase/client";
+import { toDecimalString } from "@/lib/fx-math";
 import { generateId } from "@/lib/utils";
-import type { Expense, ExpenseCategory, ExpenseSplit } from "@/types";
+import type {
+  Expense,
+  ExpenseCategory,
+  ExpenseSplit,
+  FxRateSource,
+} from "@/types";
 
 interface ExpenseRow {
   id: string;
@@ -10,8 +16,11 @@ interface ExpenseRow {
   amount_minor_units: number;
   currency: string;
   base_currency_amount: number;
-  fx_rate: number;
+  fx_rate: number | string;
   fx_cached: boolean;
+  rate_timestamp: string | null;
+  rate_source: FxRateSource | null;
+  needs_currency_review: boolean | null;
   category: ExpenseCategory | null;
   note: string | null;
   merchant: string | null;
@@ -33,8 +42,11 @@ function mapExpenseRow(row: ExpenseRow): Expense {
     amountMinorUnits: Number(row.amount_minor_units),
     currency: row.currency,
     baseCurrencyAmount: Number(row.base_currency_amount),
-    fxRate: Number(row.fx_rate),
+    fxRate: toDecimalString(row.fx_rate),
     fxCached: row.fx_cached,
+    rateTimestamp: row.rate_timestamp ?? row.created_at,
+    rateSource: row.rate_source ?? (row.fx_cached ? "cached" : "live"),
+    needsCurrencyReview: row.needs_currency_review ?? false,
     category: row.category,
     note: row.note ?? undefined,
     merchant: row.merchant ?? undefined,
@@ -72,6 +84,14 @@ export function buildExpenseRecord(params: {
   amountMinorUnits: number;
   currency: string;
   baseCurrency: string;
+  /** Resolved by the /api/fx/rate route before the record is built. */
+  fx: {
+    convertedAmountMinorUnits: number;
+    rate: string;
+    rateTimestamp: string;
+    rateSource: FxRateSource;
+  };
+  needsCurrencyReview: boolean;
   splitMethod: "equal" | "custom";
   splitMap: ExpenseSplit[];
   category: Expense["category"];
@@ -81,7 +101,6 @@ export function buildExpenseRecord(params: {
   id?: string;
 }): Expense {
   const now = new Date().toISOString();
-  const sameCurrency = params.currency === params.baseCurrency;
 
   return {
     id: params.id ?? generateId(),
@@ -90,11 +109,14 @@ export function buildExpenseRecord(params: {
     createdBy: params.createdBy,
     amountMinorUnits: params.amountMinorUnits,
     currency: params.currency,
-    baseCurrencyAmount: sameCurrency
-      ? params.amountMinorUnits
-      : params.amountMinorUnits,
-    fxRate: 1,
-    fxCached: false,
+    // BALANCES (4.6): baseCurrencyAmount is the only field balance math may
+    // sum — access it through getExpenseAmountForBalances() in lib/fx-math.
+    baseCurrencyAmount: params.fx.convertedAmountMinorUnits,
+    fxRate: params.fx.rate,
+    fxCached: params.fx.rateSource === "cached",
+    rateTimestamp: params.fx.rateTimestamp,
+    rateSource: params.fx.rateSource,
+    needsCurrencyReview: params.needsCurrencyReview,
     category: params.category,
     note: params.note,
     splitMethod: params.splitMethod,
@@ -120,6 +142,9 @@ export async function persistExpense(expense: Expense): Promise<Expense> {
       base_currency_amount: expense.baseCurrencyAmount,
       fx_rate: expense.fxRate,
       fx_cached: expense.fxCached,
+      rate_timestamp: expense.rateTimestamp,
+      rate_source: expense.rateSource,
+      needs_currency_review: expense.needsCurrencyReview,
       category: expense.category,
       note: expense.note ?? null,
       merchant: expense.merchant ?? null,

@@ -21,11 +21,14 @@ import {
   getCurrencyPrecision,
   getDecimalPlacesError,
   hasValidDecimalPlaces,
+  isValidCurrencyCode,
   parseAmountToMinorUnits,
 } from "@/lib/currency";
+import { FxRateUnavailableError, resolveExpenseFx } from "@/lib/fx-client";
 import { cn } from "@/lib/utils";
 import {
   useActiveTrip,
+  useAddToast,
   useExpenseStore,
   useOpenBottomSheet,
   useTripMembers,
@@ -49,6 +52,7 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
   const members = useTripMembers();
   const addExpense = useExpenseStore((s) => s.addExpense);
   const openBottomSheet = useOpenBottomSheet();
+  const addToast = useAddToast();
 
   const trip =
     activeTrip?.id === params.tripId
@@ -61,12 +65,31 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
     prefill && !prefill.failed && prefill.totalAmount && prefill.totalAmount > 0
   );
 
+  // OCR edge case (4.4): a currency code the app doesn't support must never
+  // reach the FX call — default to the trip base currency and flag for review.
+  const scannedCurrency = prefill?.currency ?? null;
+  const scannedCurrencyRecognized = Boolean(
+    scannedCurrency && isValidCurrencyCode(scannedCurrency)
+  );
+  const scannedCurrencyUnrecognized = Boolean(
+    scannedCurrency && !scannedCurrencyRecognized
+  );
+
   const [currency, setCurrency] = useState(
-    prefill?.currency ?? trip?.baseCurrency ?? "NGN"
+    scannedCurrencyRecognized && scannedCurrency
+      ? scannedCurrency
+      : trip?.baseCurrency ?? "NGN"
   );
   // OCR-detected currency (or a manual pick) must not be overridden by
   // the trip base currency arriving later.
-  const currencyLockedRef = useRef(Boolean(prefill?.currency));
+  const currencyLockedRef = useRef(scannedCurrencyRecognized);
+
+  const [needsCurrencyReview, setNeedsCurrencyReview] = useState(
+    scannedCurrencyUnrecognized
+  );
+  const [showCurrencyReviewNotice, setShowCurrencyReviewNotice] = useState(
+    scannedCurrencyUnrecognized
+  );
 
   const [amountStr, setAmountStr] = useState("");
   const [payerId, setPayerId] = useState(user?.id ?? "");
@@ -203,6 +226,9 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
         onSelect={(c) => {
           currencyLockedRef.current = true;
           setCurrency(c.code);
+          // An explicit pick is the user confirming the currency.
+          setNeedsCurrencyReview(false);
+          setShowCurrencyReviewNotice(false);
           if (!hasValidDecimalPlaces(amountStr, c.code)) {
             setAmountStr(amountStr.split(".")[0] ?? "");
           }
@@ -234,6 +260,10 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
         : customSplits;
 
     try {
+      // Same-currency expenses resolve instantly (rate "1", no API call);
+      // otherwise the server fetches a live rate with cached-rate fallback.
+      const fx = await resolveExpenseFx(totalMinor, currency, trip.baseCurrency);
+
       addExpense(
         trip.id,
         {
@@ -245,12 +275,22 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
           category,
           note: note.trim() || undefined,
           receiptImageUrl: receiptImageUrl ?? undefined,
+          fx,
+          needsCurrencyReview,
         },
         { baseCurrency: trip.baseCurrency, createdBy: user.id }
       );
 
       router.push(`/trips/${trip.id}`);
-    } finally {
+    } catch (error) {
+      // No live rate AND no cached rate — never fabricate one.
+      addToast({
+        message:
+          error instanceof FxRateUnavailableError
+            ? error.message
+            : "Couldn't save the expense. Please try again.",
+        variant: "error",
+      });
       setSubmitting(false);
     }
   };
@@ -307,6 +347,8 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
             onAmountChange={setAmountStr}
             onCurrencyClick={openCurrencyPicker}
             decimalError={decimalError}
+            showCurrencyReview={showCurrencyReviewNotice}
+            onDismissCurrencyReview={() => setShowCurrencyReviewNotice(false)}
           />
         </div>
 

@@ -8,7 +8,25 @@ import {
 } from "@/lib/db/expenses";
 import { generateId } from "@/lib/utils";
 import { useBalanceStore } from "@/store/balanceStore";
+import { useTripStore } from "@/store/tripStore";
 import { useUIStore } from "@/store/uiStore";
+
+/**
+ * The DB trigger locks the trip's base currency when its first expense lands.
+ * Mirror that into client trip state so the app never thinks it's unlocked.
+ */
+function mirrorBaseCurrencyLock(tripId: string, lockedAt: string) {
+  useTripStore.setState((state) => {
+    const lock = (trip: typeof state.activeTrip) =>
+      trip && trip.id === tripId && !trip.baseCurrencyLockedAt
+        ? { ...trip, baseCurrencyLockedAt: lockedAt }
+        : trip;
+    return {
+      activeTrip: lock(state.activeTrip),
+      trips: state.trips.map((t) => lock(t)!),
+    };
+  });
+}
 
 /** Data handed from the receipt-scan flow to the Add Expense form. */
 export interface ScanPrefill {
@@ -148,6 +166,7 @@ export const useExpenseStore = create<ExpenseState>((set, get) => ({
           },
         }));
 
+        mirrorBaseCurrencyLock(tripId, saved.createdAt);
         useBalanceStore.getState().recomputeBalances(tripId);
       } catch (error) {
         console.error("Failed to save expense:", error);

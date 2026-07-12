@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { History } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import {
   EXPENSE_CATEGORIES,
   getCategoryConfig,
 } from "@/features/expenses/categoryConfig";
+import { useAddToast } from "@/store";
 import type { Expense } from "@/types";
 
 interface ExpenseRowProps {
@@ -36,6 +40,39 @@ function CategorySwatch({ category }: { category: Expense["category"] }) {
   );
 }
 
+/**
+ * Deliberately quiet cached-rate marker (per "avoid cluttering the main
+ * list"): a 12px clock in the same muted tone as the text beside it, with a
+ * 24x24px touch target. Tapping explains the rate via the global info toast.
+ */
+function CachedRateIndicator() {
+  const addToast = useAddToast();
+
+  return (
+    <button
+      type="button"
+      aria-label="Converted using a cached exchange rate"
+      onClick={(e) => {
+        // The whole row is a link — keep the tap scoped to the icon.
+        e.preventDefault();
+        e.stopPropagation();
+        addToast({
+          message: "This was converted using a recent cached rate",
+          variant: "info",
+        });
+      }}
+      className={cn(
+        // 24x24 touch target around a 12px glyph; negative margins collapse
+        // the padding so the visible gap to the amount text stays 4px.
+        "-my-1.5 -ml-1.5 -mr-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+      )}
+    >
+      <History className="h-3 w-3 text-[#94A3B8]" strokeWidth={2} />
+    </button>
+  );
+}
+
 export function ExpenseRow({
   expense,
   tripId,
@@ -47,6 +84,7 @@ export function ExpenseRow({
   const description =
     expense.note?.trim() || `${payerName.split(" ")[0]} paid`;
   const showBaseConversion = expense.currency !== baseCurrency;
+  const usedCachedRate = expense.rateSource === "cached";
 
   return (
     <div
@@ -85,12 +123,15 @@ export function ExpenseRow({
             {formatCurrency(expense.amountMinorUnits, expense.currency)}
           </p>
           {showBaseConversion && (
-            <p
-              className="mt-0.5 text-[12px] font-normal text-[#94A3B8] tabular-nums"
-              style={{ fontFeatureSettings: '"tnum"' }}
-            >
-              ({formatCurrency(expense.baseCurrencyAmount, baseCurrency)})
-            </p>
+            <div className="mt-0.5 flex items-center justify-end gap-1">
+              {usedCachedRate && <CachedRateIndicator />}
+              <p
+                className="text-[12px] font-normal text-[#94A3B8] tabular-nums"
+                style={{ fontFeatureSettings: '"tnum"' }}
+              >
+                ({formatCurrency(expense.baseCurrencyAmount, baseCurrency)})
+              </p>
+            </div>
           )}
         </div>
       </Link>
