@@ -404,6 +404,28 @@
   overflow: hidden;
 }
 
+/* Dashboard — staggered trip list entrance */
+@keyframes dashboard-item-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dashboard-item-enter {
+  animation: dashboard-item-enter 400ms var(--ease-tally) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-dashboard-item-enter {
+    animation: none !important;
+  }
+}
+
 @keyframes expense-row-enter {
   from {
     max-height: 0;

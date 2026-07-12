@@ -1,51 +1,167 @@
 import Link from "next/link";
-import { MapPin, Calendar } from "lucide-react";
-import type { Trip } from "@/types";
-import { Badge } from "@/components/ui/Badge";
-import { formatRelativeDate } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { Calendar, MapPin } from "lucide-react";
+import {
+  getAvatarColorForUser,
+  getMemberInitial,
+} from "@/lib/avatar-colors";
+import { formatCompactDateRange, cn } from "@/lib/utils";
+import type { Trip, TripMember } from "@/types";
 
 interface TripCardProps {
   trip: Trip;
-  memberCount?: number;
+  members?: TripMember[];
+  /** Past trips render muted so active trips stay the focal content. */
+  variant?: "active" | "past";
   className?: string;
 }
 
-export function TripCard({ trip, memberCount, className }: TripCardProps) {
+function MemberAvatarStack({ members }: { members: TripMember[] }) {
+  const visible = members.slice(0, 4);
+  const overflow = members.length - visible.length;
+
+  return (
+    <div className="flex items-center" aria-label={`${members.length} members`}>
+      {visible.map((member, i) => (
+        <div
+          key={member.userId}
+          className={cn(
+            "relative flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full",
+            "border-2 border-[#13131A] text-[10px] font-semibold text-white",
+            i > 0 && "-ml-2"
+          )}
+          style={{
+            zIndex: visible.length - i,
+            backgroundColor: getAvatarColorForUser(member.userId),
+          }}
+          title={member.displayName}
+        >
+          {member.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={member.avatarUrl}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            getMemberInitial(member.displayName)
+          )}
+        </div>
+      ))}
+      {overflow > 0 && (
+        <div
+          className={cn(
+            "relative -ml-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+            "border-2 border-[#13131A] bg-[#1C1C27]",
+            "text-[11px] font-semibold text-[#94A3B8]"
+          )}
+          style={{ zIndex: 0 }}
+        >
+          +{overflow}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function TripCard({
+  trip,
+  members = [],
+  variant = "active",
+  className,
+}: TripCardProps) {
+  const isPast = variant === "past";
+  const hasDates = Boolean(trip.startDate || trip.endDate);
+  const dateLabel = hasDates
+    ? formatCompactDateRange(trip.startDate, trip.endDate) || "No dates set"
+    : "No dates set";
+
   return (
     <Link
       href={`/trips/${trip.id}`}
       className={cn(
-        "block rounded-card border border-border-glass bg-background-card p-4",
-        "transition-all duration-default ease-tally",
-        "hover:border-accent-violet/30 hover:bg-background-elevated active:scale-[0.99]",
+        "relative block overflow-hidden rounded-[20px] border border-[#ffffff0f] bg-[#13131A] p-5",
+        // Physical top-edge highlight
+        "shadow-[inset_0_1px_0_#ffffff0a]",
+        "transition-all duration-default ease-tally active:scale-[0.99]",
+        isPast
+          ? "opacity-60"
+          : [
+              "hover:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#7C3AED60]",
+              "focus-visible:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#7C3AED60]",
+            ],
+        "focus-visible:outline-none",
         className
       )}
     >
+      {/* Active live accent — gradient left rail */}
+      {!isPast && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-[3px] rounded-l-[20px]"
+          style={{
+            background: "linear-gradient(180deg, #7C3AED 0%, #2563EB 100%)",
+          }}
+        />
+      )}
+
+      {/* Top row — name + currency pill */}
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-semibold text-text-primary">
-            {trip.name}
-          </h3>
-          <div className="mt-1 flex items-center gap-1.5 text-sm text-text-secondary">
-            <MapPin className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{trip.destination}</span>
-          </div>
-        </div>
-        <Badge variant="violet">{trip.baseCurrency}</Badge>
+        <h3
+          className={cn(
+            "min-w-0 flex-1 truncate text-[18px] font-bold tracking-[-0.01em]",
+            isPast ? "text-[#94A3B8]" : "text-[#F8F8FF]"
+          )}
+        >
+          {trip.name}
+        </h3>
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-[0.02em]",
+            isPast
+              ? "border border-[#ffffff0f] bg-[#1C1C27] text-[#94A3B8]"
+              : "border border-[#7C3AED40] bg-[#7C3AED1a] text-[#7C3AED]"
+          )}
+        >
+          {trip.baseCurrency}
+        </span>
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-text-disabled">
-        <div className="flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5" />
-          <span>
-            {formatRelativeDate(trip.startDate)} –{" "}
-            {formatRelativeDate(trip.endDate)}
-          </span>
-        </div>
-        {memberCount !== undefined && (
-          <span>{memberCount} members</span>
-        )}
+
+      {/* Destination */}
+      <div className="mt-3 flex items-center gap-1.5">
+        <MapPin
+          className={cn(
+            "h-3.5 w-3.5 shrink-0",
+            isPast ? "text-[#475569]" : "text-[#7C3AED]"
+          )}
+          strokeWidth={2}
+        />
+        <span
+          className={cn(
+            "truncate text-[14px] font-normal",
+            isPast ? "text-[#475569]" : "text-[#94A3B8]"
+          )}
+        >
+          {trip.destination}
+        </span>
       </div>
+
+      {/* Dates */}
+      <div className="mt-1.5 flex items-center gap-1.5">
+        <Calendar
+          className="h-3.5 w-3.5 shrink-0 text-[#475569]"
+          strokeWidth={2}
+        />
+        <span className="text-[14px] font-normal tabular-nums text-[#475569]">
+          {dateLabel}
+        </span>
+      </div>
+
+      {/* Member faces — group presence */}
+      {members.length > 0 && (
+        <div className="mt-4">
+          <MemberAvatarStack members={members} />
+        </div>
+      )}
     </Link>
   );
 }
