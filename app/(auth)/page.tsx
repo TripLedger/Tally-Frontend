@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { EmailAuthSheet, GoogleIcon, HeroMotion } from "@/features/auth";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -131,13 +132,13 @@ function LandingContent() {
 
           <p className="mx-auto mt-11 max-w-[280px] text-center text-[12px] leading-[1.5] text-[#475569]">
             By continuing, you agree to Tally&apos;s{" "}
-            <a href="/terms" className="text-[#94A3B8] underline">
+            <Link href="/terms" className="text-[#94A3B8] underline">
               Terms
-            </a>{" "}
+            </Link>{" "}
             and{" "}
-            <a href="/privacy" className="text-[#94A3B8] underline">
+            <Link href="/privacy" className="text-[#94A3B8] underline">
               Privacy Policy
-            </a>
+            </Link>
             .
           </p>
         </footer>
