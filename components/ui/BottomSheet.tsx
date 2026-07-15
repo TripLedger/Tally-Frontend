@@ -64,7 +64,13 @@ export function BottomSheet() {
           "relative z-10 w-full max-w-mobile",
           "rounded-t-[20px] bg-[#13131A]",
           "transition-transform duration-default ease-tally",
-          height === "75" ? "h-[75dvh]" : height === "40" ? "h-[40dvh]" : "h-[60dvh]",
+          height === "75"
+            ? "h-[75dvh]"
+            : height === "45"
+              ? "h-[45dvh]"
+              : height === "40"
+                ? "h-[40dvh]"
+                : "h-[60dvh]",
           "overflow-hidden flex flex-col",
           "animate-sheet-in"
         )}
@@ -99,7 +105,7 @@ export function BottomSheetTrigger({
   content,
   title,
   height,
-}: BottomSheetTriggerProps & { height?: "40" | "60" | "75" }) {
+}: BottomSheetTriggerProps & { height?: "40" | "45" | "60" | "75" }) {
   const openBottomSheet = useOpenBottomSheet();
 
   return (

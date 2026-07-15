@@ -28,6 +28,7 @@ interface ExpenseRow {
   merchant: string | null;
   split_method: "equal" | "custom";
   split_map: ExpenseSplit[] | null;
+  line_items?: Expense["lineItems"] | null;
   ocr_source: boolean;
   receipt_image_url: string | null;
   created_at: string;
@@ -54,6 +55,7 @@ function mapExpenseRow(row: ExpenseRow): Expense {
     merchant: row.merchant ?? undefined,
     splitMethod: row.split_method,
     splitMap: Array.isArray(row.split_map) ? row.split_map : [],
+    lineItems: Array.isArray(row.line_items) ? row.line_items : [],
     ocrSource: row.ocr_source,
     receiptImageUrl: row.receipt_image_url ?? undefined,
     createdAt: row.created_at,
@@ -96,8 +98,10 @@ export function buildExpenseRecord(params: {
   needsCurrencyReview: boolean;
   splitMethod: "equal" | "custom";
   splitMap: ExpenseSplit[];
+  lineItems?: Expense["lineItems"];
   category: Expense["category"];
   note?: string;
+  merchant?: string;
   receiptImageUrl?: string;
   createdBy: string;
   id?: string;
@@ -121,8 +125,10 @@ export function buildExpenseRecord(params: {
     needsCurrencyReview: params.needsCurrencyReview,
     category: params.category,
     note: params.note,
+    merchant: params.merchant,
     splitMethod: params.splitMethod,
     splitMap: params.splitMap,
+    lineItems: params.lineItems ?? [],
     ocrSource: Boolean(params.receiptImageUrl),
     receiptImageUrl: params.receiptImageUrl,
     createdAt: now,
@@ -167,6 +173,7 @@ export async function persistExpense(
       merchant: expense.merchant ?? null,
       split_method: expense.splitMethod,
       split_map: expense.splitMap,
+      line_items: expense.lineItems ?? [],
       ocr_source: expense.ocrSource,
       receipt_image_url: expense.receiptImageUrl ?? null,
       created_at: expense.createdAt,

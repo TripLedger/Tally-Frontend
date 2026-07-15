@@ -27,6 +27,11 @@ export {
   useExpensesLoading,
   useExpenseSubmitting,
   useIsAddingExpense,
+  useUnassignedTotal,
+  useAssignedTotal,
+  type ScanPrefill,
+  type ScanResult,
+  type ScanLineItem,
 } from "./expenseStore";
 
 export {

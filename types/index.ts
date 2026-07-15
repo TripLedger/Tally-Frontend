@@ -55,6 +55,15 @@ export interface ExpenseSplit {
   amountMinorUnits: number;
 }
 
+/** Per-line-item assignment from the AI receipt → assign flow. */
+export interface ExpenseLineItem {
+  name: string;
+  quantity: number;
+  /** Integer minor units. */
+  lineTotal: number;
+  splitMap: { userId: string; share: number }[];
+}
+
 export type FxRateSource = "live" | "cached";
 
 export interface Expense {
@@ -86,6 +95,8 @@ export interface Expense {
   merchant?: string;
   splitMethod: "equal" | "custom";
   splitMap: ExpenseSplit[];
+  /** Empty for manual / equal-split expenses. */
+  lineItems?: ExpenseLineItem[];
   ocrSource: boolean;
   receiptImageUrl?: string;
   createdAt: string;
@@ -102,6 +113,9 @@ export interface AddExpenseInput {
   category: ExpenseCategory | null;
   note?: string;
   receiptImageUrl?: string;
+  /** Populated by the line-item assignment flow; []/omit otherwise. */
+  lineItems?: ExpenseLineItem[];
+  merchant?: string;
   /** Resolved server-side before save — see /api/fx/rate. */
   fx: {
     convertedAmountMinorUnits: number;

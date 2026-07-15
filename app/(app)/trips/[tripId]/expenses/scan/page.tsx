@@ -4,9 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Image as ImageIcon, UploadCloud, X } from "lucide-react";
 import { EXPENSE_CATEGORIES } from "@/features/expenses/categoryConfig";
+import { SplitModeDecisionSheet } from "@/features/expenses/SplitModeDecisionSheet";
 import { uploadReceiptImage } from "@/lib/storage";
+import { fromMinorUnits } from "@/lib/currency";
 import { cn } from "@/lib/utils";
-import { useExpenseStore } from "@/store";
+import {
+  useBottomSheet,
+  useExpenseStore,
+  useOpenBottomSheet,
+  type ScanResult,
+} from "@/store";
 import type { ExpenseCategory } from "@/types";
 
 interface ScanPageProps {
@@ -17,7 +24,7 @@ type Phase = "camera" | "fallback" | "processing";
 
 const STATUS_PHRASES = [
   "Finding the total",
-  "Checking the merchant",
+  "Reading line items",
   "Almost there",
 ];
 
@@ -66,14 +73,10 @@ async function normalizeToJpeg(source: Blob): Promise<Blob> {
   return blob;
 }
 
-interface ScanExtraction {
-  totalAmount: number;
-  currency: string | null;
-  merchantName: string | null;
-  category: ExpenseCategory | null;
-}
-
-async function callScanApi(base64: string): Promise<ScanExtraction | null> {
+async function callScanApi(
+  base64: string,
+  receiptImageUrl: string | null
+): Promise<ScanResult | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 10000);
 
@@ -90,14 +93,6 @@ async function callScanApi(base64: string): Promise<ScanExtraction | null> {
     if (!json?.ok || !json.extraction) return null;
 
     const ex = json.extraction;
-    const amountOk =
-      typeof ex.totalAmount === "number" &&
-      Number.isFinite(ex.totalAmount) &&
-      ex.totalAmount > 0;
-
-    // "Model returned nothing useful" and "API failed" take the same path.
-    if (!amountOk || ex.confidence !== "high") return null;
-
     const category = EXPENSE_CATEGORIES.some((c) => c.id === ex.suggestedCategory)
       ? (ex.suggestedCategory as ExpenseCategory)
       : null;
@@ -110,7 +105,70 @@ async function callScanApi(base64: string): Promise<ScanExtraction | null> {
         ? ex.merchantName.trim()
         : null;
 
-    return { totalAmount: ex.totalAmount, currency, merchantName, category };
+    const lineItems = Array.isArray(ex.lineItems)
+      ? ex.lineItems
+          .filter(
+            (item: {
+              name?: unknown;
+              lineTotal?: unknown;
+            }) =>
+              typeof item?.name === "string" &&
+              typeof item?.lineTotal === "number" &&
+              (item.lineTotal as number) > 0
+          )
+          .map(
+            (item: {
+              name: string;
+              quantity?: number;
+              unitPrice?: number;
+              lineTotal: number;
+            }) => ({
+              name: item.name,
+              quantity:
+                typeof item.quantity === "number" && item.quantity > 0
+                  ? Math.round(item.quantity)
+                  : 1,
+              unitPrice:
+                typeof item.unitPrice === "number" ? item.unitPrice : item.lineTotal,
+              lineTotal: item.lineTotal,
+              splitMap: [] as { userId: string; share: number }[],
+            })
+          )
+      : [];
+
+    const total =
+      typeof ex.total === "number" && Number.isFinite(ex.total) && ex.total > 0
+        ? ex.total
+        : lineItems.length > 0
+          ? lineItems.reduce(
+              (sum: number, item: { lineTotal: number }) => sum + item.lineTotal,
+              0
+            )
+          : null;
+
+    const confidence: "high" | "low" =
+      ex.confidence === "high" && (total !== null || lineItems.length > 0)
+        ? "high"
+        : "low";
+
+    const singleAmountOnly = Boolean(
+      ex.singleAmountOnly ?? (lineItems.length === 0 && total !== null)
+    );
+
+    if (confidence === "low" && total === null && lineItems.length === 0) {
+      return null;
+    }
+
+    return {
+      merchantName,
+      total,
+      currency,
+      confidence,
+      category,
+      lineItems,
+      receiptImageUrl,
+      singleAmountOnly,
+    };
   } catch {
     return null;
   } finally {
@@ -122,11 +180,17 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
   const { tripId } = params;
   const router = useRouter();
   const setPrefillData = useExpenseStore((s) => s.setPrefillData);
+  const setScanResult = useExpenseStore((s) => s.setScanResult);
+  const clearScanState = useExpenseStore((s) => s.clearScanState);
+  const openBottomSheet = useOpenBottomSheet();
+  const { isOpen: sheetOpen } = useBottomSheet();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const processingRef = useRef(false);
+  const awaitingDecisionRef = useRef(false);
+  const choseSplitModeRef = useRef(false);
 
   const [phase, setPhase] = useState<Phase>("camera");
   const [backdropUrl, setBackdropUrl] = useState<string | null>(null);
@@ -134,7 +198,6 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
   const [statusIdx, setStatusIdx] = useState(0);
   const [exiting, setExiting] = useState(false);
 
-  // Camera opens immediately on mount; denied/unavailable → upload fallback.
   useEffect(() => {
     let cancelled = false;
 
@@ -170,7 +233,6 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
     };
   }, []);
 
-  // Rotating status phrases while processing.
   useEffect(() => {
     if (phase !== "processing") return;
     const interval = setInterval(
@@ -186,6 +248,41 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
     };
   }, [backdropUrl]);
 
+  // Backdrop dismiss on split-mode sheet → clear scan + return to trip.
+  useEffect(() => {
+    if (!awaitingDecisionRef.current) return;
+    if (sheetOpen) return;
+
+    awaitingDecisionRef.current = false;
+    if (choseSplitModeRef.current) return;
+
+    clearScanState();
+    router.replace(`/trips/${tripId}`);
+  }, [sheetOpen, clearScanState, router, tripId]);
+
+  const goToAddExpense = useCallback(
+    async (scan: ScanResult | null, failed: boolean) => {
+      const currency = scan?.currency ?? null;
+      const total = scan?.total ?? null;
+      setPrefillData({
+        totalAmount:
+          total && total > 0
+            ? fromMinorUnits(total, currency ?? "USD")
+            : null,
+        currency,
+        category: scan?.category ?? null,
+        merchantName: scan?.merchantName ?? null,
+        receiptImageUrl: scan?.receiptImageUrl ?? null,
+        failed,
+      });
+      clearScanState();
+      setExiting(true);
+      await new Promise((r) => setTimeout(r, 250));
+      router.replace(`/trips/${tripId}/expenses/new`);
+    },
+    [tripId, router, setPrefillData, clearScanState]
+  );
+
   const processImage = useCallback(
     async (blob: Blob) => {
       if (processingRef.current) return;
@@ -199,38 +296,63 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
 
       const startedAt = Date.now();
 
-      // Upload and OCR run in parallel; both failures are non-fatal.
       const uploadPromise = uploadReceiptImage(blob, tripId).catch(() => null);
-      let extraction: ScanExtraction | null = null;
+      let scan: ScanResult | null = null;
+      let receiptImageUrl: string | null = null;
       try {
-        const base64 = await blobToBase64(blob);
-        extraction = await callScanApi(base64);
+        const [base64, uploaded] = await Promise.all([
+          blobToBase64(blob),
+          uploadPromise,
+        ]);
+        receiptImageUrl = uploaded;
+        scan = await callScanApi(base64, receiptImageUrl);
       } catch {
-        extraction = null;
+        receiptImageUrl = (await uploadPromise) ?? null;
+        scan = null;
       }
 
-      const receiptImageUrl = (await uploadPromise) ?? null;
-
-      // Keep the processing state visible long enough to read.
       const elapsed = Date.now() - startedAt;
       if (elapsed < MIN_PROCESSING_MS) {
         await new Promise((r) => setTimeout(r, MIN_PROCESSING_MS - elapsed));
       }
 
-      setPrefillData({
-        totalAmount: extraction?.totalAmount ?? null,
-        currency: extraction?.currency ?? null,
-        category: extraction?.category ?? null,
-        merchantName: extraction?.merchantName ?? null,
-        receiptImageUrl,
-        failed: extraction === null,
-      });
+      if (!scan) {
+        await goToAddExpense(
+          {
+            merchantName: null,
+            total: null,
+            currency: null,
+            confidence: "low",
+            category: null,
+            lineItems: [],
+            receiptImageUrl,
+            singleAmountOnly: false,
+          },
+          true
+        );
+        return;
+      }
 
-      setExiting(true);
-      await new Promise((r) => setTimeout(r, 250));
-      router.replace(`/trips/${tripId}/expenses/new`);
+      if (scan.singleAmountOnly || scan.lineItems.length === 0) {
+        await goToAddExpense(scan, false);
+        return;
+      }
+
+      setScanResult(scan);
+      choseSplitModeRef.current = false;
+      awaitingDecisionRef.current = true;
+      openBottomSheet(
+        <SplitModeDecisionSheet
+          tripId={tripId}
+          scan={scan}
+          onChose={() => {
+            choseSplitModeRef.current = true;
+          }}
+        />,
+        { height: "45" }
+      );
     },
-    [tripId, router, setPrefillData]
+    [tripId, setScanResult, openBottomSheet, goToAddExpense]
   );
 
   const capture = useCallback(async () => {

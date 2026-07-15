@@ -6,6 +6,7 @@ import {
   fetchExpensesForTrip,
   persistExpense,
 } from "@/lib/db/expenses";
+import { sumUnassignedLineItems } from "@/lib/expenses";
 import { generateId } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { useBalanceStore } from "@/store/balanceStore";
@@ -39,11 +40,36 @@ export interface ScanPrefill {
   failed: boolean;
 }
 
+/** One OCR line item. Monetary fields are integer minor units. */
+export interface ScanLineItem {
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  /** Built during line-item assignment; empty until the user assigns members. */
+  splitMap: { userId: string; share: number }[];
+}
+
+/** Full OCR payload held between scan → split-mode → assign/new. */
+export interface ScanResult {
+  merchantName: string | null;
+  /** Grand total in minor units. */
+  total: number | null;
+  currency: string | null;
+  confidence: "high" | "low";
+  category: ExpenseCategory | null;
+  lineItems: ScanLineItem[];
+  receiptImageUrl: string | null;
+  singleAmountOnly: boolean;
+}
+
 interface ExpenseState {
   expensesByTrip: Record<string, Expense[]>;
   isLoading: boolean;
   isAddingExpense: boolean;
   prefill: ScanPrefill | null;
+  scanResult: ScanResult | null;
+  assignedLineItems: ScanLineItem[];
   setExpensesForTrip: (tripId: string, expenses: Expense[]) => void;
   fetchExpenses: (tripId: string) => Promise<void>;
   getExpense: (tripId: string, expenseId: string) => Promise<Expense | null>;
@@ -54,6 +80,12 @@ interface ExpenseState {
   ) => Expense;
   setPrefillData: (prefill: ScanPrefill) => void;
   clearPrefill: () => void;
+  setScanResult: (result: ScanResult) => void;
+  updateLineItemSplit: (
+    itemIndex: number,
+    splitMap: { userId: string; share: number }[]
+  ) => void;
+  clearScanState: () => void;
   removeExpenseFromTrip: (tripId: string, expenseId: string) => void;
   clearExpenses: () => void;
 }
@@ -69,9 +101,36 @@ export const useExpenseStore = create<ExpenseState>((set, get) => ({
   isLoading: false,
   isAddingExpense: false,
   prefill: null,
+  scanResult: null,
+  assignedLineItems: [],
 
   setPrefillData: (prefill) => set({ prefill }),
   clearPrefill: () => set({ prefill: null }),
+
+  setScanResult: (result) =>
+    set({
+      scanResult: result,
+      assignedLineItems: result.lineItems.map((item) => ({
+        ...item,
+        splitMap: item.splitMap ?? [],
+      })),
+    }),
+
+  updateLineItemSplit: (itemIndex, splitMap) =>
+    set((state) => {
+      const next = state.assignedLineItems.map((item, i) =>
+        i === itemIndex ? { ...item, splitMap } : item
+      );
+      return {
+        assignedLineItems: next,
+        scanResult: state.scanResult
+          ? { ...state.scanResult, lineItems: next }
+          : null,
+      };
+    }),
+
+  clearScanState: () =>
+    set({ scanResult: null, assignedLineItems: [] }),
 
   setExpensesForTrip: (tripId, expenses) =>
     set((state) => ({
@@ -238,8 +297,21 @@ export const useExpenseStore = create<ExpenseState>((set, get) => ({
       isLoading: false,
       isAddingExpense: false,
       prefill: null,
+      scanResult: null,
+      assignedLineItems: [],
     }),
 }));
+
+/** Remaining minor units not fully assigned across all scan line items. */
+export const useUnassignedTotal = () =>
+  useExpenseStore((s) => sumUnassignedLineItems(s.assignedLineItems));
+
+export const useAssignedTotal = () =>
+  useExpenseStore((s) => {
+    const total = s.scanResult?.total ?? 0;
+    const unassigned = sumUnassignedLineItems(s.assignedLineItems);
+    return Math.max(0, total - unassigned);
+  });
 
 export const useExpensesForTrip = (tripId: string) =>
   useExpenseStore((s) => s.expensesByTrip[tripId] ?? EMPTY_EXPENSES);

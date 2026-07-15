@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { toMinorUnits } from "@/lib/currency";
 
 const API_TIMEOUT_MS = 8000;
 const VALID_CATEGORIES = [
@@ -9,51 +10,138 @@ const VALID_CATEGORIES = [
   "other",
 ] as const;
 
-const SYSTEM_PROMPT = `You extract structured data from receipt photos.
-Respond with ONLY a valid JSON object — no markdown fences, no commentary — matching exactly:
-{"totalAmount": number | null, "currency": string | null, "merchantName": string | null, "suggestedCategory": "food" | "transport" | "lodging" | "activities" | "other" | null, "confidence": "high" | "low"}
-
+const SYSTEM_PROMPT = `You are a receipt parser. Extract all line items from the receipt image provided.
+Return ONLY valid JSON with no preamble, no markdown, no explanation:
+{
+  "merchantName": string | null,
+  "total": number | null,
+  "currency": string | null,
+  "confidence": "high" | "low",
+  "suggestedCategory": "food" | "transport" | "lodging" | "activities" | "other" | null,
+  "lineItems": [{ "name": string, "quantity": number, "unitPrice": number, "lineTotal": number }]
+}
 Rules:
-- totalAmount is the grand total actually paid (after tax/tip), as a decimal number. Null if unreadable.
+- lineItems must always be an array, never null. If no items found, return [].
+- All monetary values are raw decimals (e.g. 4500 not "₦4,500").
+- total is the grand total actually paid (after tax/tip), as a decimal. Null if unreadable.
 - currency is the ISO 4217 code inferred from symbols or text (e.g. "$" → "USD", "₦" → "NGN", "€" → "EUR"). Null if you cannot tell.
 - merchantName is the business name printed on the receipt, cleaned up. Null if unreadable.
 - suggestedCategory: restaurants/cafés/groceries → "food"; taxis/fuel/parking/transit → "transport"; hotels → "lodging"; tours/tickets/events → "activities"; anything else → "other". Null if unclear.
-- confidence: "high" only if you clearly read a total amount from an actual receipt. Blurry, rotated, cropped, or non-receipt images → "low".`;
+- If the image is blurry, rotated, or unreadable, return confidence: "low" and empty lineItems.
+- Never invent line items not visible on the receipt.
+- confidence: "high" only if you clearly read a total or line items from an actual receipt.`;
 
-interface Extraction {
-  totalAmount: number | null;
-  currency: string | null;
-  merchantName: string | null;
-  suggestedCategory: string | null;
-  confidence: "high" | "low";
+export interface ScanLineItemExtraction {
+  name: string;
+  quantity: number;
+  /** Minor units of currency. */
+  unitPrice: number;
+  /** Minor units of currency. */
+  lineTotal: number;
 }
 
-function parseExtraction(text: string): Extraction | null {
+export interface ScanExtractionResponse {
+  merchantName: string | null;
+  /** Grand total in minor units, or null. */
+  total: number | null;
+  currency: string | null;
+  confidence: "high" | "low";
+  suggestedCategory: string | null;
+  lineItems: ScanLineItemExtraction[];
+  /** True when Claude returned a total but no line items — skip item assignment. */
+  singleAmountOnly: boolean;
+}
+
+function emptyExtraction(): ScanExtractionResponse {
+  return {
+    merchantName: null,
+    total: null,
+    currency: null,
+    confidence: "low",
+    suggestedCategory: null,
+    lineItems: [],
+    singleAmountOnly: false,
+  };
+}
+
+function parseLineItems(
+  raw: unknown,
+  currency: string
+): ScanLineItemExtraction[] {
+  if (!Array.isArray(raw)) return [];
+
+  const items: ScanLineItemExtraction[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") continue;
+    const obj = entry as Record<string, unknown>;
+    const name =
+      typeof obj.name === "string" && obj.name.trim()
+        ? obj.name.trim().slice(0, 120)
+        : null;
+    if (!name) continue;
+
+    const quantity =
+      typeof obj.quantity === "number" &&
+      Number.isFinite(obj.quantity) &&
+      obj.quantity > 0
+        ? Math.max(1, Math.round(obj.quantity))
+        : 1;
+
+    const lineTotalRaw =
+      typeof obj.lineTotal === "number" && Number.isFinite(obj.lineTotal)
+        ? obj.lineTotal
+        : typeof obj.unitPrice === "number" && Number.isFinite(obj.unitPrice)
+          ? obj.unitPrice * quantity
+          : null;
+    if (lineTotalRaw === null || lineTotalRaw <= 0) continue;
+
+    const unitPriceRaw =
+      typeof obj.unitPrice === "number" &&
+      Number.isFinite(obj.unitPrice) &&
+      obj.unitPrice > 0
+        ? obj.unitPrice
+        : lineTotalRaw / quantity;
+
+    items.push({
+      name,
+      quantity,
+      unitPrice: toMinorUnits(unitPriceRaw, currency),
+      lineTotal: toMinorUnits(lineTotalRaw, currency),
+    });
+  }
+  return items;
+}
+
+function parseExtraction(text: string): ScanExtractionResponse {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
-  if (start === -1 || end <= start) return null;
+  if (start === -1 || end <= start) return emptyExtraction();
 
   let raw: unknown;
   try {
     raw = JSON.parse(text.slice(start, end + 1));
   } catch {
-    return null;
+    return emptyExtraction();
   }
-  if (!raw || typeof raw !== "object") return null;
+  if (!raw || typeof raw !== "object") return emptyExtraction();
 
   const obj = raw as Record<string, unknown>;
-
-  const totalAmount =
-    typeof obj.totalAmount === "number" &&
-    Number.isFinite(obj.totalAmount) &&
-    obj.totalAmount > 0
-      ? obj.totalAmount
-      : null;
 
   const currency =
     typeof obj.currency === "string" && /^[A-Za-z]{3}$/.test(obj.currency.trim())
       ? obj.currency.trim().toUpperCase()
-      : null;
+      : "USD";
+
+  const totalMajor =
+    typeof obj.total === "number" &&
+    Number.isFinite(obj.total) &&
+    obj.total > 0
+      ? obj.total
+      : typeof obj.totalAmount === "number" &&
+          Number.isFinite(obj.totalAmount) &&
+          obj.totalAmount > 0
+        ? obj.totalAmount
+        : null;
 
   const merchantName =
     typeof obj.merchantName === "string" && obj.merchantName.trim()
@@ -66,10 +154,30 @@ function parseExtraction(text: string): Extraction | null {
     ? String(obj.suggestedCategory)
     : null;
 
-  const confidence: "high" | "low" =
-    obj.confidence === "high" && totalAmount !== null ? "high" : "low";
+  const lineItems = parseLineItems(obj.lineItems, currency);
 
-  return { totalAmount, currency, merchantName, suggestedCategory, confidence };
+  const total =
+    totalMajor !== null
+      ? toMinorUnits(totalMajor, currency)
+      : lineItems.length > 0
+        ? lineItems.reduce((sum, item) => sum + item.lineTotal, 0)
+        : null;
+
+  const hasReadableData = total !== null || lineItems.length > 0;
+  const confidence: "high" | "low" =
+    obj.confidence === "high" && hasReadableData ? "high" : "low";
+
+  const singleAmountOnly = lineItems.length === 0 && total !== null;
+
+  return {
+    merchantName,
+    total,
+    currency: typeof obj.currency === "string" ? currency : null,
+    confidence,
+    suggestedCategory,
+    lineItems,
+    singleAmountOnly,
+  };
 }
 
 export async function POST(request: Request) {
@@ -89,9 +197,17 @@ export async function POST(request: Request) {
       mediaType = body.mediaType;
     }
   } catch {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({
+      ok: true,
+      extraction: emptyExtraction(),
+    });
   }
-  if (!image) return NextResponse.json({ ok: false });
+  if (!image) {
+    return NextResponse.json({
+      ok: true,
+      extraction: emptyExtraction(),
+    });
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
@@ -106,7 +222,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5",
-        max_tokens: 300,
+        max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: [
           {
@@ -118,7 +234,7 @@ export async function POST(request: Request) {
               },
               {
                 type: "text",
-                text: "Extract the receipt data. Respond with only the JSON object.",
+                text: "Extract all line items from this receipt. Respond with only the JSON object.",
               },
             ],
           },
@@ -129,7 +245,10 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       console.error("Anthropic API error:", response.status);
-      return NextResponse.json({ ok: false });
+      return NextResponse.json({
+        ok: true,
+        extraction: emptyExtraction(),
+      });
     }
 
     const data = await response.json();
@@ -138,12 +257,13 @@ export async function POST(request: Request) {
       : null;
     const extraction = parseExtraction(textBlock?.text ?? "");
 
-    if (!extraction) return NextResponse.json({ ok: false });
     return NextResponse.json({ ok: true, extraction });
   } catch (err) {
-    // Timeout (AbortError) and network failures both land here — same fallback.
     console.error("Receipt scan failed:", err);
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({
+      ok: true,
+      extraction: emptyExtraction(),
+    });
   } finally {
     clearTimeout(timeout);
   }
