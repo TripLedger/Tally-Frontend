@@ -9,7 +9,23 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
+      screens: {
+        xs: "375px",
+      },
       colors: {
+        tabr: {
+          bg: "#0A0714",
+          surface: "#120D22",
+          card: "#1A1330",
+          border: "#2D2250",
+          primary: "#9367F9",
+          "primary-hover": "#8254F0",
+          text: "#F1EEF9",
+          muted: "#8B7FB8",
+          faint: "#4A4068",
+          mint: "#10B981",
+          coral: "#F43F5E",
+        },
         background: {
           DEFAULT: "#0A0A0F",
           card: "#13131A",

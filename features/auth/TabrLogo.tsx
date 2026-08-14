@@ -1,0 +1,24 @@
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+
+interface TabrLogoProps {
+  className?: string;
+  title?: string;
+}
+
+/**
+ * Reusable Tabr wordmark — use anywhere (auth, nav, splash).
+ * Source export: `design/auth/tabr.png` → served from `/tabr/brand/tabr-logo.png`.
+ */
+export function TabrLogo({ className, title = "Tabr" }: TabrLogoProps) {
+  return (
+    <Image
+      src="/tabr/brand/tabr-logo.png"
+      alt={title}
+      width={101}
+      height={47}
+      priority
+      className={cn("h-8 w-auto", className)}
+    />
+  );
+}

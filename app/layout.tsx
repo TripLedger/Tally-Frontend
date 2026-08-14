@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tally",
+  title: "Tabr",
   description:
-    "Travel-native group expense splitting with AI receipt scanning and automatic settlement.",
+    "The social spending app for young Nigerians — split the bill, settle up, discover where to go.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Tally",
+    title: "Tabr",
   },
 };
 
@@ -30,7 +32,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#0A0A0F",
+  themeColor: "#0A0714",
 };
 
 export default function RootLayout({
@@ -39,7 +41,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn("dark", GeistSans.variable)}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         <ThemeProvider>
           <AppProviders>{children}</AppProviders>

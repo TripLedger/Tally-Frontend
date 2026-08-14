@@ -1,8 +1,44 @@
 import { z } from "zod";
 import { isValidCurrencyCode } from "@/lib/currency";
+import { isPasswordComplex } from "./passwordRules";
 
 export const emailAuthSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
+  email: z
+    .string({ error: "Enter a valid email address" })
+    .trim()
+    .email("Enter a valid email address"),
+});
+
+export const signUpSchema = z
+  .object({
+    email: z
+      .string({ error: "Enter a valid email address" })
+      .trim()
+      .email("Enter a valid email address"),
+    password: z
+      .string()
+      .min(1, "Enter a password")
+      .refine(
+        isPasswordComplex,
+        "Use upper & lowercase, a number, and a special character"
+      ),
+    confirmPassword: z.string().min(1, "Repeat your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const otpSchema = z
+  .string()
+  .regex(/^\d{6}$/, "Enter the 6-digit code");
+
+export const signInSchema = z.object({
+  email: z
+    .string({ error: "Enter a valid email address" })
+    .trim()
+    .email("Enter a valid email address"),
+  password: z.string().min(1, "Enter your password"),
 });
 
 export const onboardingSchema = z.object({
@@ -25,5 +61,7 @@ export const displayNameSchema = z.object({
 });
 
 export type EmailAuthFormData = z.infer<typeof emailAuthSchema>;
+export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type SignInFormData = z.infer<typeof signInSchema>;
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 export type DisplayNameFormData = z.infer<typeof displayNameSchema>;

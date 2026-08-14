@@ -77,3 +77,9 @@ export {
   type ToastItem,
   type ToastVariant,
 } from "./uiStore";
+
+export {
+  useOnboardingStore,
+  useActiveOnboardingSlide,
+  useIntroCompleted,
+} from "./onboardingStore";

@@ -13,6 +13,24 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Tabr / Figma — text colors */
+  --text-primary-500: #15131a;
+  --text-secondary-500: #716d7d;
+
+  /* Tabr / Figma — heading 2 (onboarding headlines) */
+  --heading-2-font-family: var(--font-geist-sans), Geist, system-ui, sans-serif;
+  --heading-2-font-size: 30px;
+  --heading-2-line-height: 30px;
+  --heading-2-letter-spacing: -1px;
+
+  /* Tabr / Figma — paragraph small/regular (onboarding body) */
+  --font-definitions-font-family-body: var(--font-geist-sans), Geist, system-ui,
+    sans-serif;
+  --paragraph-small-font-size: 14px;
+  --paragraph-small-line-height: 20px;
+  --paragraph-small-letter-spacing: 0px;
+  --whites-500: #fff;
 }
 
 @layer base {
@@ -29,6 +47,51 @@
 }
 
 @layer utilities {
+  .text-tabr-heading-2 {
+    width: 224px;
+    min-height: 60px;
+    color: #fff;
+    font-family: var(--heading-2-font-family);
+    font-size: var(--heading-2-font-size);
+    font-style: normal;
+    font-weight: 600;
+    line-height: var(--heading-2-line-height);
+    letter-spacing: var(--heading-2-letter-spacing);
+  }
+
+  .text-tabr-paragraph-small {
+    align-self: stretch;
+    color: var(--whites-500, #fff);
+    font-family: var(--font-definitions-font-family-body);
+    font-size: var(--paragraph-small-font-size);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--paragraph-small-line-height);
+    letter-spacing: var(--paragraph-small-letter-spacing);
+  }
+
+  /* Light-auth heading 2 — Forgot password / OTP (Figma Text-Primary-500) */
+  .text-tabr-ink-heading-2 {
+    color: var(--text-primary-500, #15131a);
+    font-family: var(--heading-2-font-family, Geist);
+    font-size: var(--heading-2-font-size, 30px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: var(--heading-2-line-height, 30px);
+    letter-spacing: var(--heading-2-letter-spacing, -1px);
+  }
+
+  /* Light-auth paragraph small/regular (Figma Text-secondary-500) */
+  .text-tabr-ink-paragraph-small {
+    color: var(--text-secondary-500, #716d7d);
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-small-font-size, 14px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--paragraph-small-line-height, 20px);
+    letter-spacing: var(--paragraph-small-letter-spacing, 0);
+  }
+
   .safe-top {
     padding-top: var(--safe-top);
   }

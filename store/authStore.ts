@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { writeMockUser } from "@/lib/auth/mock-session";
 
 export type AuthStatus =
   | "idle"
@@ -27,65 +28,47 @@ interface AuthState {
   updateHomeCurrency: (homeCurrency: string) => Promise<boolean>;
 }
 
-async function patchUserProfile(body: {
-  displayName?: string;
-  homeCurrency?: string;
-}): Promise<AuthUser | null> {
-  const res = await fetch("/api/user", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = (await res.json().catch(() => null)) as
-    | { ok: true; user: AuthUser }
-    | { ok: false; reason?: string }
-    | null;
-
-  if (!res.ok || !data || !("ok" in data) || !data.ok) {
-    return null;
-  }
-
-  return data.user;
-}
-
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   status: "idle",
   isUpdatingProfile: false,
+
   setUser: (user) =>
     set({
       user,
       status: user ? "authenticated" : "unauthenticated",
     }),
+
   setStatus: (status) => set({ status }),
+
   clearUser: () => set({ user: null, status: "unauthenticated" }),
-  completeOnboarding: (displayName, homeCurrency) =>
-    set((state) => ({
-      user: state.user
-        ? { ...state.user, displayName, homeCurrency, onboardingComplete: true }
-        : null,
-    })),
+
+  completeOnboarding: (displayName, homeCurrency) => {
+    const current = get().user;
+    const next: AuthUser = current
+      ? { ...current, displayName, homeCurrency, onboardingComplete: true }
+      : {
+          id: `mock-${Date.now()}`,
+          email: "demo@tabr.app",
+          displayName,
+          homeCurrency,
+          onboardingComplete: true,
+        };
+
+    writeMockUser(next);
+    set({ user: next, status: "authenticated" });
+  },
 
   updateDisplayName: async (displayName) => {
     const trimmed = displayName.trim();
-    if (!get().user || trimmed.length < 2) return false;
+    const current = get().user;
+    if (!current || trimmed.length < 2) return false;
 
     set({ isUpdatingProfile: true });
     try {
-      const updated = await patchUserProfile({ displayName: trimmed });
-      if (!updated) return false;
-
-      set((state) => ({
-        user: state.user
-          ? {
-              ...state.user,
-              displayName: updated.displayName,
-              homeCurrency: updated.homeCurrency || state.user.homeCurrency,
-              avatarUrl: updated.avatarUrl ?? state.user.avatarUrl,
-            }
-          : null,
-      }));
+      const next = { ...current, displayName: trimmed };
+      writeMockUser(next);
+      set({ user: next });
       return true;
     } finally {
       set({ isUpdatingProfile: false });
@@ -94,23 +77,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   updateHomeCurrency: async (homeCurrency) => {
     const code = homeCurrency.trim().toUpperCase();
-    if (!get().user || !code) return false;
+    const current = get().user;
+    if (!current || !code) return false;
 
     set({ isUpdatingProfile: true });
     try {
-      const updated = await patchUserProfile({ homeCurrency: code });
-      if (!updated) return false;
-
-      set((state) => ({
-        user: state.user
-          ? {
-              ...state.user,
-              displayName: updated.displayName || state.user.displayName,
-              homeCurrency: updated.homeCurrency,
-              avatarUrl: updated.avatarUrl ?? state.user.avatarUrl,
-            }
-          : null,
-      }));
+      const next = { ...current, homeCurrency: code };
+      writeMockUser(next);
+      set({ user: next });
       return true;
     } finally {
       set({ isUpdatingProfile: false });
@@ -125,6 +99,6 @@ export const useIsAuthenticated = () =>
 export const useAuthLoading = () =>
   useAuthStore((s) => s.status === "loading" || s.status === "idle");
 export const useHomeCurrency = () =>
-  useAuthStore((s) => s.user?.homeCurrency ?? "USD");
+  useAuthStore((s) => s.user?.homeCurrency ?? "NGN");
 export const useIsUpdatingProfile = () =>
   useAuthStore((s) => s.isUpdatingProfile);
