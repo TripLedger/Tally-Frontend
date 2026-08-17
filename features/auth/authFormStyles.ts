@@ -22,32 +22,37 @@ export const AUTH = {
     primary: "#9367F9",
     cta: "#8B5CF6",
     ctaDisabled: "#C5ADFA",
-    error: "#DC2626",
+    error: "#F43F5E",
+    success: "#22C55E",
   },
 } as const;
 
 const authGeistClass =
   "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
 
-/** Same column as onboarding: full width of the auth frame, 24px side inset. */
+/**
+ * Same column as onboarding: full width of the auth frame, 24px side inset.
+ * Padding uses --safe-top / --safe-bottom (not env() in the class). Commas
+ * inside env() break Tailwind arbitrary-value parsing and drop the padding.
+ */
 export const authShellClass = cn(
   "mx-auto flex min-h-dvh w-full flex-col items-stretch",
   "bg-white px-6",
-  "pb-[max(1.5rem,env(safe-area-inset-bottom,0px))]",
-  "pt-[calc(max(env(safe-area-inset-top,0px),47px)+1.75rem)]"
+  "pb-[max(1.5rem,var(--safe-bottom))]",
+  "pt-[calc(max(var(--safe-top),47px)+1.75rem)]"
 );
 
 /**
- * Forgot-password / OTP stack.
- * Figma frames include ~47px status bar; back arrow starts ~14px below it.
- * Always reserve at least 47px (browser / Android) plus that gap so content
- * never sits under the iOS/Android status bar.
+ * Forgot-password / OTP / reset stack.
+ * Figma frames include ~47px status bar; back arrow sits below it.
+ * Floor at 47px for browsers that report 0, then add 20px so the arrow
+ * never sits under the iOS/Android status bar on a real phone.
  */
 export const authStackShellClass = cn(
   "mx-auto flex min-h-dvh w-full flex-col items-stretch bg-white px-6",
   authGeistClass,
-  "pb-[max(1.5rem,env(safe-area-inset-bottom,0px))]",
-  "pt-[calc(max(env(safe-area-inset-top,0px),47px)+0.875rem)]"
+  "pb-[max(68px,calc(var(--safe-bottom)+2rem))]",
+  "pt-[calc(max(var(--safe-top),47px)+1.25rem)]"
 );
 
 export const authStackHeaderClass = "mt-6 w-full text-left";

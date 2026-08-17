@@ -1,0 +1,34 @@
+---
+description: Status-bar-safe headers and reusable primary buttons on every screen
+alwaysApply: true
+---
+
+# Screen layout conventions
+
+## Headers never sit under the status bar
+
+Figma frames include a ~47px iOS status bar. Do not start headers, back arrows, or greetings at `pt-4` / `safe-top` only — on a live phone the OS chrome covers that.
+
+Use the same floor as auth:
+
+```tsx
+pt-[calc(max(var(--safe-top),47px)+1rem)]
+```
+
+- Floor at **47px** when `env(safe-area-inset-top)` is 0 (desktop preview).
+- On device, `safe-top` is used when it is larger (notch / Dynamic Island).
+- Then add breathing room (1rem–1.25rem) so content sits **below** the status bar, matching Figma content — not the fake status bar in the screenshot.
+
+Do not render Figma’s fake time / signal / home indicator.
+
+## Reuse shared buttons
+
+Primary CTAs are one size everywhere: **52px height, full width, pill (`rounded-full`), 16px semibold**.
+
+Reuse — do not restyle per screen:
+
+- `authControlBoxClass` — shared 52px pill box
+- `authStackCtaClass(enabled)` — purple CTA (`#8B5CF6`)
+- `authPrimaryBtnClass(enabled)` — same box, `#9367F9`
+
+If the Figma button matches this control (Create group, Continue, Get started, etc.), import those helpers. Do not invent `h-12` / `sm:h-[52px]` variants.

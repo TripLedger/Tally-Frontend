@@ -14,6 +14,7 @@ interface OnboardingCurrencyPickerProps {
   onClose: () => void;
   /** Container wrapping the trigger + panel — clicks here don't close. */
   containerRef?: RefObject<HTMLElement | null>;
+  className?: string;
 }
 
 function CurrencyOptionRow({
@@ -50,6 +51,7 @@ export function OnboardingCurrencyPicker({
   onSelect,
   onClose,
   containerRef,
+  className,
 }: OnboardingCurrencyPickerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
@@ -95,7 +97,10 @@ export function OnboardingCurrencyPicker({
       ref={panelRef}
       role="listbox"
       aria-label="Home currency"
-      className="overflow-hidden rounded-b-2xl border border-t-0 border-[#E0E0E0] bg-white"
+      className={cn(
+        "overflow-hidden rounded-b-2xl border border-t-0 border-[#E0E0E0] bg-white",
+        className
+      )}
     >
       <div className="border-b border-[#E0E0E0] p-3">
         <div className="relative">

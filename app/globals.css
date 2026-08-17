@@ -24,13 +24,37 @@
   --heading-2-line-height: 30px;
   --heading-2-letter-spacing: -1px;
 
+  /* Tabr / Figma — heading 3 (home hero: Playfair Display) */
+  --heading-3-font-family: var(--font-playfair), "Playfair Display", Georgia,
+    serif;
+  --heading-3-font-size: 32px;
+  --heading-3-line-height: 40px;
+  --heading-3-letter-spacing: -0.32px;
+
+  /* Tabr / Figma — heading 3 ink (Your groups — Geist) */
+  --heading-3-ink-font-family: var(--font-geist-sans), Geist, system-ui,
+    sans-serif;
+  --heading-3-ink-font-size: 24px;
+  --heading-3-ink-line-height: 28.8px;
+  --heading-3-ink-letter-spacing: -1px;
+
+  /* Tabr / Figma — surfaces */
+  --card-colour1: #f4f2ff;
+
   /* Tabr / Figma — paragraph small/regular (onboarding body) */
   --font-definitions-font-family-body: var(--font-geist-sans), Geist, system-ui,
     sans-serif;
   --paragraph-small-font-size: 14px;
   --paragraph-small-line-height: 20px;
   --paragraph-small-letter-spacing: 0px;
+  --paragraph-regular-font-size: 16px;
+  --paragraph-regular-line-height: 24px;
+  --paragraph-regular-letter-spacing: 0px;
+  --paragraph-mini-font-size: 12px;
+  --paragraph-mini-line-height: 16px;
+  --paragraph-mini-letter-spacing: 0px;
   --whites-500: #fff;
+  --new-bg: #fafafa;
 }
 
 @layer base {
@@ -70,6 +94,18 @@
     letter-spacing: var(--paragraph-small-letter-spacing);
   }
 
+  /* Home hero — Playfair Display heading 3 */
+  .text-tabr-heading-3 {
+    align-self: stretch;
+    color: var(--text-primary-500, #15131a);
+    font-family: var(--heading-3-font-family);
+    font-size: clamp(1.75rem, 7vw, var(--heading-3-font-size, 32px));
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--heading-3-line-height, 40px);
+    letter-spacing: var(--heading-3-letter-spacing, -0.32px);
+  }
+
   /* Light-auth heading 2 — Forgot password / OTP (Figma Text-Primary-500) */
   .text-tabr-ink-heading-2 {
     color: var(--text-primary-500, #15131a);
@@ -79,6 +115,50 @@
     font-weight: 600;
     line-height: var(--heading-2-line-height, 30px);
     letter-spacing: var(--heading-2-letter-spacing, -1px);
+  }
+
+  /* Home / light UI — heading 3 ink (Your groups — Geist) */
+  .text-tabr-ink-heading-3 {
+    color: var(--text-primary-500, #15131a);
+    font-family: var(--heading-3-ink-font-family, Geist);
+    font-size: var(--heading-3-ink-font-size, 24px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: var(--heading-3-ink-line-height, 28.8px);
+    letter-spacing: var(--heading-3-ink-letter-spacing, -1px);
+  }
+
+  /* Home / light UI — paragraph mini/regular (Hi, name) */
+  .text-tabr-ink-paragraph-mini {
+    color: var(--text-primary-500, #15131a);
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-mini-font-size, 12px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--paragraph-mini-line-height, 16px);
+    letter-spacing: var(--paragraph-mini-letter-spacing, 0);
+  }
+
+  /* Home / light UI — paragraph mini/regular, secondary ash */
+  .text-tabr-ink-paragraph-mini-secondary {
+    color: var(--text-secondary-500, #716d7d);
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-mini-font-size, 12px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--paragraph-mini-line-height, 16px);
+    letter-spacing: var(--paragraph-mini-letter-spacing, 0);
+  }
+
+  /* Home / light UI — paragraph/medium (Figma Text-Primary-500) */
+  .text-tabr-ink-paragraph-medium {
+    color: var(--text-primary-500, #15131a);
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-regular-font-size, 16px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: var(--paragraph-regular-line-height, 24px);
+    letter-spacing: var(--paragraph-regular-letter-spacing, 0);
   }
 
   /* Light-auth paragraph small/regular (Figma Text-secondary-500) */
@@ -685,10 +765,19 @@
     @apply mx-auto min-h-dvh max-w-mobile border-x border-border-glass shadow-2xl;
     background: #0A0A0F;
   }
+
+  .mobile-frame.mobile-frame-light {
+    background: #fafafa;
+    border-color: #edeaf3;
+  }
 }
 
 @media (min-width: 1024px) {
   body {
     background: #050508;
+  }
+
+  body:has(.mobile-frame-light) {
+    background: #f4f2f8;
   }
 }

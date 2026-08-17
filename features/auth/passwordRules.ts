@@ -57,6 +57,31 @@ export function isPasswordComplex(password: string) {
   return passwordRules.every((rule) => rule.test(password));
 }
 
+/** Figma password-reset rules — length + a number (shown live under the field). */
+export const resetPasswordRules: PasswordRule[] = [
+  {
+    id: "length",
+    label: "Minimum of 8 characters",
+    test: (p) => p.length >= PASSWORD_MIN_LENGTH,
+  },
+  {
+    id: "number",
+    label: "At least one number",
+    test: (p) => /[0-9]/.test(p),
+  },
+];
+
+export function getResetPasswordRuleStatus(password: string) {
+  return resetPasswordRules.map((rule) => ({
+    ...rule,
+    met: rule.test(password),
+  }));
+}
+
+export function isResetPasswordValid(password: string) {
+  return resetPasswordRules.every((rule) => rule.test(password));
+}
+
 const UPPER = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 const LOWER = "abcdefghijkmnopqrstuvwxyz";
 const DIGITS = "23456789";

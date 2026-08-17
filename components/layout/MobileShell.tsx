@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { LightHomeNav, useLightHomeChrome } from "@/features/home";
+import { cn } from "@/lib/utils";
 import { BottomNav } from "./BottomNav";
 
 interface MobileShellProps {
@@ -22,11 +24,19 @@ function isImmersiveRoute(pathname: string): boolean {
 export function MobileShell({ children, showNav = true }: MobileShellProps) {
   const pathname = usePathname();
   const navVisible = showNav && !isImmersiveRoute(pathname);
+  const lightHome = useLightHomeChrome();
 
   return (
-    <div className="mobile-frame flex min-h-dvh flex-col">
-      <main className={navVisible ? "flex-1 pb-20" : "flex-1"}>{children}</main>
-      {navVisible && <BottomNav />}
+    <div
+      className={cn(
+        "mobile-frame flex min-h-dvh flex-col",
+        lightHome && "mobile-frame-light bg-[#FAFAFA]"
+      )}
+    >
+      <main className={navVisible ? "flex min-h-0 flex-1 flex-col pb-20" : "flex-1"}>
+        {children}
+      </main>
+      {navVisible && (lightHome ? <LightHomeNav /> : <BottomNav />)}
     </div>
   );
 }

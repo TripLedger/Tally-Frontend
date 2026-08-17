@@ -1,9 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Tabr",
@@ -43,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("dark", GeistSans.variable)}
+      className={cn("dark", GeistSans.variable, playfair.variable)}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

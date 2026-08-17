@@ -4,6 +4,7 @@ export {
   signUpSchema,
   signInSchema,
   otpSchema,
+  resetPasswordSchema,
   onboardingSchema,
   displayNameSchema,
 } from "./schemas";
@@ -11,6 +12,7 @@ export type {
   EmailAuthFormData,
   SignUpFormData,
   SignInFormData,
+  ResetPasswordFormData,
   OnboardingFormData,
   DisplayNameFormData,
 } from "./schemas";
@@ -26,6 +28,8 @@ export {
   ForgotPasswordOtpForm,
   ForgotPasswordOtpFallback,
 } from "./ForgotPasswordOtpForm";
+export { ResetPasswordForm } from "./ResetPasswordForm";
+export { ResetPasswordSuccess } from "./ResetPasswordSuccess";
 export { OtpInput } from "./OtpInput";
 export {
   AuthScreen,
@@ -69,6 +73,9 @@ export {
 export {
   generateStrongPassword,
   getPasswordRuleStatus,
+  getResetPasswordRuleStatus,
   isPasswordComplex,
+  isResetPasswordValid,
   passwordRules,
+  resetPasswordRules,
 } from "./passwordRules";

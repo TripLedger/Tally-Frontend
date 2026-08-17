@@ -26,10 +26,6 @@ export function ForgotPasswordOtpForm() {
   const [secondsLeft, setSecondsLeft] = useState(AUTH.resendSeconds as number);
 
   useEffect(() => {
-    if (!email) router.replace("/forgot-password");
-  }, [email, router]);
-
-  useEffect(() => {
     if (secondsLeft <= 0) return;
     const id = window.setTimeout(() => {
       setSecondsLeft((s) => s - 1);
@@ -70,10 +66,11 @@ export function ForgotPasswordOtpForm() {
       return;
     }
 
-    router.push("/sign-in");
+    const resetPath = email
+      ? `/forgot-password/reset?email=${encodeURIComponent(email)}`
+      : "/forgot-password/reset";
+    router.push(resetPath);
   };
-
-  if (!email) return null;
 
   return (
     <AuthStackScreen>

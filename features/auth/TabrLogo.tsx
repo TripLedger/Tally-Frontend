@@ -6,10 +6,7 @@ interface TabrLogoProps {
   title?: string;
 }
 
-/**
- * Reusable Tabr wordmark — use anywhere (auth, nav, splash).
- * Source export: `design/auth/tabr.png` → served from `/tabr/brand/tabr-logo.png`.
- */
+/** Reusable Tabr wordmark — use anywhere (auth, nav, splash). */
 export function TabrLogo({ className, title = "Tabr" }: TabrLogoProps) {
   return (
     <Image

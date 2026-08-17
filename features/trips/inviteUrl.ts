@@ -10,3 +10,8 @@ export function getInviteUrl(inviteToken: string): string {
 export function getInviteDisplayUrl(inviteToken: string): string {
   return getInviteUrl(inviteToken).replace(/^https?:\/\//, "");
 }
+
+/** Branded path shown in the light share sheet (Figma: tabr/join/…). */
+export function getInviteBrandedPath(inviteToken: string): string {
+  return `tabr/join/${inviteToken}`;
+}
