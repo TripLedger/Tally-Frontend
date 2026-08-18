@@ -12,6 +12,16 @@ export interface GroupMemberView {
   email: string;
 }
 
+export interface GroupTripView {
+  id: string;
+  groupId: string;
+  name: string;
+  destination: string;
+  startDate: string;
+  endDate: string;
+  coverSrc: string;
+}
+
 const PREVIEW_MEMBER_EMAILS: Record<string, string> = {
   "preview-aniekan": "aniekananiekan@quietly.com",
   "preview-mark": "markplus@loopai.com",
@@ -172,4 +182,79 @@ export function membersToGroupViews(members: TripMember[]): GroupMemberView[] {
 function emailFromDisplayName(name: string): string {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "");
   return `${slug || "member"}@quietly.com`;
+}
+
+const GROUP_TRIP_COVER = "/tabr/home/images/painting.png";
+
+export interface GroupEventView {
+  id: string;
+  tripId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  coverSrc: string;
+}
+
+/** Figma trip cards on the group Trips tab (My Day Ones). */
+export const PREVIEW_GROUP_TRIPS: GroupTripView[] = [
+  {
+    id: "preview-trip-lagos-weekend",
+    groupId: MOCK_EXISTING_HOME_TRIP.id,
+    name: "Lagos weekend",
+    destination: "Lagos",
+    startDate: "2026-09-12",
+    endDate: "2026-09-14",
+    coverSrc: GROUP_TRIP_COVER,
+  },
+  {
+    id: "preview-trip-abuja-outing",
+    groupId: MOCK_EXISTING_HOME_TRIP.id,
+    name: "Abuja outing",
+    destination: "Abuja",
+    startDate: "2026-09-12",
+    endDate: "2026-09-14",
+    coverSrc: GROUP_TRIP_COVER,
+  },
+  {
+    id: "preview-trip-festival-of-songs",
+    groupId: MOCK_EXISTING_HOME_TRIP.id,
+    name: "Festival of songs",
+    destination: "Ondo",
+    startDate: "2026-08-12",
+    endDate: "2026-08-12",
+    coverSrc: GROUP_TRIP_COVER,
+  },
+  {
+    id: "preview-trip-concert",
+    groupId: MOCK_EXISTING_HOME_TRIP.id,
+    name: "Concert",
+    destination: "Lagos",
+    startDate: "2026-09-13",
+    endDate: "2026-09-13",
+    coverSrc: GROUP_TRIP_COVER,
+  },
+];
+
+export const PREVIEW_GROUP_EVENTS: GroupEventView[] = [
+  {
+    id: "preview-event-dinner-luxe",
+    tripId: "preview-trip-lagos-weekend",
+    name: "Dinner at Luxe",
+    startDate: "2026-09-12",
+    endDate: "2026-09-14",
+    coverSrc: GROUP_TRIP_COVER,
+  },
+];
+
+export function getPreviewGroupTrips(tripId: string): GroupTripView[] {
+  if (tripId === MOCK_EXISTING_HOME_TRIP.id) return PREVIEW_GROUP_TRIPS;
+  return [];
+}
+
+export function getPreviewNestedTrip(itemId: string): GroupTripView | null {
+  return PREVIEW_GROUP_TRIPS.find((trip) => trip.id === itemId) ?? null;
+}
+
+export function getPreviewTripEvents(itemId: string): GroupEventView[] {
+  return PREVIEW_GROUP_EVENTS.filter((event) => event.tripId === itemId);
 }

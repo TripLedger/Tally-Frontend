@@ -2,6 +2,9 @@
 export const GROUP_DETAIL_ICONS = {
   search: "/tabr/home/icons/search.svg",
   invite: "/tabr/home/icons/person.svg",
+  mapPin: "/tabr/home/icons/map-pin.svg",
+  calendar: "/tabr/home/icons/calendar-days.svg",
+  plus: "/tabr/home/icons/plus.svg",
 } as const;
 
 export const groupDetailFocusRing =

@@ -12,6 +12,7 @@ import {
   getPreviewGroupFriendsMembers,
   getPreviewGroupTrip,
   getPreviewGroupTripCount,
+  getPreviewGroupTrips,
   isPreviewGroupTripId,
   membersToGroupViews,
 } from "./mockGroupFriendsData";
@@ -57,6 +58,8 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
   const tripCount = isPreview
     ? getPreviewGroupTripCount(tripId)
     : 1;
+
+  const groupTrips = isPreview ? getPreviewGroupTrips(tripId) : [];
 
   const showInitialLoading = !isPreview && isLoading && !trip;
 
@@ -118,7 +121,7 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
             onInviteFriends={openInvite}
           />
         ) : (
-          <GroupTripsPanel tripCount={tripCount} />
+          <GroupTripsPanel trips={groupTrips} />
         )}
       </div>
 

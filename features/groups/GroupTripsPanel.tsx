@@ -3,16 +3,46 @@
 import Link from "next/link";
 import { authStackCtaClass } from "@/features/auth";
 import { FIGMA_USER_AVATAR_POOL } from "@/features/home/figmaUserAvatars";
+import { GroupTripCard } from "./GroupTripCard";
+import { groupDetailFocusRing } from "./groupDetailStyles";
+import type { GroupTripView } from "./mockGroupFriendsData";
 import { cn } from "@/lib/utils";
 
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
-
 interface GroupTripsPanelProps {
-  tripCount?: number;
+  trips: GroupTripView[];
 }
 
-export function GroupTripsPanel({ tripCount: _tripCount = 0 }: GroupTripsPanelProps) {
+export function GroupTripsPanel({ trips }: GroupTripsPanelProps) {
+  if (trips.length === 0) {
+    return <GroupTripsEmpty />;
+  }
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col bg-[var(--new-bg,#FAFAFA)]">
+      <ul className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-[43px]">
+        {trips.map((trip) => (
+          <li key={trip.id} className="w-full shrink-0">
+            <GroupTripCard
+              trip={trip}
+              href={`/trips/${trip.groupId}/trips/${trip.id}`}
+            />
+          </li>
+        ))}
+      </ul>
+
+      <div className="shrink-0 px-4 pb-2 pt-4">
+        <Link
+          href="/trips/new"
+          className={cn("w-full", authStackCtaClass(true), groupDetailFocusRing)}
+        >
+          Add new trip
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function GroupTripsEmpty() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[var(--new-bg,#FAFAFA)] px-5 py-6 xs:px-6">
       <section
@@ -53,7 +83,7 @@ export function GroupTripsPanel({ tripCount: _tripCount = 0 }: GroupTripsPanelPr
 
         <Link
           href="/trips/new"
-          className={cn("mt-5", authStackCtaClass(true), focusRing)}
+          className={cn("mt-5", authStackCtaClass(true), groupDetailFocusRing)}
         >
           Add new trip
         </Link>
