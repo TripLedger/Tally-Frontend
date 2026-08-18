@@ -13,8 +13,16 @@ export {
   MOCK_EXISTING_HOME_TRIP,
   MOCK_EXISTING_HOME_MEMBERS,
   getMockExistingHomeMembersByTrip,
+  getMockExistingHomeTrips,
+  getMockExistingHomeTripCounts,
 } from "./mockExistingHomeData";
 export { GroupCreatedFlow } from "./GroupCreatedFlow";
 export { GroupCreatedOverlay } from "./GroupCreatedOverlay";
 export { ShareWithFriendsOverlay } from "./ShareWithFriendsOverlay";
 export { LightHomeOverlay } from "./LightHomeOverlay";
+export {
+  FIGMA_HERO_AVATAR_CLUSTER,
+  FIGMA_USER_AVATAR_POOL,
+  FIGMA_USER_AVATARS,
+  figmaUserAvatarAt,
+} from "./figmaUserAvatars";

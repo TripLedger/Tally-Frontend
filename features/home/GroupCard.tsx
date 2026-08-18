@@ -2,15 +2,19 @@
 
 import Link from "next/link";
 import { formatCompactDateRange, cn } from "@/lib/utils";
+import { FIGMA_USER_AVATAR_POOL, figmaUserAvatarAt } from "./figmaUserAvatars";
 import type { Trip, TripMember } from "@/types";
 
 const COVER_SRC = "/tabr/home/images/friends.png";
 
-const FALLBACK_AVATARS = [
-  "/tabr/home/avatars/14.png",
-  "/tabr/home/avatars/15.png",
-  "/tabr/home/avatars/18.png",
-  "/tabr/home/avatars/21.png",
+const FALLBACK_AVATARS = FIGMA_USER_AVATAR_POOL;
+
+/** Figma card-colour1–4 — rotate per card in the groups list. */
+const CARD_BG_CLASSES = [
+  "bg-[var(--card-colour1,#F4F2FF)]",
+  "bg-[var(--card-colour2,#FFF2FC)]",
+  "bg-[var(--card-colour3,#EBF5FD)]",
+  "bg-[var(--card-colour4,#FEF6EF)]",
 ] as const;
 
 const focusRing =
@@ -19,23 +23,36 @@ const focusRing =
 interface GroupCardProps {
   trip: Trip;
   members?: TripMember[];
+  /** 0–3 maps to Figma card-colour tokens. */
+  colorIndex?: number;
+  /** Shown as “N trip(s)” until backend tracks trip history per group. */
+  tripCount?: number;
 }
 
 function memberAvatarSrc(member: TripMember, index: number): string {
-  return member.avatarUrl || FALLBACK_AVATARS[index % FALLBACK_AVATARS.length];
+  return member.avatarUrl || figmaUserAvatarAt(index);
 }
 
-export function GroupCard({ trip, members = [] }: GroupCardProps) {
+export function GroupCard({
+  trip,
+  members = [],
+  colorIndex = 0,
+  tripCount = 1,
+}: GroupCardProps) {
   const friendCount = Math.max(members.length, 1);
   const friendLabel = friendCount === 1 ? "1 friend" : `${friendCount} friends`;
+  const tripLabel = tripCount === 1 ? "1 trip" : `${tripCount} trips`;
   const nextLabel = buildNextLabel(trip);
   const faces = members.slice(0, 5);
+  const cardBg =
+    CARD_BG_CLASSES[colorIndex % CARD_BG_CLASSES.length] ?? CARD_BG_CLASSES[0];
 
   return (
     <Link
       href={`/trips/${trip.id}`}
       className={cn(
-        "block w-full overflow-hidden rounded-[24px] bg-[var(--card-colour1,#F4F2FF)] p-3 xs:p-4",
+        "block w-full overflow-hidden rounded-[24px] p-3 xs:p-4",
+        cardBg,
         "transition-transform duration-fast ease-tally active:scale-[0.99]",
         focusRing
       )}
@@ -48,11 +65,9 @@ export function GroupCard({ trip, members = [] }: GroupCardProps) {
       />
 
       <div className="px-1 pb-1 pt-3">
-        <h3 className="text-tabr-ink-paragraph-medium text-left">
-          {trip.name}
-        </h3>
+        <h3 className="text-tabr-ink-paragraph-medium text-left">{trip.name}</h3>
         <p className="text-tabr-ink-paragraph-mini-secondary mt-0.5">
-          {friendLabel} • 1 trip
+          {friendLabel} • {tripLabel}
         </p>
 
         {faces.length > 0 ? (
@@ -100,9 +115,7 @@ export function GroupCard({ trip, members = [] }: GroupCardProps) {
         {nextLabel ? (
           <>
             <div className="my-3 h-px w-full bg-[#E5E5E5]" />
-            <p className="text-tabr-ink-paragraph-mini-secondary">
-              {nextLabel}
-            </p>
+            <p className="text-tabr-ink-paragraph-mini-secondary">{nextLabel}</p>
           </>
         ) : null}
       </div>

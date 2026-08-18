@@ -6,8 +6,9 @@ import { useAuthSession } from "@/features/auth";
 import {
   ExistingUserHome,
   getMockExistingHomeMembersByTrip,
+  getMockExistingHomeTripCounts,
+  getMockExistingHomeTrips,
   GroupCreatedFlow,
-  MOCK_EXISTING_HOME_TRIP,
   NewUserHome,
 } from "@/features/home";
 import { fetchMembersForTrip } from "@/lib/db/members";
@@ -71,13 +72,15 @@ function DashboardContent() {
   let home = null;
 
   if (previewExisting) {
+    // Same ExistingUserHome screen as production — sample data only for preview.
     home = (
       <ExistingUserHome
         displayName={displayName}
         avatarUrl={user?.avatarUrl}
         unreadCount={unreadCount}
-        trips={[MOCK_EXISTING_HOME_TRIP]}
+        trips={getMockExistingHomeTrips()}
         membersByTrip={getMockExistingHomeMembersByTrip()}
+        tripCountsByTripId={getMockExistingHomeTripCounts()}
       />
     );
   } else if (trips.length === 0) {

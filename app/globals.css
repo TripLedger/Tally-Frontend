@@ -38,8 +38,12 @@
   --heading-3-ink-line-height: 28.8px;
   --heading-3-ink-letter-spacing: -1px;
 
-  /* Tabr / Figma — surfaces */
+  /* Tabr / Figma — group card pastels */
   --card-colour1: #f4f2ff;
+  --card-colour2: #fff2fc;
+  --card-colour3: #ebf5fd;
+  --card-colour4: #fef6ef;
+  --new-bg: #fafafa;
 
   /* Tabr / Figma — paragraph small/regular (onboarding body) */
   --font-definitions-font-family-body: var(--font-geist-sans), Geist, system-ui,
@@ -53,8 +57,10 @@
   --paragraph-mini-font-size: 12px;
   --paragraph-mini-line-height: 16px;
   --paragraph-mini-letter-spacing: 0px;
+  --paragraph-large-font-size: 18px;
+  --paragraph-large-line-height: 27px;
+  --paragraph-large-letter-spacing: 0px;
   --whites-500: #fff;
-  --new-bg: #fafafa;
 }
 
 @layer base {
@@ -159,6 +165,18 @@
     font-weight: 500;
     line-height: var(--paragraph-regular-line-height, 24px);
     letter-spacing: var(--paragraph-regular-letter-spacing, 0);
+  }
+
+  /* Group hero — paragraph large/medium (My Day Ones) */
+  .text-tabr-hero-paragraph-large-medium {
+    color: var(--whites-500, #fff);
+    text-align: center;
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-large-font-size, 18px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: var(--paragraph-large-line-height, 27px);
+    letter-spacing: var(--paragraph-large-letter-spacing, 0);
   }
 
   /* Light-auth paragraph small/regular (Figma Text-secondary-500) */

@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { authStackCtaClass } from "@/features/auth";
+import { FIGMA_USER_AVATAR_POOL } from "./figmaUserAvatars";
 import { HomeHeader } from "./HomeHeader";
 import { cn } from "@/lib/utils";
 
-const CREW_AVATARS = [
-  { src: "/tabr/home/avatars/14.png", alt: "Crew member" },
-  { src: "/tabr/home/avatars/15.png", alt: "Crew member" },
-  { src: "/tabr/home/avatars/18.png", alt: "Crew member" },
-  { src: "/tabr/home/avatars/21.png", alt: "Crew member" },
-] as const;
+const CREW_AVATARS = FIGMA_USER_AVATAR_POOL.map((src) => ({
+  src,
+  alt: "Crew member",
+}));
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
