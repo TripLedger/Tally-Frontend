@@ -11,23 +11,23 @@ import { cn } from "@/lib/utils";
 
 const variantConfig: Record<
   ToastVariant,
-  { icon: typeof CheckCircle; className: string }
+  { icon: typeof CheckCircle; accent: string }
 > = {
   success: {
     icon: CheckCircle,
-    className: "border-semantic-green/30 bg-semantic-green/10 text-semantic-green",
+    accent: "text-[#10B981]",
   },
   error: {
     icon: AlertCircle,
-    className: "border-semantic-rose/30 bg-semantic-rose/10 text-semantic-rose",
+    accent: "text-[#F43F5E]",
   },
   warning: {
     icon: AlertTriangle,
-    className: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
+    accent: "text-[#F59E0B]",
   },
   info: {
     icon: Info,
-    className: "border-accent-cobalt/30 bg-accent-cobalt/10 text-accent-cobalt",
+    accent: "text-[#8B5CF6]",
   },
 };
 
@@ -54,20 +54,21 @@ function ToastItem({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-card border px-4 py-3 shadow-float-nav",
-        "animate-in slide-in-from-top duration-fast ease-tally",
-        "bg-background-elevated backdrop-blur-md",
-        config.className
+        "flex items-center gap-3 rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3",
+        "shadow-[0_8px_28px_rgba(21,19,26,0.12)]",
+        "animate-in slide-in-from-top duration-fast ease-tally"
       )}
-      role="alert"
+      role="status"
+      aria-live="polite"
     >
-      <Icon className="h-5 w-5 shrink-0" />
-      <p className="flex-1 text-sm font-medium text-text-primary">
+      <Icon className={cn("h-5 w-5 shrink-0", config.accent)} />
+      <p className="flex-1 text-[14px] font-medium leading-5 text-[#15131A]">
         {message}
       </p>
       <button
+        type="button"
         onClick={() => removeToast(id)}
-        className="shrink-0 rounded-full p-1 text-text-secondary hover:text-text-primary"
+        className="shrink-0 rounded-full p-1 text-[#8E8E93] transition-colors hover:text-[#15131A]"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />
@@ -82,8 +83,8 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-[60] flex flex-col gap-2 p-4 safe-top pointer-events-none">
-      <div className="mx-auto w-full max-w-mobile flex flex-col gap-2 pointer-events-auto">
+    <div className="pointer-events-none fixed left-0 right-0 top-0 z-[70] flex flex-col gap-2 p-4 safe-top">
+      <div className="pointer-events-auto mx-auto flex w-full max-w-mobile flex-col gap-2">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} {...toast} />
         ))}

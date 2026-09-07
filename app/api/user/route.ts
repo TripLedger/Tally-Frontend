@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isValidCurrencyCode } from "@/lib/currency";
-import { updateUser } from "@/lib/db/users";
-import { createClient } from "@/lib/supabase/server";
+import { updateUser, findUserById } from "@/lib/db/users";
 
 const patchUserSchema = z
   .object({
+    userId: z.string().min(1),
     displayName: z
       .string()
       .trim()
@@ -26,22 +26,12 @@ const patchUserSchema = z
   );
 
 /**
- * PATCH /api/user — { displayName?, homeCurrency? }
+ * PATCH /api/user — { userId, displayName?, homeCurrency? }
  *
- * Updates the signed-in user's profile. Primary persistence is Supabase
- * user_metadata (source of truth for authStore). Also best-effort PATCHes
- * the USER# DynamoDB row when Dynamo is configured.
+ * Updates the user's profile in the local/Dynamo user store.
+ * Open while auth is mock — userId is required until the real backend ships.
  */
 export async function PATCH(request: Request) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -61,51 +51,36 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const { displayName, homeCurrency } = parsed.data;
+  const { userId, displayName, homeCurrency } = parsed.data;
 
-  const metadata: Record<string, string> = {};
-  if (displayName !== undefined) metadata.display_name = displayName;
-  if (homeCurrency !== undefined) metadata.home_currency = homeCurrency;
-
-  const { data: updatedAuth, error: authError } = await supabase.auth.updateUser({
-    data: metadata,
-  });
-
-  if (authError || !updatedAuth.user) {
-    console.error("Failed to update Supabase user metadata:", authError);
-    return NextResponse.json(
-      { ok: false, reason: "update_failed" },
-      { status: 500 }
-    );
-  }
-
-  // Best-effort Dynamo USER# sync — session id may not exist in Dynamo
-  // if the account was created only via Supabase auth.
   try {
-    await updateUser(user.id, {
+    await updateUser(userId, {
       ...(displayName !== undefined ? { displayName } : {}),
       ...(homeCurrency !== undefined ? { homeCurrency } : {}),
     });
   } catch (error) {
-    console.warn("Dynamo user patch skipped or failed:", error);
+    console.warn("User patch skipped or failed:", error);
   }
 
-  const meta = (updatedAuth.user.user_metadata ?? {}) as {
-    display_name?: string;
-    home_currency?: string;
-    avatar_url?: string;
-    onboarding_complete?: boolean;
-  };
+  const user = await findUserById(userId).catch(() => null);
 
   return NextResponse.json({
     ok: true,
-    user: {
-      id: updatedAuth.user.id,
-      email: updatedAuth.user.email ?? "",
-      displayName: meta.display_name ?? "",
-      homeCurrency: meta.home_currency ?? "USD",
-      avatarUrl: meta.avatar_url,
-      onboardingComplete: meta.onboarding_complete === true,
-    },
+    user: user
+      ? {
+          id: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          homeCurrency: user.homeCurrency,
+          avatarUrl: user.avatarUrl,
+          onboardingComplete: true,
+        }
+      : {
+          id: userId,
+          email: "",
+          displayName: displayName ?? "",
+          homeCurrency: homeCurrency ?? "USD",
+          onboardingComplete: true,
+        },
   });
 }

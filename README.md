@@ -67,9 +67,9 @@ Equal-split paths (transport, lodging) still work in one tap. Line-item assignme
 | UI | Tailwind CSS, Lucide icons, Inter, mobile shell (≈375–430px) |
 | Forms | React Hook Form + Zod |
 | State | Zustand (`store/`) with typed hooks |
-| Auth | Supabase Auth (Google + magic link) |
-| Data | Supabase Postgres + RLS; Storage for receipt images |
-| Legacy / optional | AWS DynamoDB for some user fields |
+| Auth | Mock session (localStorage) until backend auth ships |
+| Data | In-memory / Zustand (backend API TBD) |
+| Optional | AWS DynamoDB for some user fields |
 | AI | Anthropic Claude (`POST /api/expenses/scan`) |
 | FX | exchangerate.host (optional key) with open.er-api.com fallback |
 
@@ -79,7 +79,6 @@ Equal-split paths (transport, lodging) still work in one tap. Line-item assignme
 
 ### Prerequisites
 - Node.js 18+
-- A Supabase project
 - Anthropic API key (for receipt scan)
 - Optional: AWS credentials if you use DynamoDB user sync
 
@@ -113,10 +112,6 @@ Copy from `.env.local.example`:
 ```bash
 NEXT_PUBLIC_APP_URL=https://tally-frontend-xi.vercel.app
 
-# Supabase (required for auth + primary data)
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-
 # Optional DynamoDB user storage
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=
@@ -131,26 +126,7 @@ ANTHROPIC_MODEL=          # optional; defaults to claude-sonnet-4-5
 FX_API_KEY=
 ```
 
-For local development, set `NEXT_PUBLIC_APP_URL` to your local origin and match Supabase Auth redirect URLs accordingly.
-
----
-
-## Supabase setup
-
-Run the SQL in the Supabase SQL editor (order suggested below). Scripts are written to be safe to re-run.
-
-| File | Purpose |
-|------|---------|
-| `supabase/schema.sql` | Core trips, members, invites, expenses, RLS |
-| `supabase/expenses.sql` | Expenses table (if not covered by schema) |
-| `supabase/settlements.sql` | Settlement records |
-| `supabase/fx.sql` | Cached FX rates |
-| `supabase/notifications.sql` | In-app notifications |
-| `supabase/receipt-scan.sql` | Receipt URL column + `receipts` storage bucket |
-| `supabase/expense-line-items.sql` | `line_items` jsonb for AI assign flow |
-| `supabase/fix-invite-rpc.sql` | Invite lookup RPC fix if join links fail |
-
-Also configure Supabase Auth providers (Google + email) and redirect URLs to match `NEXT_PUBLIC_APP_URL` (e.g. `/auth/callback`).
+For local development, set `NEXT_PUBLIC_APP_URL` to your local origin.
 
 ---
 
@@ -161,7 +137,6 @@ app/(auth)/          Landing + onboarding
 app/(app)/           Authenticated shell (bottom nav)
 app/(legal)/         Terms + Privacy
 app/join/            Invite join flow
-app/auth/            OAuth / magic-link callbacks
 app/api/             scan, fx, notifications, user
 
 components/ui/       Primitives (BottomSheet, Avatar, …)
@@ -170,7 +145,6 @@ features/            auth, trips, expenses, balances, settlements,
                      notifications, profile
 store/               Zustand slices + selectors
 lib/                 currency, FX, debt math, DB helpers, storage
-supabase/            SQL migrations / policies
 types/               Shared TypeScript models
 ```
 
@@ -242,9 +216,7 @@ Hard-refresh the browser (`Ctrl+Shift+R`).
 
 **Receipt scan always fails:** confirm `ANTHROPIC_API_KEY` is set and the server was restarted after editing `.env.local`.
 
-**Save after assign fails on `line_items`:** run `supabase/expense-line-items.sql`.
-
-**Invite links broken:** run `supabase/fix-invite-rpc.sql` and verify Auth redirect URLs.
+**Create group / invite flows:** data is kept in memory (Zustand + `lib/db`) until the real backend ships. Refreshing the page clears local groups.
 
 ---
 

@@ -1,15 +1,5 @@
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { isDynamoConfigured } from "@/lib/dynamo-config";
 import type { TripMember } from "@/types";
-
-interface MemberRow {
-  trip_id: string;
-  user_id: string;
-  role: string;
-  display_name: string | null;
-  avatar_url: string | null;
-  joined_at: string;
-}
 
 function memberMemoryKey(tripId: string, userId: string) {
   return `${tripId}#${userId}`;
@@ -33,17 +23,6 @@ async function loadDynamo() {
   return { docClient, TABLE_NAME, ...commands };
 }
 
-export function mapMemberRow(row: MemberRow): TripMember {
-  return {
-    userId: row.user_id,
-    tripId: row.trip_id,
-    displayName: row.display_name ?? "",
-    avatarUrl: row.avatar_url ?? undefined,
-    role: row.role as TripMember["role"],
-    joinedAt: row.joined_at,
-  };
-}
-
 /** Organizer first, then by join time. */
 export function sortTripMembers(members: TripMember[]): TripMember[] {
   return [...members].sort((a, b) => {
@@ -51,45 +30,6 @@ export function sortTripMembers(members: TripMember[]): TripMember[] {
     if (b.role === "organizer" && a.role !== "organizer") return 1;
     return new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime();
   });
-}
-
-async function fetchMembersSupabase(tripId: string): Promise<TripMember[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("trip_members")
-    .select("*")
-    .eq("trip_id", tripId);
-
-  if (error || !data) return [];
-  return sortTripMembers((data as MemberRow[]).map(mapMemberRow));
-}
-
-async function getMemberSupabase(
-  tripId: string,
-  userId: string
-): Promise<TripMember | null> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("trip_members")
-    .select("*")
-    .eq("trip_id", tripId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error || !data) return null;
-  return mapMemberRow(data as MemberRow);
-}
-
-async function insertMemberSupabase(member: TripMember): Promise<void> {
-  const supabase = createClient();
-  const { error } = await supabase.from("trip_members").insert({
-    trip_id: member.tripId,
-    user_id: member.userId,
-    role: member.role,
-    display_name: member.displayName,
-    avatar_url: member.avatarUrl ?? null,
-  });
-  if (error) throw error;
 }
 
 function memoryFetchMembers(tripId: string): TripMember[] {
@@ -182,15 +122,10 @@ async function insertMemberDynamo(member: TripMember): Promise<void> {
   );
 }
 
-function shouldUseSupabase(): boolean {
-  return isSupabaseConfigured();
-}
-
 /** All members for a trip — sorted organizer-first. */
 export async function fetchMembersForTrip(
   tripId: string
 ): Promise<TripMember[]> {
-  if (shouldUseSupabase()) return fetchMembersSupabase(tripId);
   if (!isDynamoConfigured()) return memoryFetchMembers(tripId);
   try {
     return await fetchMembersDynamo(tripId);
@@ -199,12 +134,11 @@ export async function fetchMembersForTrip(
   }
 }
 
-/** Single MEMBER# row lookup — used to skip duplicate joins. */
+/** Single MEMBER row lookup — used to skip duplicate joins. */
 export async function getTripMember(
   tripId: string,
   userId: string
 ): Promise<TripMember | null> {
-  if (shouldUseSupabase()) return getMemberSupabase(tripId, userId);
   if (!isDynamoConfigured()) return memoryGetMember(tripId, userId);
   try {
     return await getMemberDynamo(tripId, userId);
@@ -215,10 +149,6 @@ export async function getTripMember(
 
 /** Insert a member row. Caller must check for duplicates first. */
 export async function insertTripMember(member: TripMember): Promise<void> {
-  if (shouldUseSupabase()) {
-    await insertMemberSupabase(member);
-    return;
-  }
   if (!isDynamoConfigured()) {
     memoryInsertMember(member);
     return;
@@ -230,7 +160,7 @@ export async function insertTripMember(member: TripMember): Promise<void> {
   }
 }
 
-/** Seed in-memory store when Supabase/Dynamo is unavailable (local dev). */
+/** Seed in-memory store for local / mock flows. */
 export function seedMemoryMember(member: TripMember): void {
   memoryInsertMember(member);
 }

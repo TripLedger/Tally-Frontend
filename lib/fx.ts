@@ -1,4 +1,3 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { readCachedRate, writeCachedRate } from "@/lib/db/fxRates";
 import { toDecimalString } from "@/lib/fx-math";
 
@@ -94,7 +93,6 @@ async function fetchLiveRate(from: string, to: string): Promise<string> {
  * 4. No cache either → FxUnavailableError. A rate is NEVER fabricated.
  */
 export async function getExchangeRate(
-  supabase: SupabaseClient,
   fromCurrency: string,
   toCurrency: string
 ): Promise<ExchangeRateResult> {
@@ -108,13 +106,13 @@ export async function getExchangeRate(
   try {
     const rate = await fetchLiveRate(from, to);
     const timestamp = new Date().toISOString();
-    await writeCachedRate(supabase, from, to, rate, timestamp);
+    await writeCachedRate(from, to, rate, timestamp);
     return { rate, source: "live", timestamp };
   } catch (error) {
     console.error(`Live FX fetch failed for ${from}→${to}:`, error);
   }
 
-  const cached = await readCachedRate(supabase, from, to);
+  const cached = await readCachedRate(from, to);
   if (cached) {
     return { rate: cached.rate, source: "cached", timestamp: cached.fetchedAt };
   }

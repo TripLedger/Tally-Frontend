@@ -179,6 +179,18 @@
     letter-spacing: var(--paragraph-large-letter-spacing, 0);
   }
 
+  /* Light UI — paragraph large/medium (Share with friends title) */
+  .text-tabr-ink-paragraph-large-medium {
+    color: var(--text-primary-500, #15131a);
+    text-align: center;
+    font-family: var(--font-definitions-font-family-body, Geist);
+    font-size: var(--paragraph-large-font-size, 18px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: var(--paragraph-large-line-height, 27px);
+    letter-spacing: var(--paragraph-large-letter-spacing, 0);
+  }
+
   /* Light-auth paragraph small/regular (Figma Text-secondary-500) */
   .text-tabr-ink-paragraph-small {
     color: var(--text-secondary-500, #716d7d);

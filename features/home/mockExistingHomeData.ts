@@ -4,8 +4,7 @@ import { FIGMA_USER_AVATAR_POOL } from "./figmaUserAvatars";
 /**
  * Demo data for /dashboard?preview=existing — "groups over time".
  *
- * This is used so you can preview the home UI without having Supabase/Dynamo
- * backend data available.
+ * This is used so you can preview the home UI without a backend.
  */
 
 export const MOCK_EXISTING_HOME_TRIPS: Trip[] = [
@@ -17,30 +16,33 @@ export const MOCK_EXISTING_HOME_TRIPS: Trip[] = [
     endDate: "2026-10-22",
     baseCurrency: "NGN",
     baseCurrencyLockedAt: null,
+    coverImageUrl: "/tabr/home/images/group-cover.png",
     inviteToken: "preview-token-mountain",
     createdBy: "preview-user",
     createdAt: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "preview-trip-wanderlust",
-    name: "The Wanderlust Crew",
-    destination: "Beach Getaway",
-    startDate: "2026-11-05",
-    endDate: "2026-11-07",
+    name: "My girls",
+    destination: "Beach getaway",
+    startDate: "2026-09-15",
+    endDate: "2026-09-17",
     baseCurrency: "USD",
     baseCurrencyLockedAt: null,
+    coverImageUrl: "/tabr/home/images/friends.png",
     inviteToken: "preview-token-beach",
     createdBy: "preview-user",
     createdAt: "2026-02-10T00:00:00.000Z",
   },
   {
     id: "preview-trip-travel-tribe",
-    name: "The Travel Tribe",
-    destination: "City Exploration",
-    startDate: "2026-12-02",
-    endDate: "2026-12-04",
+    name: "My millionaire crew",
+    destination: "Mountain Retreat",
+    startDate: "2026-10-20",
+    endDate: "2026-10-22",
     baseCurrency: "EUR",
     baseCurrencyLockedAt: null,
+    coverImageUrl: "/tabr/home/images/friends2.png",
     inviteToken: "preview-token-city",
     createdBy: "preview-user",
     createdAt: "2026-03-18T00:00:00.000Z",
@@ -48,11 +50,12 @@ export const MOCK_EXISTING_HOME_TRIPS: Trip[] = [
   {
     id: "preview-trip-journey-collective",
     name: "The Journey Collective",
-    destination: "Cultural Escape",
-    startDate: "2027-01-10",
-    endDate: "2027-01-13",
+    destination: "",
+    startDate: "",
+    endDate: "",
     baseCurrency: "NGN",
     baseCurrencyLockedAt: null,
+    coverImageUrl: "/tabr/home/images/group-cover.png",
     inviteToken: "preview-token-culture",
     createdBy: "preview-user",
     createdAt: "2026-04-29T00:00:00.000Z",
@@ -85,17 +88,17 @@ function makeMembers(tripId: string, count: number): TripMember[] {
 
 export const MOCK_EXISTING_HOME_MEMBERS_BY_TRIP: Record<string, TripMember[]> = {
   [MOCK_EXISTING_HOME_TRIPS[0].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[0].id, 8),
-  [MOCK_EXISTING_HOME_TRIPS[1].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[1].id, 6),
-  [MOCK_EXISTING_HOME_TRIPS[2].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[2].id, 4),
-  [MOCK_EXISTING_HOME_TRIPS[3].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[3].id, 7),
+  [MOCK_EXISTING_HOME_TRIPS[1].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[1].id, 4),
+  [MOCK_EXISTING_HOME_TRIPS[2].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[2].id, 6),
+  [MOCK_EXISTING_HOME_TRIPS[3].id]: makeMembers(MOCK_EXISTING_HOME_TRIPS[3].id, 8),
 };
 
 /** Figma trip counts per group card (preview only until API ships). */
 export const MOCK_EXISTING_HOME_TRIP_COUNTS: Record<string, number> = {
   [MOCK_EXISTING_HOME_TRIPS[0].id]: 3,
-  [MOCK_EXISTING_HOME_TRIPS[1].id]: 1,
-  [MOCK_EXISTING_HOME_TRIPS[2].id]: 5,
-  [MOCK_EXISTING_HOME_TRIPS[3].id]: 4,
+  [MOCK_EXISTING_HOME_TRIPS[1].id]: 5,
+  [MOCK_EXISTING_HOME_TRIPS[2].id]: 7,
+  [MOCK_EXISTING_HOME_TRIPS[3].id]: 3,
 };
 
 // Back-compat: some older code may still import the singular members array.

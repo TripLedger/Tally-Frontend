@@ -17,7 +17,6 @@ export type {
   DisplayNameFormData,
 } from "./schemas";
 export { useAuthSession, AuthSessionHydrator } from "./useAuthSession";
-export { EmailAuthSheet } from "./EmailAuthSheet";
 export { HeroMotion } from "./HeroMotion";
 export { GoogleIcon } from "./GoogleIcon";
 export { TabrLogo } from "./TabrLogo";

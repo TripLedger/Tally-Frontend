@@ -21,6 +21,8 @@ export interface Trip {
    * DB trigger, surfaced as microcopy on the Create Trip screen.
    */
   baseCurrencyLockedAt: string | null;
+  /** Group cover on home cards — local blob URL or hosted URL. */
+  coverImageUrl?: string;
   inviteToken: string;
   createdBy: string;
   createdAt: string;
@@ -41,6 +43,7 @@ export interface CreateTripInput {
   startDate: string;
   endDate: string;
   baseCurrency: string;
+  coverImageUrl?: string;
 }
 
 export type ExpenseCategory =

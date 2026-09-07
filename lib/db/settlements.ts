@@ -1,20 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
 import { emitSettlementConfirmedNotifications } from "@/lib/notifications/emit";
 import { generateId } from "@/lib/utils";
 import type { Settlement } from "@/types";
-
-interface SettlementRow {
-  id: string;
-  trip_id: string;
-  from_user_id: string;
-  to_user_id: string;
-  amount_minor_units: number;
-  currency: string;
-  confirmed_by: string;
-  idempotency_token: string;
-  status: string;
-  settled_at: string;
-}
 
 const memorySettlements = new Map<string, Settlement[]>();
 
@@ -23,21 +9,6 @@ export class SettlementDuplicateError extends Error {
     super("SETTLEMENT_DUPLICATE");
     this.name = "SettlementDuplicateError";
   }
-}
-
-function mapSettlementRow(row: SettlementRow): Settlement {
-  return {
-    id: row.id,
-    tripId: row.trip_id,
-    fromUserId: row.from_user_id,
-    toUserId: row.to_user_id,
-    amountMinorUnits: Number(row.amount_minor_units),
-    currency: row.currency,
-    confirmedBy: row.confirmed_by,
-    idempotencyToken: row.idempotency_token,
-    status: "confirmed",
-    settledAt: row.settled_at,
-  };
 }
 
 function memoryUpsert(settlement: Settlement): Settlement {
@@ -55,6 +26,14 @@ function memoryFetch(tripId: string): Settlement[] {
     (a, b) =>
       new Date(b.settledAt).getTime() - new Date(a.settledAt).getTime()
   );
+}
+
+function memoryFindByToken(idempotencyToken: string): Settlement | null {
+  for (const list of memorySettlements.values()) {
+    const hit = list.find((s) => s.idempotencyToken === idempotencyToken);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 export function buildSettlementRecord(params: {
@@ -83,10 +62,8 @@ export function buildSettlementRecord(params: {
 }
 
 /**
- * Atomic insert — duplicate idempotency_token fails at the DB (unique constraint),
- * which we treat as a successful no-op for double-tap races.
- *
- * Settlement recipient notification is a non-blocking side effect when `notify` is set.
+ * Persist settlement in memory. Duplicate idempotency tokens are treated as
+ * a successful no-op for double-tap races.
  */
 export async function persistSettlement(
   settlement: Settlement,
@@ -99,35 +76,12 @@ export async function persistSettlement(
     };
   }
 ): Promise<Settlement> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("settlements")
-    .insert({
-      id: settlement.id,
-      trip_id: settlement.tripId,
-      from_user_id: settlement.fromUserId,
-      to_user_id: settlement.toUserId,
-      amount_minor_units: settlement.amountMinorUnits,
-      currency: settlement.currency,
-      confirmed_by: settlement.confirmedBy,
-      idempotency_token: settlement.idempotencyToken,
-      status: settlement.status,
-      settled_at: settlement.settledAt,
-    })
-    .select("*")
-    .single();
-
-  if (error) {
-    if (error.code === "23505") {
-      throw new SettlementDuplicateError();
-    }
-    console.error("Failed to persist settlement:", error.message, error);
-    throw error;
+  const existing = memoryFindByToken(settlement.idempotencyToken);
+  if (existing) {
+    throw new SettlementDuplicateError();
   }
 
-  const saved = mapSettlementRow(data as SettlementRow);
-  memoryUpsert(saved);
+  const saved = memoryUpsert(settlement);
 
   if (notify) {
     emitSettlementConfirmedNotifications({
@@ -143,33 +97,11 @@ export async function persistSettlement(
 export async function fetchSettlementByToken(
   idempotencyToken: string
 ): Promise<Settlement | null> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("settlements")
-    .select("*")
-    .eq("idempotency_token", idempotencyToken)
-    .maybeSingle();
-
-  if (error || !data) return null;
-  return mapSettlementRow(data as SettlementRow);
+  return memoryFindByToken(idempotencyToken);
 }
 
 export async function fetchSettlementsForTrip(
   tripId: string
 ): Promise<Settlement[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("settlements")
-    .select("*")
-    .eq("trip_id", tripId)
-    .order("settled_at", { ascending: false });
-
-  if (error) {
-    console.error("Failed to fetch settlements:", error.message, error);
-    return memoryFetch(tripId);
-  }
-
-  const settlements = (data as SettlementRow[]).map(mapSettlementRow);
-  memorySettlements.set(tripId, settlements);
-  return settlements;
+  return memoryFetch(tripId);
 }

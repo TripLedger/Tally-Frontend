@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { FxUnavailableError, getExchangeRate } from "@/lib/fx";
 import { isValidCurrencyCode } from "@/lib/currency";
 
@@ -8,8 +7,7 @@ import { isValidCurrencyCode } from "@/lib/currency";
  *
  * Server-side FX resolution for expense creation. Keeps provider keys off the
  * client and funnels every conversion through the live-fetch → cache-fallback
- * policy in lib/fx.ts. Requires an authenticated Supabase session (the same
- * session RLS uses for the fx_rates cache table).
+ * policy in lib/fx.ts.
  */
 export async function POST(request: Request) {
   let from: string | undefined;
@@ -29,19 +27,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json(
-      { ok: false, reason: "unauthorized" },
-      { status: 401 }
-    );
-  }
-
   try {
-    const result = await getExchangeRate(supabase, from, to);
+    const result = await getExchangeRate(from, to);
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     if (error instanceof FxUnavailableError) {

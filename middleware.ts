@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-/** Auth is open (mock) until backend endpoints ship — no Supabase gate. */
+/** Auth is open (mock) until backend endpoints ship. */
 export function middleware(_request: NextRequest) {
   return NextResponse.next();
 }

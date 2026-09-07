@@ -100,6 +100,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       endDate: input.endDate,
       baseCurrency: input.baseCurrency,
       baseCurrencyLockedAt: null,
+      coverImageUrl: input.coverImageUrl,
       inviteToken: generateInviteToken(),
       createdBy: user.id,
       createdAt: now,
@@ -120,7 +121,12 @@ export const useTripStore = create<TripState>((set, get) => ({
       members: [organizer],
     }));
 
-    await persistTrip(trip, organizer);
+    try {
+      await persistTrip(trip, organizer);
+    } catch (error) {
+      // Keep the optimistic group so design flows work without a backend.
+      console.error("Failed to persist trip (keeping local copy):", error);
+    }
 
     return trip;
   },
@@ -128,7 +134,12 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ isLoading: true });
     try {
       const trips = await fetchTripsForUser(user.id);
-      set({ trips, isLoading: false });
+      // Prefer server/memory list, but never wipe optimistic local trips.
+      set((state) => {
+        const remoteIds = new Set(trips.map((t) => t.id));
+        const localOnly = state.trips.filter((t) => !remoteIds.has(t.id));
+        return { trips: [...localOnly, ...trips], isLoading: false };
+      });
     } catch (error) {
       console.error("Failed to fetch trips:", error);
       set({ isLoading: false });
@@ -142,14 +153,21 @@ export const useTripStore = create<TripState>((set, get) => ({
       if (trip) {
         set((state) => ({
           activeTrip: trip,
-          members,
+          members: members.length > 0 ? members : state.members,
           isLoading: false,
           trips: state.trips.some((t) => t.id === trip.id)
             ? state.trips
             : [trip, ...state.trips],
         }));
       } else {
-        set({ members, isLoading: false });
+        // Keep whatever we already have locally (mock / optimistic create).
+        const local = get().trips.find((t) => t.id === tripId) ?? null;
+        set({
+          activeTrip: local,
+          isLoading: false,
+          ...(local ? {} : { members: [] }),
+        });
+        return local;
       }
       if (members.length > 0) {
         useBalanceStore.getState().recomputeBalances(tripId);
@@ -157,8 +175,9 @@ export const useTripStore = create<TripState>((set, get) => ({
       return trip;
     } catch (error) {
       console.error("Failed to fetch trip detail:", error);
-      set({ isLoading: false });
-      return null;
+      const local = get().trips.find((t) => t.id === tripId) ?? null;
+      set({ activeTrip: local, isLoading: false });
+      return local;
     }
   },
   joinTripViaToken: async (token, user) => {

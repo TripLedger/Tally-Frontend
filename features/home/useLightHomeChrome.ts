@@ -8,6 +8,7 @@ export function useLightHomeChrome() {
 
   return (
     pathname === "/trips/new" ||
+    pathname === "/trips/new/cover" ||
     pathname === "/dashboard" ||
     /^\/trips\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/[^/]+$/.test(pathname)

@@ -15,6 +15,7 @@ interface MobileShellProps {
 function isImmersiveRoute(pathname: string): boolean {
   return (
     pathname === "/trips/new" ||
+    pathname === "/trips/new/cover" ||
     /^\/trips\/[^/]+\/invite$/.test(pathname) ||
     /^\/trips\/[^/]+\/expenses\/new$/.test(pathname) ||
     /^\/trips\/[^/]+\/expenses\/[^/]+$/.test(pathname)

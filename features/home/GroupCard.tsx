@@ -1,123 +1,128 @@
 "use client";
 
 import Link from "next/link";
-import { formatCompactDateRange, cn } from "@/lib/utils";
-import { FIGMA_USER_AVATAR_POOL, figmaUserAvatarAt } from "./figmaUserAvatars";
+import { cn } from "@/lib/utils";
+import {
+  FIGMA_HERO_AVATAR_CLUSTER,
+  figmaUserAvatarAt,
+} from "./figmaUserAvatars";
 import type { Trip, TripMember } from "@/types";
 
-const COVER_SRC = "/tabr/home/images/friends.png";
-
-const FALLBACK_AVATARS = FIGMA_USER_AVATAR_POOL;
-
-/** Figma card-colour1–4 — rotate per card in the groups list. */
-const CARD_BG_CLASSES = [
-  "bg-[var(--card-colour1,#F4F2FF)]",
-  "bg-[var(--card-colour2,#FFF2FC)]",
-  "bg-[var(--card-colour3,#EBF5FD)]",
-  "bg-[var(--card-colour4,#FEF6EF)]",
-] as const;
+/** Figma home group card fallback when a group has no custom cover. */
+const DEFAULT_COVER_SRC = "/tabr/home/images/group-cover.png";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+
+const metaTextClass =
+  "text-left text-[12px] font-normal leading-4 text-white/80";
 
 interface GroupCardProps {
   trip: Trip;
   members?: TripMember[];
-  /** 0–3 maps to Figma card-colour tokens. */
+  /** Kept for list callers; cover treatment no longer uses pastel card colours. */
   colorIndex?: number;
   /** Shown as “N trip(s)” until backend tracks trip history per group. */
   tripCount?: number;
 }
 
-function memberAvatarSrc(member: TripMember, index: number): string {
-  return member.avatarUrl || figmaUserAvatarAt(index);
+/** Up to 5 faces — member avatars first, then Figma pool from home/avatars. */
+function buildAvatarStack(members: TripMember[]): string[] {
+  const fromMembers = members
+    .slice(0, 5)
+    .map((member, index) => member.avatarUrl || figmaUserAvatarAt(index));
+
+  if (fromMembers.length >= 5) return fromMembers;
+
+  const filled = [...fromMembers];
+  for (let i = 0; filled.length < 5; i++) {
+    filled.push(FIGMA_HERO_AVATAR_CLUSTER[i % FIGMA_HERO_AVATAR_CLUSTER.length]);
+  }
+  return filled;
+}
+
+/** Figma “20 Oct” — day then short month. */
+function formatNextDate(isoDate: string): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  if (!y || !m || !d) return "";
+  return new Date(y, m - 1, d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
 }
 
 export function GroupCard({
   trip,
   members = [],
-  colorIndex = 0,
   tripCount = 1,
 }: GroupCardProps) {
   const friendCount = Math.max(members.length, 1);
   const friendLabel = friendCount === 1 ? "1 friend" : `${friendCount} friends`;
   const tripLabel = tripCount === 1 ? "1 trip" : `${tripCount} trips`;
   const nextLabel = buildNextLabel(trip);
-  const faces = members.slice(0, 5);
-  const cardBg =
-    CARD_BG_CLASSES[colorIndex % CARD_BG_CLASSES.length] ?? CARD_BG_CLASSES[0];
+  const faces = buildAvatarStack(members);
+  const coverSrc = trip.coverImageUrl || DEFAULT_COVER_SRC;
 
   return (
     <Link
       href={`/trips/${trip.id}`}
       className={cn(
-        "block w-full overflow-hidden rounded-[24px] p-3 xs:p-4",
-        cardBg,
+        "relative block w-full overflow-hidden rounded-[24px]",
+        "aspect-[358/280]",
         "transition-transform duration-fast ease-tally active:scale-[0.99]",
         focusRing
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={COVER_SRC}
+        src={coverSrc}
         alt=""
-        className="h-[140px] w-full rounded-[18px] object-cover xs:h-[160px] sm:h-[180px]"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-[#15131A]/70 via-[#15131A]/25 to-transparent"
+        aria-hidden
       />
 
-      <div className="px-1 pb-1 pt-3">
-        <h3 className="text-tabr-ink-paragraph-medium text-left">{trip.name}</h3>
-        <p className="text-tabr-ink-paragraph-mini-secondary mt-0.5">
+      <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col px-4 pb-4 pt-16 xs:px-5 xs:pb-5">
+        <h3
+          className={cn(
+            "text-left text-white",
+            "text-[16px] font-medium leading-6"
+          )}
+        >
+          {trip.name}
+        </h3>
+        <p className={cn(metaTextClass, "mt-0.5")}>
           {friendLabel} • {tripLabel}
         </p>
 
-        {faces.length > 0 ? (
-          <div
-            className="mt-3 flex items-center"
-            aria-label={`${friendCount} members`}
-          >
-            {faces.map((member, index) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={member.userId}
-                src={memberAvatarSrc(member, index)}
-                alt=""
-                width={24}
-                height={24}
-                className={cn(
-                  "relative h-6 w-6 rounded-full object-cover",
-                  "border border-white",
-                  index > 0 && "-ml-2"
-                )}
-                style={{ zIndex: index + 1 }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-3 flex items-center" aria-hidden>
-            {FALLBACK_AVATARS.map((src, index) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={src}
-                src={src}
-                alt=""
-                width={24}
-                height={24}
-                className={cn(
-                  "relative h-6 w-6 rounded-full object-cover border border-white",
-                  index > 0 && "-ml-2"
-                )}
-                style={{ zIndex: index + 1 }}
-              />
-            ))}
-          </div>
-        )}
+        <div
+          className="mt-3 flex items-center"
+          aria-label={`${friendCount} members`}
+        >
+          {faces.map((src, index) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={`${src}-${index}`}
+              src={src}
+              alt=""
+              width={24}
+              height={24}
+              className={cn(
+                "relative h-6 w-6 rounded-full object-cover",
+                "border border-white",
+                index > 0 && "-ml-2"
+              )}
+              style={{ zIndex: index + 1 }}
+            />
+          ))}
+        </div>
 
-        {nextLabel ? (
-          <>
-            <div className="my-3 h-px w-full bg-[#E5E5E5]" />
-            <p className="text-tabr-ink-paragraph-mini-secondary">{nextLabel}</p>
-          </>
-        ) : null}
+        <div className="my-3 h-px w-full bg-white/80" aria-hidden />
+        <p className={metaTextClass}>
+          {nextLabel ?? "No upcoming trips"}
+        </p>
       </div>
     </Link>
   );
@@ -125,13 +130,10 @@ export function GroupCard({
 
 function buildNextLabel(trip: Trip): string | null {
   const destination = trip.destination.trim();
-  const dates =
-    trip.startDate && trip.endDate
-      ? formatCompactDateRange(trip.startDate, trip.endDate)
-      : "";
+  const date = trip.startDate ? formatNextDate(trip.startDate) : "";
 
-  if (destination && dates) return `Next: ${destination} • ${dates}`;
+  if (destination && date) return `Next: ${destination} • ${date}`;
   if (destination) return `Next: ${destination}`;
-  if (dates) return `Next: ${dates}`;
+  if (date) return `Next: ${date}`;
   return null;
 }

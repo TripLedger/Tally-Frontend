@@ -18,7 +18,7 @@ import { HomeProfileAvatarLink } from "@/features/home";
 import { OnboardingCurrencyPicker } from "@/features/onboarding";
 import { createTripSchema, type CreateTripFormData } from "@/features/trips/schemas";
 import { getCurrencyByCode } from "@/lib/currency";
-import { useAddToast, useTripStore } from "@/store";
+import { useAddToast, useCreateGroupDraftStore } from "@/store";
 import { cn } from "@/lib/utils";
 
 const focusRing =
@@ -38,9 +38,8 @@ const groupFieldClass = cn(
 export function CreateGroupForm() {
   const router = useRouter();
   const { user } = useAuthSession();
-  const createTrip = useTripStore((s) => s.createTrip);
+  const setDraft = useCreateGroupDraftStore((s) => s.setDraft);
   const addToast = useAddToast();
-  const [submitting, setSubmitting] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const currencyFieldRef = useRef<HTMLDivElement>(null);
 
@@ -65,34 +64,19 @@ export function CreateGroupForm() {
     ? getCurrencyByCode(baseCurrency)
     : undefined;
 
-  const onSubmit = async (data: CreateTripFormData) => {
+  const onSubmit = (data: CreateTripFormData) => {
     if (!user) {
       addToast({ message: "You need to be signed in.", variant: "error" });
       return;
     }
-    setSubmitting(true);
-    try {
-      const trip = await createTrip(
-        {
-          name: data.name,
-          destination: "",
-          startDate: "",
-          endDate: "",
-          baseCurrency: data.baseCurrency,
-        },
-        user
-      );
-      router.push(`/dashboard?created=${trip.id}`);
-    } catch {
-      setSubmitting(false);
-      addToast({
-        message: "Couldn't create the group. Please try again.",
-        variant: "error",
-      });
-    }
+    setDraft({
+      name: data.name.trim(),
+      baseCurrency: data.baseCurrency,
+    });
+    router.push("/trips/new/cover");
   };
 
-  const enabled = isValid && !submitting;
+  const enabled = isValid;
 
   return (
     <AuthStackScreen>
@@ -207,11 +191,7 @@ export function CreateGroupForm() {
               enabled={enabled}
               disabled={!enabled}
             >
-              {submitting ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-              ) : (
-                "Create"
-              )}
+              Continue
             </AuthPrimaryButton>
           </div>
         </form>

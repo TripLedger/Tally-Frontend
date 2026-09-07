@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { clearMockUser, mockSignOut } from "@/lib/auth/mock-session";
 import { useAuthStore } from "@/store/authStore";
 import { useBalanceStore } from "@/store/balanceStore";
 import { useCloseBottomSheet } from "@/store";
@@ -15,12 +15,9 @@ import { cn } from "@/lib/utils";
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
 
-async function signOutAndClear() {
-  if (isSupabaseConfigured()) {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-  }
-
+function signOutAndClear() {
+  mockSignOut();
+  clearMockUser();
   useAuthStore.getState().clearUser();
   useTripStore.getState().clearTripState();
   useTripStore.getState().clearPendingInvite();
@@ -35,11 +32,11 @@ export function SignOutConfirmSheet() {
   const closeBottomSheet = useCloseBottomSheet();
   const [busy, setBusy] = useState(false);
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (busy) return;
     setBusy(true);
     try {
-      await signOutAndClear();
+      signOutAndClear();
       closeBottomSheet();
       router.refresh();
       router.push("/");
@@ -59,7 +56,7 @@ export function SignOutConfirmSheet() {
 
       <button
         type="button"
-        onClick={() => void handleConfirm()}
+        onClick={handleConfirm}
         disabled={busy}
         className={cn(
           "mt-6 flex h-14 w-full items-center justify-center rounded-[12px]",

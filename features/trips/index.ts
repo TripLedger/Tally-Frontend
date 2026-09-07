@@ -9,10 +9,16 @@ export { TripMetaRow } from "./TripMetaRow";
 export { MemberRow } from "./MemberRow";
 export { MemberList } from "./MemberList";
 export { getInviteUrl, getInviteDisplayUrl, getInviteBrandedPath } from "./inviteUrl";
-export { useInviteShare } from "./useInviteShare";
+export { useInviteShare, type ShareChannel } from "./useInviteShare";
+export {
+  useDeviceContacts,
+  isContactPickerSupported,
+  type DeviceContact,
+} from "./useDeviceContacts";
 export {
   useResolvePendingInvite,
   PendingInviteResolver,
 } from "./useResolvePendingInvite";
 export { createTripSchema, type CreateTripFormData } from "./schemas";
 export { CreateGroupForm } from "./CreateGroupForm";
+export { UploadGroupCoverForm } from "./UploadGroupCoverForm";

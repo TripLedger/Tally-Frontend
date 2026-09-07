@@ -3,10 +3,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getInviteUrl } from "./inviteUrl";
 import { useAddToast } from "@/store";
+import type { DeviceContact } from "./useDeviceContacts";
+
+export type ShareChannel =
+  | "message"
+  | "mail"
+  | "whatsapp"
+  | "twitter"
+  | "messenger";
 
 interface UseInviteShareOptions {
   inviteToken: string;
   tripName: string;
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/[^\d+]/g, "");
 }
 
 export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions) {
@@ -22,6 +34,8 @@ export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions)
   }, []);
 
   const shareText = `Join ${tripName} on Tabr`;
+  const canNativeShare =
+    typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   const copyInviteUrl = useCallback(async () => {
     if (!inviteUrl) return false;
@@ -55,15 +69,14 @@ export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions)
       addToast({
         message: "Couldn't copy the link. Please try again.",
         variant: "error",
+        duration: 3000,
       });
       return;
     }
 
     setCopied(true);
-    addToast({ message: "Link copied", variant: "success", duration: 2500 });
-
     if (copyResetRef.current) clearTimeout(copyResetRef.current);
-    copyResetRef.current = setTimeout(() => setCopied(false), 1500);
+    copyResetRef.current = setTimeout(() => setCopied(false), 1800);
   }, [inviteUrl, copyInviteUrl, addToast]);
 
   const handleNativeShare = useCallback(async () => {
@@ -87,9 +100,9 @@ export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions)
     const ok = await copyInviteUrl();
     if (ok) {
       addToast({
-        message: "Link copied — sharing isn't available on this device",
+        message: "Link copied — open your messages app to share it",
         variant: "info",
-        duration: 3000,
+        duration: 3200,
       });
     } else {
       addToast({
@@ -100,26 +113,48 @@ export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions)
   }, [inviteUrl, shareText, copyInviteUrl, addToast]);
 
   const openShareChannel = useCallback(
-    (channel: "message" | "mail" | "whatsapp" | "twitter") => {
+    (channel: ShareChannel, contact?: DeviceContact) => {
       if (!inviteUrl) return;
 
-      const body = encodeURIComponent(`${shareText}\n${inviteUrl}`);
+      const body = `${shareText}\n${inviteUrl}`;
+      const encodedBody = encodeURIComponent(body);
+      const phone = contact?.tel ? digitsOnly(contact.tel) : "";
+      const email = contact?.email?.trim() ?? "";
 
       switch (channel) {
-        case "message":
-          window.location.href = `sms:?&body=${body}`;
+        case "message": {
+          const sms = phone
+            ? `sms:${phone}?&body=${encodedBody}`
+            : `sms:?&body=${encodedBody}`;
+          window.location.href = sms;
           break;
-        case "mail":
-          window.location.href = `mailto:?subject=${encodeURIComponent(
+        }
+        case "mail": {
+          const to = email ? encodeURIComponent(email) : "";
+          window.location.href = `mailto:${to}?subject=${encodeURIComponent(
             shareText
-          )}&body=${body}`;
+          )}&body=${encodedBody}`;
           break;
-        case "whatsapp":
-          window.open(`https://wa.me/?text=${body}`, "_blank", "noopener,noreferrer");
+        }
+        case "whatsapp": {
+          const wa = phone
+            ? `https://wa.me/${phone.replace(/^\+/, "")}?text=${encodedBody}`
+            : `https://wa.me/?text=${encodedBody}`;
+          window.open(wa, "_blank", "noopener,noreferrer");
           break;
+        }
         case "twitter":
           window.open(
-            `https://twitter.com/intent/tweet?text=${body}`,
+            `https://twitter.com/intent/tweet?text=${encodedBody}`,
+            "_blank",
+            "noopener,noreferrer"
+          );
+          break;
+        case "messenger":
+          window.open(
+            `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+              inviteUrl
+            )}&redirect_uri=${encodeURIComponent(inviteUrl)}`,
             "_blank",
             "noopener,noreferrer"
           );
@@ -131,11 +166,29 @@ export function useInviteShare({ inviteToken, tripName }: UseInviteShareOptions)
     [inviteUrl, shareText, handleNativeShare]
   );
 
+  /** Prefer SMS / email for a contact; otherwise fall back to the system share sheet. */
+  const shareWithContact = useCallback(
+    async (contact: DeviceContact) => {
+      if (contact.tel) {
+        openShareChannel("message", contact);
+        return;
+      }
+      if (contact.email) {
+        openShareChannel("mail", contact);
+        return;
+      }
+      await handleNativeShare();
+    },
+    [openShareChannel, handleNativeShare]
+  );
+
   return {
     inviteUrl,
     copied,
+    canNativeShare,
     handleCopy,
     handleNativeShare,
     openShareChannel,
+    shareWithContact,
   };
 }
