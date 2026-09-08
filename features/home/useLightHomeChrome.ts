@@ -11,6 +11,11 @@ export function useLightHomeChrome() {
     pathname === "/trips/new/cover" ||
     pathname === "/dashboard" ||
     /^\/trips\/[^/]+$/.test(pathname) ||
+    /^\/trips\/[^/]+\/trips\/new$/.test(pathname) ||
+    /^\/trips\/[^/]+\/trips\/new\/[^/]+\/group$/.test(pathname) ||
+    /^\/trips\/[^/]+\/trips\/new\/[^/]+\/customise$/.test(pathname) ||
+    /^\/trips\/[^/]+\/outings\/[^/]+$/.test(pathname) ||
+    /^\/trips\/[^/]+\/outings\/[^/]+\/expenses(\/(scan|new))?$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/[^/]+$/.test(pathname)
   );
 }

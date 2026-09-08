@@ -121,7 +121,7 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
             onInviteFriends={openInvite}
           />
         ) : (
-          <GroupTripsPanel trips={groupTrips} />
+          <GroupTripsPanel groupId={tripId} trips={groupTrips} />
         )}
       </div>
 

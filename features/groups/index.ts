@@ -9,4 +9,5 @@ export { TripItineraryScreen } from "./TripItineraryScreen";
 export {
   isPreviewGroupTripId,
   getPreviewGroupTrip,
+  getPreviewOutingDraft,
 } from "./mockGroupFriendsData";

@@ -14,6 +14,16 @@ export function formatFigmaTripDates(startISO: string, endISO: string): string {
   return `${startDay} - ${end.getDate()} ${month}`;
 }
 
+/** Figma Trips tab card: "Thursday, 12 September" */
+export function formatFigmaTripCardDate(iso: string): string {
+  const date = parseIsoDate(iso);
+  if (!date) return "";
+  const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+  const day = date.getDate();
+  const month = date.toLocaleDateString("en-GB", { month: "long" });
+  return `${weekday}, ${day} ${month}`;
+}
+
 function parseIsoDate(iso: string): Date | null {
   const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return null;

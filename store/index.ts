@@ -25,6 +25,11 @@ export {
 } from "./createGroupDraftStore";
 
 export {
+  useCreatedTripDraftStore,
+  type CreatedTripDraft,
+} from "./createdTripDraftStore";
+
+export {
   useExpenseStore,
   useExpenses,
   useExpensesForTrip,

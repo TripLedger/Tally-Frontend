@@ -20,6 +20,10 @@ export interface GroupTripView {
   startDate: string;
   endDate: string;
   coverSrc: string;
+  /** Figma badge — defaults from startDate when omitted */
+  status?: "upcoming" | "past";
+  /** When set, card opens outing details instead of nested itinerary */
+  outingHref?: string;
 }
 
 const PREVIEW_MEMBER_EMAILS: Record<string, string> = {
@@ -185,6 +189,9 @@ function emailFromDisplayName(name: string): string {
 }
 
 const GROUP_TRIP_COVER = "/tabr/home/images/painting.png";
+const TRIP_CARD = (n: 1 | 2 | 3 | 4 | 5) =>
+  `/tabr/Trip cards/Trip card ${n}.png`;
+const TRIP_LOCATION = "/tabr/Trip cards/trip location.png";
 
 export interface GroupEventView {
   id: string;
@@ -195,50 +202,34 @@ export interface GroupEventView {
   coverSrc: string;
 }
 
-/** Figma trip cards on the group Trips tab (My Day Ones). */
+/** Figma trip cards on the group Trips tab (My Day Ones) — place outings. */
 export const PREVIEW_GROUP_TRIPS: GroupTripView[] = [
   {
-    id: "preview-trip-lagos-weekend",
+    id: "preview-outing-cafe-alyanto",
     groupId: MOCK_EXISTING_HOME_TRIP.id,
-    name: "Lagos weekend",
-    destination: "Lagos",
+    name: "Cafe Alyanto",
+    destination: "Lekki, Lagos",
     startDate: "2026-09-12",
-    endDate: "2026-09-14",
-    coverSrc: GROUP_TRIP_COVER,
+    endDate: "2026-09-12",
+    coverSrc: TRIP_LOCATION,
+    status: "upcoming",
   },
   {
-    id: "preview-trip-abuja-outing",
+    id: "preview-outing-la-tropicana",
     groupId: MOCK_EXISTING_HOME_TRIP.id,
-    name: "Abuja outing",
-    destination: "Abuja",
+    name: "La Tropicana",
+    destination: "Ilupeju, Lagos",
     startDate: "2026-09-12",
-    endDate: "2026-09-14",
-    coverSrc: GROUP_TRIP_COVER,
-  },
-  {
-    id: "preview-trip-festival-of-songs",
-    groupId: MOCK_EXISTING_HOME_TRIP.id,
-    name: "Festival of songs",
-    destination: "Ondo",
-    startDate: "2026-08-12",
-    endDate: "2026-08-12",
-    coverSrc: GROUP_TRIP_COVER,
-  },
-  {
-    id: "preview-trip-concert",
-    groupId: MOCK_EXISTING_HOME_TRIP.id,
-    name: "Concert",
-    destination: "Lagos",
-    startDate: "2026-09-13",
-    endDate: "2026-09-13",
-    coverSrc: GROUP_TRIP_COVER,
+    endDate: "2026-09-12",
+    coverSrc: TRIP_CARD(4),
+    status: "past",
   },
 ];
 
 export const PREVIEW_GROUP_EVENTS: GroupEventView[] = [
   {
     id: "preview-event-dinner-luxe",
-    tripId: "preview-trip-lagos-weekend",
+    tripId: "preview-outing-cafe-alyanto",
     name: "Dinner at Luxe",
     startDate: "2026-09-12",
     endDate: "2026-09-14",
@@ -257,4 +248,35 @@ export function getPreviewNestedTrip(itemId: string): GroupTripView | null {
 
 export function getPreviewTripEvents(itemId: string): GroupEventView[] {
   return PREVIEW_GROUP_EVENTS.filter((event) => event.tripId === itemId);
+}
+
+/** Seeded outing details for Figma Trips-tab cards (until API). */
+export function getPreviewOutingDraft(
+  outingId: string
+): import("@/store/createdTripDraftStore").CreatedTripDraft | null {
+  const trip = getPreviewNestedTrip(outingId);
+  if (!trip) return null;
+
+  const isCafe = outingId.includes("cafe");
+  return {
+    id: trip.id,
+    name: isCafe ? "Coffee date" : trip.name,
+    groupId: trip.groupId,
+    groupName: "My Day Ones",
+    friendCount: 8,
+    avatarSrcs: [...FIGMA_HERO_AVATAR_CLUSTER],
+    placeId: isCafe ? "cafe-alyanto" : "la-tropicana",
+    placeName: trip.name,
+    area: trip.destination.split(",")[0]?.trim() || trip.destination,
+    city: "Lagos",
+    rating: 4.5,
+    reviewCount: 60,
+    priceLabel: isCafe ? "~ N10,000/person" : "~ N12,000/person",
+    imageSrc: trip.coverSrc,
+    date: trip.startDate,
+    time: isCafe ? "20:00" : "10:30",
+    address: isCafe
+      ? "Flowershop Cafe, Store 2:, 274 Akin Adesola St, Victoria Island, Lagos 106104, Lagos"
+      : `${trip.destination}`,
+  };
 }
