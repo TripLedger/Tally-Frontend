@@ -80,8 +80,8 @@ export function AuthStackHeader({
   title,
   subtitle,
 }: {
-  title: string;
-  subtitle: string;
+  title: ReactNode;
+  subtitle: ReactNode;
 }) {
   return (
     <header className={authStackHeaderClass}>

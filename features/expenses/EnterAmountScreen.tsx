@@ -10,14 +10,15 @@ import {
 } from "@/features/auth";
 import {
   formatAmountInputDisplay,
-  getCurrencySymbol,
   parseAmountToMinorUnits,
 } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import { useExpenseStore, useHomeCurrency } from "@/store";
-
-const geistClass =
-  "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
+import { BillAmountCard } from "./BillAmountCard";
+import {
+  lightExpenseCtaFooterClass,
+  lightExpenseShellClass,
+} from "./lightExpenseChrome";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
@@ -63,7 +64,6 @@ export function EnterAmountScreen({
   const setPrefillData = useExpenseStore((s) => s.setPrefillData);
 
   const currency = (homeCurrency || "NGN").toUpperCase();
-  const symbol = getCurrencySymbol(currency);
 
   const [digits, setDigits] = useState("");
 
@@ -98,22 +98,11 @@ export function EnterAmountScreen({
       failed: false,
     });
 
-    router.push(
-      `/trips/${groupId}/expenses/new?outingId=${encodeURIComponent(outingId)}`
-    );
+    router.push(`/trips/${groupId}/outings/${outingId}/expenses/split`);
   };
 
   return (
-    <div
-      className={cn(
-        "mx-auto flex min-h-dvh w-full flex-col",
-        "bg-[var(--new-bg,#FAFAFA)]",
-        "px-5 xs:px-6",
-        "pb-[max(1.25rem,var(--safe-bottom))]",
-        "pt-[calc(max(var(--safe-top),47px)+1rem)]",
-        geistClass
-      )}
-    >
+    <div className={cn(lightExpenseShellClass, "pb-0")}>
       <div className="flex shrink-0 items-center">
         <AuthBackButton href={backHref} label="Back to add expense" />
       </div>
@@ -123,54 +112,32 @@ export function EnterAmountScreen({
         subtitle="Enter total amount"
       />
 
-      <div
-        className={cn(
-          "relative mt-8 w-full overflow-hidden rounded-[20px] bg-white",
-          "px-5 py-7",
-          "shadow-[0_2px_16px_rgba(21,19,26,0.06)]"
-        )}
-      >
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.14)_0%,transparent_70%)]"
-          aria-hidden
-        />
+      <BillAmountCard
+        currency={currency}
+        display={displayAmount}
+        className="mt-8 shrink-0"
+      />
 
-        <p className="relative text-center text-[13px] font-normal leading-4 text-[#8E8E93]">
-          Your bill
-        </p>
-
-        <p
-          className="relative mt-3 flex items-baseline justify-center gap-1.5 text-[#15131A]"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <span className="text-[28px] font-semibold leading-none tracking-[-0.02em]">
-            {symbol}
-          </span>
-          <span className="text-[40px] font-semibold leading-none tracking-[-0.03em] tabular-nums">
-            {displayAmount}
-          </span>
-        </p>
-
-        <p className="relative mt-3 text-center text-[13px] font-normal leading-4 text-[#8E8E93]">
-          Amount in total
-        </p>
-      </div>
-
-      <div className="mt-8 flex min-h-0 flex-1 flex-col justify-end gap-6 pb-1">
+      <div className="mt-8 flex min-h-0 flex-1 flex-col justify-end gap-6">
         <AmountKeypad
           onDigit={appendDigit}
           onBackspace={backspace}
         />
 
-        <button
-          type="button"
-          disabled={!canContinue}
-          onClick={onContinue}
-          className={cn("w-full shrink-0", authStackCtaClass(canContinue), focusRing)}
-        >
-          Continue
-        </button>
+        <div className={lightExpenseCtaFooterClass}>
+          <button
+            type="button"
+            disabled={!canContinue}
+            onClick={onContinue}
+            className={cn(
+              "w-full shrink-0",
+              authStackCtaClass(canContinue),
+              focusRing
+            )}
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   );

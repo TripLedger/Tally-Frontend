@@ -9,12 +9,10 @@ import {
   authStackCtaClass,
 } from "@/features/auth";
 import { cn } from "@/lib/utils";
-
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
-
-const geistClass =
-  "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
+import {
+  lightExpenseFocusRing,
+  lightExpenseShellClass,
+} from "./lightExpenseChrome";
 
 const secondaryBtnClass = cn(
   authControlBoxClass,
@@ -22,7 +20,7 @@ const secondaryBtnClass = cn(
   "text-[16px] font-semibold leading-none text-[#15131A]",
   "transition-[transform,background-color] duration-150",
   "hover:bg-[#FAFAFA] active:scale-[0.98]",
-  focusRing
+  lightExpenseFocusRing
 );
 
 interface AddExpenseScreenProps {
@@ -42,16 +40,7 @@ export function AddExpenseScreen({
   const outingHref = `/trips/${groupId}/outings/${outingId}`;
 
   return (
-    <div
-      className={cn(
-        "mx-auto flex min-h-dvh w-full flex-col",
-        "bg-[var(--new-bg,#FAFAFA)]",
-        "px-5 xs:px-6",
-        "pb-[max(1.5rem,var(--safe-bottom))]",
-        "pt-[calc(max(var(--safe-top),47px)+1rem)]",
-        geistClass
-      )}
-    >
+    <div className={lightExpenseShellClass}>
       <div className="flex shrink-0 items-center">
         <AuthBackButton href={outingHref} label="Back to trip" />
       </div>
@@ -61,7 +50,7 @@ export function AddExpenseScreen({
         subtitle="Assign expenses to your trip"
       />
 
-      <div className="flex min-h-0 flex-1 flex-col items-center pt-10 pb-16 sm:justify-center sm:pt-0">
+      <div className="flex min-h-0 flex-1 flex-col items-center pt-10 pb-4 sm:justify-center sm:pt-0">
         <div
           className={cn(
             "flex w-full max-w-[340px] flex-col items-center",
@@ -82,7 +71,11 @@ export function AddExpenseScreen({
           <div className="mt-6 flex w-full flex-col gap-3">
             <Link
               href={`${base}/scan`}
-              className={cn("w-full", authStackCtaClass(true), focusRing)}
+              className={cn(
+                "w-full",
+                authStackCtaClass(true),
+                lightExpenseFocusRing
+              )}
             >
               Scan receipt
             </Link>

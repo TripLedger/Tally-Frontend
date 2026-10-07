@@ -220,6 +220,51 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Assign-by-item share slider (Figma) */
+  .assign-split-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      to right,
+      #8b5cf6 0%,
+      #8b5cf6 var(--assign-pct, 0%),
+      #e8e8ed var(--assign-pct, 0%),
+      #e8e8ed 100%
+    );
+    outline: none;
+    cursor: pointer;
+  }
+
+  .assign-split-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 1px 3px rgba(21, 19, 26, 0.12);
+    cursor: pointer;
+  }
+
+  .assign-split-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 1px 3px rgba(21, 19, 26, 0.12);
+    cursor: pointer;
+  }
+
+  .assign-split-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: transparent;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

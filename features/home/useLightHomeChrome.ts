@@ -15,7 +15,9 @@ export function useLightHomeChrome() {
     /^\/trips\/[^/]+\/trips\/new\/[^/]+\/group$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new\/[^/]+\/customise$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+$/.test(pathname) ||
-    /^\/trips\/[^/]+\/outings\/[^/]+\/expenses(\/(scan|new))?$/.test(pathname) ||
+    /^\/trips\/[^/]+\/outings\/[^/]+\/expenses(\/(scan|new|split(\/(equal|items|success))?))?$/.test(
+      pathname
+    ) ||
     /^\/trips\/[^/]+\/trips\/[^/]+$/.test(pathname)
   );
 }
