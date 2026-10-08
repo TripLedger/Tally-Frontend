@@ -7,12 +7,20 @@ export type AuthStatus =
   | "authenticated"
   | "unauthenticated";
 
+/** Backend-owned KYC phase — UI maps Pending / Failed / Verified. */
+export type AuthKycStatus = "pending" | "failed" | "verified";
+
 export interface AuthUser {
   id: string;
   email: string;
   displayName: string;
   homeCurrency: string;
   avatarUrl?: string;
+  /** Public handle, e.g. `@jane.doe` — optional until API ships. */
+  handle?: string;
+  phone?: string;
+  kycStatus?: AuthKycStatus;
+  language?: string;
   onboardingComplete: boolean;
 }
 

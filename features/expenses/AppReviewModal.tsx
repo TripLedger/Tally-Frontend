@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { authStackCtaClass } from "@/features/auth";
 import { LightHomeOverlay } from "@/features/home";
@@ -14,14 +14,21 @@ interface AppReviewModalProps {
 }
 
 /**
- * Bill-sent review popup (Figma) — blurred success screen behind a rating card.
+ * App review popup (Figma — existing home + bill-sent).
+ * Soft dim scrim; 326px white card; stars + Take survey.
  */
 export function AppReviewModal({
   open,
   onClose,
   onTakeSurvey,
 }: AppReviewModalProps) {
-  const [rating, setRating] = useState(4);
+  /** Unselected until the user picks — never pre-fill a high rating. */
+  const [rating, setRating] = useState(0);
+  const hasRating = rating >= 1;
+
+  useEffect(() => {
+    if (open) setRating(0);
+  }, [open]);
 
   return (
     <LightHomeOverlay
@@ -30,65 +37,73 @@ export function AppReviewModal({
       ariaLabel="App review"
       variant="center"
       dismissOnBackdrop
-      sheetClassName="px-6 pb-7 pt-8"
+      sheetClassName="px-6 py-7"
     >
-      <div className="flex flex-col items-center text-center">
+      <div className="flex w-full flex-col items-center gap-8 text-center">
         <h2 className="text-[20px] font-semibold leading-7 tracking-[-0.02em] text-[#15131A]">
           How are you enjoying
           <br />
           the app so far?
         </h2>
 
-        <p className="text-tabr-ink-paragraph-small mt-5">Your overall rating</p>
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-[14px] font-normal leading-5 text-[#716D7D]">
+            Your overall rating
+          </p>
 
-        <div
-          className="mt-3 flex items-center justify-center gap-2.5"
-          role="radiogroup"
-          aria-label="Overall rating"
-        >
-          {Array.from({ length: 5 }, (_, index) => {
-            const value = index + 1;
-            const filled = value <= rating;
-            return (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={value === rating}
-                aria-label={`${value} star${value === 1 ? "" : "s"}`}
-                onClick={() => setRating(value)}
-                className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full",
-                  "transition-transform duration-150 active:scale-95",
-                  lightExpenseFocusRing
-                )}
-              >
-                <Star
+          <div
+            className="flex items-center justify-center gap-2"
+            role="radiogroup"
+            aria-label="Overall rating"
+          >
+            {Array.from({ length: 5 }, (_, index) => {
+              const value = index + 1;
+              const filled = value <= rating;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={value === rating}
+                  aria-label={`${value} star${value === 1 ? "" : "s"}`}
+                  onClick={() => setRating(value)}
                   className={cn(
-                    "h-8 w-8",
-                    filled
-                      ? "fill-[#F5A623] text-[#F5A623]"
-                      : "fill-transparent text-[#F5A623]"
+                    "flex h-9 w-9 items-center justify-center rounded-full",
+                    "transition-transform duration-150 active:scale-95",
+                    lightExpenseFocusRing
                   )}
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-              </button>
-            );
-          })}
+                >
+                  <Star
+                    className={cn(
+                      "h-7 w-7",
+                      filled
+                        ? "fill-[#F5A623] text-[#F5A623]"
+                        : "fill-transparent text-[#D1D1D6]"
+                    )}
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <p className="text-tabr-ink-paragraph-small mt-5 max-w-[280px]">
+        <p className="max-w-[260px] text-[14px] font-normal leading-5 text-[#716D7D]">
           We appreciate your feedback in helping us improve. Take a more
           detailed survey to help improve how we serve you. It takes 5 minutes.
         </p>
 
         <button
           type="button"
-          onClick={() => onTakeSurvey?.(rating)}
+          disabled={!hasRating}
+          onClick={() => {
+            if (!hasRating) return;
+            onTakeSurvey?.(rating);
+          }}
           className={cn(
-            "mt-7 w-full",
-            authStackCtaClass(true),
+            "w-full",
+            authStackCtaClass(hasRating),
             lightExpenseFocusRing
           )}
         >

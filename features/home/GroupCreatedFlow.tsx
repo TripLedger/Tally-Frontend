@@ -51,6 +51,12 @@ export function GroupCreatedFlow() {
     setStep("share");
   };
 
+  const handlePlanTrip = () => {
+    if (!trip) return;
+    setStep(null);
+    router.push(`/trips/${trip.id}/trips/new`);
+  };
+
   const handleCloseShare = () => {
     clearCreatedParam();
   };
@@ -66,6 +72,7 @@ export function GroupCreatedFlow() {
       <GroupCreatedOverlay
         open={step === "success"}
         onInviteFriends={handleInviteFriends}
+        onPlanTrip={handlePlanTrip}
         onClose={handleCloseSuccess}
       />
       <ShareWithFriendsOverlay

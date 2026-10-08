@@ -15,7 +15,7 @@ interface LightHomeOverlayProps {
   /**
    * `sheet` — full-width bottom sheet (share flow).
    * `floating` — inset card above the bottom edge (group-created success).
-   * `center` — centered card over a stronger blur (bill-sent review).
+   * `center` — centered review card; Figma scrim is a soft dim + barely-there blur.
    */
   variant?: "sheet" | "floating" | "center";
 }
@@ -48,7 +48,7 @@ export function LightHomeOverlay({
       className={cn(
         "fixed inset-0 z-50 flex justify-center",
         isCenter
-          ? "items-center px-6 py-8"
+          ? "items-center px-5 py-8"
           : isFloating
             ? "items-end px-5 pb-[max(2.5rem,var(--safe-bottom))] pt-6"
             : "items-end"
@@ -58,7 +58,8 @@ export function LightHomeOverlay({
         className={cn(
           "absolute inset-0",
           isCenter
-            ? "bg-[#15131A]/55 backdrop-blur-[10px]"
+            ? /* Figma review: dim only — blur almost invisible */
+              "bg-[#15131A]/30 backdrop-blur-[0.5px]"
             : "bg-[#15131A]/40 backdrop-blur-[2px]"
         )}
         onClick={dismissOnBackdrop ? onClose : undefined}
@@ -69,15 +70,15 @@ export function LightHomeOverlay({
         aria-modal
         aria-label={ariaLabel}
         className={cn(
-          "relative z-10 w-full max-w-mobile bg-white",
+          "relative z-10 bg-white",
           "shadow-[0_-8px_40px_rgba(21,19,26,0.12)]",
           "animate-sheet-in",
           isCenter
-            ? "rounded-[28px] bg-[#F7F7F8] shadow-[0_20px_60px_rgba(21,19,26,0.22)]"
+            ? "w-[326px] max-w-[calc(100%-2.5rem)] rounded-[28px] bg-white shadow-[0_16px_48px_rgba(21,19,26,0.14)]"
             : isFloating
-              ? "rounded-[24px] shadow-[0_16px_48px_rgba(21,19,26,0.16)]"
+              ? "w-full max-w-mobile rounded-[24px] shadow-[0_16px_48px_rgba(21,19,26,0.16)]"
               : cn(
-                  "rounded-t-[24px]",
+                  "w-full max-w-mobile rounded-t-[24px]",
                   "pb-[max(1.5rem,calc(var(--safe-bottom)+1rem))]"
                 ),
           sheetClassName

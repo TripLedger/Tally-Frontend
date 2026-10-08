@@ -64,10 +64,8 @@ function DashboardContent() {
     };
   }, [trips]);
 
-  const displayName =
-    previewExisting && !user?.displayName?.trim()
-      ? "Jane Doe"
-      : user?.displayName || "there";
+  // Prefer the signed-in name; Figma placeholder when onboarding left it blank.
+  const displayName = user?.displayName?.trim() || "Jane Doe";
 
   let home = null;
 

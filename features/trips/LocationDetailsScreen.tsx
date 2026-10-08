@@ -70,8 +70,11 @@ export function LocationDetailsScreen({
     });
   };
 
+  /** Already in a group context — skip “Who’s coming?” and go customise. */
   const onCreateTrip = () => {
-    router.push(`/trips/${groupId}/trips/new/${destination.id}/group`);
+    router.push(
+      `/trips/${groupId}/trips/new/${destination.id}/customise?group=${encodeURIComponent(groupId)}`
+    );
   };
 
   return (

@@ -30,6 +30,8 @@ export function mockSignIn(email = "demo@tabr.app"): AuthUser {
     email,
     displayName: "",
     homeCurrency: "NGN",
+    language: "English",
+    kycStatus: "pending",
     onboardingComplete: false,
   };
 

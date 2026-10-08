@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { authStackCtaClass } from "@/features/auth";
+import {
+  markAppReviewCompleted,
+  markAppReviewDismissed,
+  markAppReviewPromptShown,
+  shouldPromptAppReview,
+} from "@/lib/app-review";
 import { cn } from "@/lib/utils";
 import { AppReviewModal } from "./AppReviewModal";
 import {
@@ -17,11 +23,17 @@ interface BillSentSuccessScreenProps {
 }
 
 /**
- * Outing flow — Bill sent success (Figma) + optional review modal.
+ * Outing flow — Bill sent success (Figma) + occasional review modal.
  */
 export function BillSentSuccessScreen({ groupId }: BillSentSuccessScreenProps) {
   const router = useRouter();
-  const [reviewOpen, setReviewOpen] = useState(true);
+  const [reviewOpen, setReviewOpen] = useState(false);
+
+  useEffect(() => {
+    if (!shouldPromptAppReview()) return;
+    markAppReviewPromptShown();
+    setReviewOpen(true);
+  }, []);
 
   const goToGroup = () => {
     router.push(`/trips/${groupId}?tab=trips`);
@@ -62,8 +74,12 @@ export function BillSentSuccessScreen({ groupId }: BillSentSuccessScreenProps) {
 
       <AppReviewModal
         open={reviewOpen}
-        onClose={() => setReviewOpen(false)}
-        onTakeSurvey={() => {
+        onClose={() => {
+          markAppReviewDismissed();
+          setReviewOpen(false);
+        }}
+        onTakeSurvey={(rating) => {
+          markAppReviewCompleted(rating);
           setReviewOpen(false);
           goToGroup();
         }}

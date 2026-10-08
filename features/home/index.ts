@@ -1,7 +1,9 @@
 export { NewUserHome } from "./NewUserHome";
 export { ExistingUserHome } from "./ExistingUserHome";
+export { ExploreEntryScreen } from "./ExploreEntryScreen";
 export { GroupCard } from "./GroupCard";
 export { HomeHeader } from "./HomeHeader";
+export { HomeTotalBalanceCard } from "./HomeTotalBalanceCard";
 export {
   HomeNotificationsBell,
   HomeProfileAvatarLink,
@@ -20,6 +22,7 @@ export { GroupCreatedFlow } from "./GroupCreatedFlow";
 export { GroupCreatedOverlay } from "./GroupCreatedOverlay";
 export { ShareWithFriendsOverlay } from "./ShareWithFriendsOverlay";
 export { LightHomeOverlay } from "./LightHomeOverlay";
+export { useAppReviewPrompt } from "./useAppReviewPrompt";
 export {
   FIGMA_HERO_AVATAR_CLUSTER,
   FIGMA_USER_AVATAR_POOL,

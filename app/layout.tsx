@@ -1,18 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
-import { GeistSans } from "geist/font/sans";
+import { GeistSans, playfair } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { cn } from "@/lib/utils";
 import "./globals.css";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Tabr",

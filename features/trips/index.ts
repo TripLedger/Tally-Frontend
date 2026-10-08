@@ -61,5 +61,7 @@ export {
 export {
   MOCK_SELECT_GROUPS,
   filterSelectGroups,
+  tripToSelectGroupView,
+  tripsToSelectGroupViews,
   type SelectGroupView,
 } from "./mockSelectGroups";

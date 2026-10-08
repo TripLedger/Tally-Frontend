@@ -25,7 +25,7 @@ export function CategoryChips({ selected, onSelect }: CategoryChipsProps) {
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 bg-gradient-to-l from-[#0A0A0F] to-transparent"
           aria-hidden
         />
-        <div className="scrollbar-hide flex gap-2.5 overflow-x-auto px-1 pb-0.5">
+        <div className="flex gap-2.5 overflow-x-auto px-1 pb-0.5">
           {EXPENSE_CATEGORIES.map(({ id, label, icon: Icon, color }) => {
             const active = selected === id;
             return (

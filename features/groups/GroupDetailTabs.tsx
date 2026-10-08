@@ -12,17 +12,7 @@ interface GroupDetailTabsProps {
 
 export function GroupDetailTabs({ active, onChange }: GroupDetailTabsProps) {
   return (
-    <div
-      className={cn(
-        "relative z-10 -mt-5 shrink-0 rounded-t-[24px] bg-white",
-        "shadow-[0_-4px_24px_rgba(21,19,26,0.06)]"
-      )}
-      role="tablist"
-      aria-label="Group sections"
-    >
-      <div className="flex justify-center pb-1 pt-3" aria-hidden>
-        <span className="h-1 w-10 rounded-full bg-[#D1D1D6]" />
-      </div>
+    <div className="relative z-10 shrink-0 bg-white" role="tablist" aria-label="Group sections">
       <div className="grid grid-cols-2 border-b border-[#E5E5E5] px-2">
         <TabButton
           label="Friends"

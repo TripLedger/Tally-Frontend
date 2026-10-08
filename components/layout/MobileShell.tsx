@@ -39,7 +39,16 @@ export function MobileShell({ children, showNav = true }: MobileShellProps) {
         lightHome && "mobile-frame-light bg-[#FAFAFA]"
       )}
     >
-      <main className={navVisible ? "flex min-h-0 flex-1 flex-col pb-20" : "flex-1"}>
+      <main
+        className={
+          navVisible
+            ? cn(
+                "flex min-h-0 flex-1 flex-col",
+                lightHome ? "pb-24" : "pb-20"
+              )
+            : "flex-1"
+        }
+      >
         {children}
       </main>
       {navVisible && (lightHome ? <LightHomeNav /> : <BottomNav />)}

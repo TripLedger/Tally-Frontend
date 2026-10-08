@@ -8,6 +8,7 @@ export {
   useIsUpdatingProfile,
   type AuthUser,
   type AuthStatus,
+  type AuthKycStatus,
 } from "./authStore";
 
 export {

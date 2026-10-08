@@ -18,6 +18,7 @@ export const config = {
     "/trips/:path*",
     "/add/:path*",
     "/balances/:path*",
+    "/explore/:path*",
     "/profile/:path*",
     "/notifications/:path*",
   ],

@@ -28,8 +28,9 @@ function tripHref(trip: GroupTripView): string {
  */
 export function GroupTripsPanel({ groupId, trips }: GroupTripsPanelProps) {
   const addTripHref = `/trips/${groupId}/trips/new`;
-  const draft = useCreatedTripDraftStore((s) => s.draft);
+  const draftsById = useCreatedTripDraftStore((s) => s.draftsById);
   const hydrateDraft = useCreatedTripDraftStore((s) => s.hydrateDraft);
+  const draftsForGroup = useCreatedTripDraftStore((s) => s.draftsForGroup);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -39,9 +40,10 @@ export function GroupTripsPanel({ groupId, trips }: GroupTripsPanelProps) {
 
   const mergedTrips = useMemo(() => {
     if (!hydrated) return trips;
-    if (!draft || draft.groupId !== groupId) return trips;
+    const groupDrafts = draftsForGroup(groupId);
+    if (groupDrafts.length === 0) return trips;
 
-    const asCard: GroupTripView = {
+    const draftCards: GroupTripView[] = groupDrafts.map((draft) => ({
       id: draft.id,
       groupId: draft.groupId,
       name: draft.placeName,
@@ -49,12 +51,13 @@ export function GroupTripsPanel({ groupId, trips }: GroupTripsPanelProps) {
       startDate: draft.date,
       endDate: draft.date,
       coverSrc: draft.imageSrc,
-      status: "upcoming",
-    };
+      status: "upcoming" as const,
+    }));
 
-    const withoutDup = trips.filter((trip) => trip.id !== draft.id);
-    return [asCard, ...withoutDup];
-  }, [trips, groupId, draft, hydrated]);
+    const draftIds = new Set(draftCards.map((t) => t.id));
+    const withoutDup = trips.filter((trip) => !draftIds.has(trip.id));
+    return [...draftCards, ...withoutDup];
+  }, [trips, groupId, draftsById, draftsForGroup, hydrated]);
 
   if (mergedTrips.length === 0) {
     return <GroupTripsEmpty addTripHref={addTripHref} />;

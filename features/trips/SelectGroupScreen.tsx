@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AuthBackButton,
@@ -8,11 +8,13 @@ import {
   useAuthSession,
 } from "@/features/auth";
 import { HomeProfileAvatarLink } from "@/features/home";
+import { useTripStore, useTrips, useTripsLoading } from "@/store";
 import { cn } from "@/lib/utils";
 import { SelectGroupCard } from "./SelectGroupCard";
 import {
   MOCK_SELECT_GROUPS,
   filterSelectGroups,
+  tripsToSelectGroupViews,
   type SelectGroupView,
 } from "./mockSelectGroups";
 
@@ -26,7 +28,7 @@ interface SelectGroupScreenProps {
 
 /**
  * Add-trip flow — “Who’s coming?” pick a group for this place.
- * Covers from public/tabr/home/images/card images (mock until API).
+ * Prefers real groups from the trip store; falls back to Figma mocks for preview.
  */
 export function SelectGroupScreen({
   groupId,
@@ -34,16 +36,35 @@ export function SelectGroupScreen({
 }: SelectGroupScreenProps) {
   const router = useRouter();
   const { user } = useAuthSession();
+  const trips = useTrips();
+  const tripsLoading = useTripsLoading();
+  const fetchTrips = useTripStore((s) => s.fetchTrips);
   const [query, setQuery] = useState("");
 
-  const groups = useMemo(
-    () => filterSelectGroups(MOCK_SELECT_GROUPS, query),
-    [query]
-  );
+  useEffect(() => {
+    if (!user?.onboardingComplete) return;
+    void fetchTrips(user);
+  }, [user, fetchTrips]);
+
+  const allGroups = useMemo(() => {
+    if (trips.length > 0) return tripsToSelectGroupViews(trips);
+    return MOCK_SELECT_GROUPS;
+  }, [trips]);
+
+  const groups = useMemo(() => {
+    const filtered = filterSelectGroups(allGroups, query);
+    // Keep the entry group first when present.
+    return [...filtered].sort((a, b) => {
+      if (a.id === groupId) return -1;
+      if (b.id === groupId) return 1;
+      return 0;
+    });
+  }, [allGroups, query, groupId]);
 
   const onSelect = (group: SelectGroupView) => {
+    // Path + query must use the chosen group so customise / outing stay aligned.
     router.push(
-      `/trips/${groupId}/trips/new/${placeId}/customise?group=${encodeURIComponent(group.id)}`
+      `/trips/${group.id}/trips/new/${placeId}/customise?group=${encodeURIComponent(group.id)}`
     );
   };
 
@@ -108,7 +129,11 @@ export function SelectGroupScreen({
       </h2>
 
       <ul className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-2">
-        {groups.length === 0 ? (
+        {tripsLoading && trips.length === 0 ? (
+          <li className="py-10 text-center text-[14px] text-[#716D7D]">
+            Loading groups…
+          </li>
+        ) : groups.length === 0 ? (
           <li className="py-10 text-center text-[14px] text-[#716D7D]">
             No groups match that search.
           </li>

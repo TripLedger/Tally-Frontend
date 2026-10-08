@@ -10,8 +10,14 @@ export function useLightHomeChrome() {
     pathname === "/trips/new" ||
     pathname === "/trips/new/cover" ||
     pathname === "/dashboard" ||
+    pathname === "/profile" ||
+    pathname === "/notifications" ||
+    pathname === "/explore" ||
+    pathname === "/balances" ||
+    pathname.startsWith("/balances/") ||
     /^\/trips\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new$/.test(pathname) ||
+    /^\/trips\/[^/]+\/trips\/new\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new\/[^/]+\/group$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new\/[^/]+\/customise$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+$/.test(pathname) ||

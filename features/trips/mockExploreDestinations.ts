@@ -111,6 +111,46 @@ export const MOCK_EXPLORE_DESTINATIONS: ExploreDestination[] = [
     description:
       "Infinity views, palm shade, and an easy day-to-night pace. Ideal for a crew reset by the water without leaving the city.",
   },
+  {
+    id: "nike-art-gallery",
+    name: "Nike Art Gallery",
+    area: "Lekki",
+    city: "Lagos",
+    rating: 4.7,
+    reviewCount: 128,
+    priceLabel: "~ N5,000/person",
+    category: "Culture",
+    imageSrc: CARD(5),
+    detailImageSrc: DETAIL_HERO,
+    description:
+      "Four floors of Nigerian art, textiles, and workshops. A vivid afternoon for the crew — photos, stories, and plenty to talk about after.",
+  },
+  {
+    id: "kalakuta-museum",
+    name: "Kalakuta Museum",
+    area: "Ikeja",
+    city: "Lagos",
+    rating: 4.6,
+    reviewCount: 84,
+    priceLabel: "~ N3,000/person",
+    category: "Culture",
+    imageSrc: CARD(3),
+    description:
+      "Fela’s former home turned museum — music history, memorabilia, and a rooftop view. Perfect for a culture-forward group outing.",
+  },
+  {
+    id: "lekki-conservation",
+    name: "Lekki Conservation Centre",
+    area: "Lekki",
+    city: "Lagos",
+    rating: 4.4,
+    reviewCount: 210,
+    priceLabel: "~ N2,500/person",
+    category: "Adventure",
+    imageSrc: CARD(1),
+    description:
+      "Canopy walkway, forest trails, and open air. An easy adventure day that still feels like an escape from the city.",
+  },
 ];
 
 export function getExploreDestinationById(

@@ -11,12 +11,14 @@ const focusRing =
 interface GroupCreatedOverlayProps {
   open: boolean;
   onInviteFriends: () => void;
+  onPlanTrip?: () => void;
   onClose?: () => void;
 }
 
 export function GroupCreatedOverlay({
   open,
   onInviteFriends,
+  onPlanTrip,
   onClose,
 }: GroupCreatedOverlayProps) {
   return (
@@ -49,6 +51,21 @@ export function GroupCreatedOverlay({
         >
           Invite friends
         </button>
+
+        {onPlanTrip ? (
+          <button
+            type="button"
+            onClick={onPlanTrip}
+            className={cn(
+              "mt-3 w-full text-[15px] font-medium text-[#8B5CF6]",
+              "transition-opacity active:opacity-80",
+              focusRing,
+              "rounded-sm py-2"
+            )}
+          >
+            Create a trip
+          </button>
+        ) : null}
       </div>
     </LightHomeOverlay>
   );

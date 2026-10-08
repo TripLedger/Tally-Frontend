@@ -1,11 +1,9 @@
-import { formatCurrency } from "@/lib/currency";
-import { getCategoryConfig } from "@/features/expenses/categoryConfig";
 import type {
-  ExpenseLoggedPayload,
   MemberJoinedPayload,
   Notification,
-  SettlementConfirmedPayload,
 } from "@/types";
+
+export type NotificationGroupKey = "today" | "yesterday" | "this_week";
 
 /** Local-calendar day key using the user's timezone (not UTC). */
 export function localDayKey(iso: string, now = new Date()): string {
@@ -23,31 +21,51 @@ export function isLocalToday(iso: string, now = new Date()): boolean {
   return localDayKey(iso) === localDayKey(now.toISOString());
 }
 
+export function isLocalYesterday(iso: string, now = new Date()): boolean {
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  return localDayKey(iso) === localDayKey(yesterday.toISOString());
+}
+
+export function notificationGroup(
+  iso: string,
+  now = new Date()
+): NotificationGroupKey {
+  if (isLocalToday(iso, now)) return "today";
+  if (isLocalYesterday(iso, now)) return "yesterday";
+  return "this_week";
+}
+
+function formatClock(date: Date): string {
+  return date
+    .toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(/\s/g, "")
+    .toLowerCase();
+}
+
+/** Subtitle under the title — Figma uses time-of-day copy. */
 export function formatNotificationTime(
   iso: string,
   now = new Date()
 ): string {
   const date = new Date(iso);
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHr = Math.floor(diffMs / 3600000);
+  const clock = formatClock(date);
 
-  if (diffMin < 1) return "Just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHr < 24 && isLocalToday(iso, now)) return `${diffHr}h ago`;
-
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  if (localDayKey(iso) === localDayKey(yesterday.toISOString())) {
-    return "Yesterday";
+  if (isLocalToday(iso, now)) {
+    const hour = date.getHours();
+    if (hour < 12) return `This morning at ${clock}`;
+    if (hour < 17) return `This afternoon at ${clock}`;
+    return `This evening at ${clock}`;
   }
 
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+  return clock;
 }
 
+/** Short headline — paragraph small/medium in the list. */
 export function formatNotificationMessage(n: Notification): string {
   switch (n.type) {
     case "member_joined": {
@@ -55,24 +73,12 @@ export function formatNotificationMessage(n: Notification): string {
       if (payload.recipientRole === "organizer") {
         return `${n.actorName} joined your trip`;
       }
-      return `${n.actorName} joined the trip via invite link`;
+      return `${n.actorName} joined ${n.tripName}`;
     }
-    case "expense_logged": {
-      const payload = n.payload as ExpenseLoggedPayload;
-      const amount = formatCurrency(payload.amount, payload.currency);
-      const detail =
-        payload.note?.trim() ||
-        getCategoryConfig(payload.category)?.label ||
-        null;
-      return detail
-        ? `${n.actorName} logged a ${amount} expense for ${detail}`
-        : `${n.actorName} logged a ${amount} expense in ${n.tripName}`;
-    }
-    case "settlement_confirmed": {
-      const payload = n.payload as SettlementConfirmedPayload;
-      const amount = formatCurrency(payload.amount, payload.currency);
-      return `${n.actorName} confirmed your ${amount} settlement`;
-    }
+    case "expense_logged":
+      return `${n.actorName} added an expense`;
+    case "settlement_confirmed":
+      return `${n.actorName} settled up with you`;
     default:
       return "New activity";
   }
@@ -83,7 +89,7 @@ export function notificationHref(n: Notification): string {
     case "settlement_confirmed":
       return `/trips/${n.tripId}/balances`;
     case "expense_logged":
-      return `/trips/${n.tripId}#expenses`;
+      return `/trips/${n.tripId}?tab=trips`;
     case "member_joined":
     default:
       return `/trips/${n.tripId}`;

@@ -43,12 +43,23 @@ export function UploadGroupCoverForm() {
   const addToast = useAddToast();
 
   const inputRef = useRef<HTMLInputElement>(null);
-  /** blob: URL from gallery pick, or /tabr/... path from preset — or null. */
+  /** Preview URL: blob: for gallery pick, /tabr/... for preset, or data URL. */
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+  /** Gallery file kept so we can persist a durable data URL (blob: dies on refresh). */
+  const selectedFileRef = useRef<File | null>(null);
   /** Whether the current selection is a blob (needs revoke on cleanup). */
   const selectedIsBlob = useRef(false);
   const [submitting, setSubmitting] = useState(false);
   const [ready, setReady] = useState(false);
+
+  const fileToDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+      reader.readAsDataURL(file);
+    });
+
 
   useEffect(() => {
     const existing = hydrateDraft();
@@ -83,12 +94,14 @@ export function UploadGroupCoverForm() {
 
     if (selectedIsBlob.current && selectedUrl) URL.revokeObjectURL(selectedUrl);
     selectedIsBlob.current = true;
+    selectedFileRef.current = file;
     setSelectedUrl(URL.createObjectURL(file));
   };
 
   const selectPreset = (src: string) => {
     if (selectedIsBlob.current && selectedUrl) URL.revokeObjectURL(selectedUrl);
     selectedIsBlob.current = false;
+    selectedFileRef.current = null;
     setSelectedUrl(src);
   };
 
@@ -105,6 +118,11 @@ export function UploadGroupCoverForm() {
 
     setSubmitting(true);
     try {
+      let coverImageUrl = selectedUrl ?? undefined;
+      if (selectedFileRef.current) {
+        coverImageUrl = await fileToDataUrl(selectedFileRef.current);
+      }
+
       const trip = await createTrip(
         {
           name: activeDraft.name,
@@ -112,7 +130,7 @@ export function UploadGroupCoverForm() {
           startDate: "",
           endDate: "",
           baseCurrency: activeDraft.baseCurrency,
-          coverImageUrl: selectedUrl ?? undefined,
+          coverImageUrl,
         },
         user
       );

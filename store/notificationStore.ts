@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import {
+  clearNotificationsForUser,
+  deleteNotification,
   fetchNotificationsForUser,
   markNotificationsRead,
 } from "@/lib/db/notifications";
@@ -13,6 +15,8 @@ interface NotificationState {
   fetchNotifications: (userId: string) => Promise<void>;
   markAllRead: (userId: string) => Promise<void>;
   markOneRead: (userId: string, notifId: string) => Promise<void>;
+  deleteOne: (userId: string, notifId: string) => Promise<void>;
+  clearAll: (userId: string) => Promise<void>;
   clearNotificationState: () => void;
 }
 
@@ -77,6 +81,44 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       await markNotificationsRead(userId, [notifId]);
     } catch (error) {
       console.error("Failed to mark notification read:", error);
+      set({
+        notifications: prev,
+        unreadCount: computeUnread(prev),
+      });
+    }
+  },
+
+  deleteOne: async (userId, notifId) => {
+    const prev = get().notifications;
+    if (!prev.some((n) => n.id === notifId)) return;
+
+    const optimistic = prev.filter((n) => n.id !== notifId);
+    set({
+      notifications: optimistic,
+      unreadCount: computeUnread(optimistic),
+    });
+
+    try {
+      await deleteNotification(userId, notifId);
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+      set({
+        notifications: prev,
+        unreadCount: computeUnread(prev),
+      });
+    }
+  },
+
+  clearAll: async (userId) => {
+    const prev = get().notifications;
+    if (prev.length === 0) return;
+
+    set({ notifications: [], unreadCount: 0 });
+
+    try {
+      await clearNotificationsForUser(userId);
+    } catch (error) {
+      console.error("Failed to clear notifications:", error);
       set({
         notifications: prev,
         unreadCount: computeUnread(prev),

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Spinner } from "@/components/ui/Spinner";
 import { ShareWithFriendsOverlay } from "@/features/home";
 import { GroupDetailHero } from "./GroupDetailHero";
+import { GroupDetailSheet, type GroupDetailSheetSnap } from "./GroupDetailSheet";
 import { GroupDetailTabs, type GroupDetailTab } from "./GroupDetailTabs";
 import { GroupFriendsPanel } from "./GroupFriendsPanel";
 import { GroupTripsPanel } from "./GroupTripsPanel";
@@ -16,7 +17,14 @@ import {
   isPreviewGroupTripId,
   membersToGroupViews,
 } from "./mockGroupFriendsData";
-import { useAddToast, useTripMembers, useTripStore, useTrips, useTripsLoading } from "@/store";
+import {
+  useAddToast,
+  useCreatedTripDraftStore,
+  useTripMembers,
+  useTripStore,
+  useTrips,
+  useTripsLoading,
+} from "@/store";
 import type { Trip } from "@/types";
 
 interface GroupDetailScreenProps {
@@ -29,10 +37,14 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
   const trips = useTrips();
   const storeMembers = useTripMembers();
   const isLoading = useTripsLoading();
+  const draftsById = useCreatedTripDraftStore((s) => s.draftsById);
+  const hydrateDraft = useCreatedTripDraftStore((s) => s.hydrateDraft);
+  const draftsForGroup = useCreatedTripDraftStore((s) => s.draftsForGroup);
 
   const initialTab =
     searchParams.get("tab") === "trips" ? "trips" : "friends";
   const [activeTab, setActiveTab] = useState<GroupDetailTab>(initialTab);
+  const [sheetSnap, setSheetSnap] = useState<GroupDetailSheetSnap>("mid");
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -42,6 +54,10 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
     if (isPreview) return;
     void useTripStore.getState().fetchTripDetail(tripId);
   }, [tripId, isPreview]);
+
+  useEffect(() => {
+    hydrateDraft();
+  }, [hydrateDraft]);
 
   const trip: Trip | null = useMemo(() => {
     if (isPreview) return getPreviewGroupTrip(tripId);
@@ -55,9 +71,14 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
     return membersToGroupViews(storeMembers);
   }, [isPreview, tripId, storeMembers]);
 
+  const outingCount = useMemo(
+    () => draftsForGroup(tripId).length,
+    [draftsForGroup, tripId, draftsById]
+  );
+
   const tripCount = isPreview
     ? getPreviewGroupTripCount(tripId)
-    : 1;
+    : outingCount;
 
   const groupTrips = isPreview ? getPreviewGroupTrips(tripId) : [];
 
@@ -86,11 +107,12 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--new-bg,#FAFAFA)]">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--new-bg,#FAFAFA)]">
         <GroupDetailHero
           groupName={trip.name}
           friendCount={memberViews.length}
           tripCount={tripCount}
+          sheetExpanded={sheetSnap === "full"}
           menuOpen={menuOpen}
           onToggleMenu={() => setMenuOpen((open) => !open)}
           onCloseMenu={() => setMenuOpen(false)}
@@ -113,16 +135,22 @@ export function GroupDetailScreen({ tripId }: GroupDetailScreenProps) {
           }}
         />
 
-        <GroupDetailTabs active={activeTab} onChange={setActiveTab} />
-
-        {activeTab === "friends" ? (
-          <GroupFriendsPanel
-            members={memberViews}
-            onInviteFriends={openInvite}
-          />
-        ) : (
-          <GroupTripsPanel groupId={tripId} trips={groupTrips} />
-        )}
+        <GroupDetailSheet
+          snap={sheetSnap}
+          onSnapChange={setSheetSnap}
+          header={
+            <GroupDetailTabs active={activeTab} onChange={setActiveTab} />
+          }
+        >
+          {activeTab === "friends" ? (
+            <GroupFriendsPanel
+              members={memberViews}
+              onInviteFriends={openInvite}
+            />
+          ) : (
+            <GroupTripsPanel groupId={tripId} trips={groupTrips} />
+          )}
+        </GroupDetailSheet>
       </div>
 
       <ShareWithFriendsOverlay

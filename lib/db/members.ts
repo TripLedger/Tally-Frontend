@@ -1,11 +1,44 @@
 import { isDynamoConfigured } from "@/lib/dynamo-config";
 import type { TripMember } from "@/types";
+import {
+  readLocalJson,
+  removeLocalJson,
+  writeLocalJson,
+} from "@/lib/db/local-persist";
+
+const MEMBERS_STORAGE_KEY = "tabr_mock_members_v1";
 
 function memberMemoryKey(tripId: string, userId: string) {
   return `${tripId}#${userId}`;
 }
 
 const memoryMembers = new Map<string, TripMember>();
+let membersHydrated = false;
+
+function hydrateMembersFromLocal(): void {
+  if (membersHydrated || typeof window === "undefined") return;
+  membersHydrated = true;
+
+  const saved = readLocalJson<TripMember[]>(MEMBERS_STORAGE_KEY);
+  if (!Array.isArray(saved)) return;
+  for (const member of saved) {
+    if (member?.tripId && member?.userId) {
+      memoryMembers.set(memberMemoryKey(member.tripId, member.userId), member);
+    }
+  }
+}
+
+function persistMembersToLocal(): void {
+  if (typeof window === "undefined") return;
+  writeLocalJson(MEMBERS_STORAGE_KEY, [...memoryMembers.values()]);
+}
+
+/** Clear persisted + in-memory members (e.g. on sign out). */
+export function clearPersistedMembers(): void {
+  memoryMembers.clear();
+  membersHydrated = true;
+  removeLocalJson(MEMBERS_STORAGE_KEY);
+}
 
 function memberPk(tripId: string, userId: string) {
   return `MEMBER#${tripId}#${userId}`;
@@ -33,6 +66,7 @@ export function sortTripMembers(members: TripMember[]): TripMember[] {
 }
 
 function memoryFetchMembers(tripId: string): TripMember[] {
+  hydrateMembersFromLocal();
   const members = [...memoryMembers.values()].filter((m) => m.tripId === tripId);
   return sortTripMembers(members);
 }
@@ -41,11 +75,14 @@ function memoryGetMember(
   tripId: string,
   userId: string
 ): TripMember | null {
+  hydrateMembersFromLocal();
   return memoryMembers.get(memberMemoryKey(tripId, userId)) ?? null;
 }
 
 function memoryInsertMember(member: TripMember): void {
+  hydrateMembersFromLocal();
   memoryMembers.set(memberMemoryKey(member.tripId, member.userId), member);
+  persistMembersToLocal();
 }
 
 async function fetchMembersDynamo(tripId: string): Promise<TripMember[]> {

@@ -16,7 +16,12 @@ import {
 } from "@/features/auth";
 import { HomeProfileAvatarLink } from "@/features/home";
 import { GROUP_DETAIL_ICONS } from "@/features/groups/groupDetailStyles";
-import { useAddToast, useCreatedTripDraftStore } from "@/store";
+import {
+  useAddToast,
+  useCreatedTripDraftStore,
+  useTripStore,
+  useTrips,
+} from "@/store";
 import { cn } from "@/lib/utils";
 import {
   customiseTripSchema,
@@ -28,6 +33,7 @@ import {
 } from "./mockExploreDestinations";
 import {
   MOCK_SELECT_GROUPS,
+  tripsToSelectGroupViews,
   type SelectGroupView,
 } from "./mockSelectGroups";
 import { TripDatePicker, formatCustomiseTripDate } from "./TripDatePicker";
@@ -54,11 +60,13 @@ function defaultTripName(placeName: string): string {
 }
 
 function GroupPickerMenu({
+  groups,
   selectedId,
   onSelect,
   onClose,
   containerRef,
 }: {
+  groups: SelectGroupView[];
   selectedId: string;
   onSelect: (id: string) => void;
   onClose: () => void;
@@ -87,7 +95,7 @@ function GroupPickerMenu({
         "shadow-[0_8px_24px_rgba(21,19,26,0.08)]"
       )}
     >
-      {MOCK_SELECT_GROUPS.map((group) => {
+      {groups.map((group) => {
         const selected = group.id === selectedId;
         return (
           <li key={group.id}>
@@ -132,6 +140,8 @@ export function CustomiseTripScreen({
   const { user } = useAuthSession();
   const addToast = useAddToast();
   const setDraft = useCreatedTripDraftStore((s) => s.setDraft);
+  const trips = useTrips();
+  const fetchTrips = useTripStore((s) => s.fetchTrips);
   const [groupOpen, setGroupOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
@@ -139,10 +149,25 @@ export function CustomiseTripScreen({
   const dateFieldRef = useRef<HTMLDivElement>(null);
   const timeFieldRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!user?.onboardingComplete) return;
+    void fetchTrips(user);
+  }, [user, fetchTrips]);
+
+  const selectableGroups = useMemo(() => {
+    if (trips.length > 0) return tripsToSelectGroupViews(trips);
+    return MOCK_SELECT_GROUPS;
+  }, [trips]);
+
   const place = getExploreDestinationById(placeId);
-  const initialGroup =
-    MOCK_SELECT_GROUPS.find((g) => g.id === selectedGroupId) ??
-    MOCK_SELECT_GROUPS[0];
+  const initialGroup = useMemo(() => {
+    return (
+      selectableGroups.find((g) => g.id === selectedGroupId) ??
+      selectableGroups.find((g) => g.id === entryGroupId) ??
+      selectableGroups[0] ??
+      MOCK_SELECT_GROUPS[0]
+    );
+  }, [selectableGroups, selectedGroupId, entryGroupId]);
 
   const {
     register,
@@ -156,7 +181,7 @@ export function CustomiseTripScreen({
     mode: "onChange",
     defaultValues: {
       name: defaultTripName(place?.name ?? "Trip"),
-      groupId: initialGroup?.id ?? "",
+      groupId: initialGroup.id,
       location: place?.name ?? "",
       date: "",
       time: "10:30",
@@ -167,8 +192,8 @@ export function CustomiseTripScreen({
   const date = watch("date");
   const time = watch("time");
   const selectedGroup: SelectGroupView | undefined = useMemo(
-    () => MOCK_SELECT_GROUPS.find((g) => g.id === groupId),
-    [groupId]
+    () => selectableGroups.find((g) => g.id === groupId) ?? initialGroup,
+    [selectableGroups, groupId, initialGroup]
   );
 
   useEffect(() => {
@@ -176,14 +201,22 @@ export function CustomiseTripScreen({
     setValue("location", place.name, { shouldValidate: true });
   }, [place, setValue]);
 
+  useEffect(() => {
+    if (!selectedGroupId) return;
+    if (selectableGroups.some((g) => g.id === selectedGroupId)) {
+      setValue("groupId", selectedGroupId, { shouldValidate: true });
+    }
+  }, [selectedGroupId, selectableGroups, setValue]);
+
   const onSubmit = (data: CustomiseTripFormData) => {
     if (!user) {
       addToast({ message: "You need to be signed in.", variant: "error" });
       return;
     }
 
+    const targetGroupId = data.groupId || entryGroupId;
     const group =
-      MOCK_SELECT_GROUPS.find((g) => g.id === data.groupId) ?? initialGroup;
+      selectableGroups.find((g) => g.id === targetGroupId) ?? initialGroup;
     const outingId = `outing-${Date.now()}`;
     const placeImage = place
       ? getExploreDestinationDetailImage(place)
@@ -192,7 +225,7 @@ export function CustomiseTripScreen({
     setDraft({
       id: outingId,
       name: data.name.trim(),
-      groupId: data.groupId,
+      groupId: targetGroupId,
       groupName: group?.name ?? "Your group",
       friendCount: group?.friendCount ?? 1,
       avatarSrcs: group?.avatarSrcs ?? [],
@@ -209,12 +242,12 @@ export function CustomiseTripScreen({
       address: getPlaceAddress(placeId, data.location.trim()),
     });
 
-    // After create, land on the group's Trips tab so the new card is visible.
-  // View details from the success modal still opens outing details.
-  router.push(`/trips/${data.groupId}/outings/${outingId}?created=1`);
-};
+    // Outing details + trip-created overlay (same group id as draft).
+    router.push(`/trips/${targetGroupId}/outings/${outingId}?created=1`);
+  };
 
-  const backHref = `/trips/${entryGroupId}/trips/new/${placeId}/group`;
+  // Primary flow skips “Who’s coming?” — back goes to location details.
+  const backHref = `/trips/${entryGroupId}/trips/new/${placeId}`;
 
   return (
     <AuthStackScreen>
@@ -301,6 +334,7 @@ export function CustomiseTripScreen({
 
               {groupOpen ? (
                 <GroupPickerMenu
+                  groups={selectableGroups}
                   selectedId={groupId}
                   containerRef={groupFieldRef}
                   onSelect={(id) => {

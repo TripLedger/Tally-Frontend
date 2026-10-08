@@ -84,3 +84,18 @@ export async function markNotificationsRead(
     )
   );
 }
+
+export async function deleteNotification(
+  userId: string,
+  notificationId: string
+): Promise<void> {
+  const existing = memoryList(userId);
+  memoryByUser.set(
+    userId,
+    existing.filter((n) => n.id !== notificationId)
+  );
+}
+
+export async function clearNotificationsForUser(userId: string): Promise<void> {
+  memoryByUser.set(userId, []);
+}

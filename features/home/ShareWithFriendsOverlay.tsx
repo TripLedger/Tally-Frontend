@@ -247,7 +247,7 @@ export function ShareWithFriendsOverlay({
         ) : null}
 
         {contacts.length > 0 ? (
-          <ul className="mt-4 flex gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <ul className="mt-4 flex gap-4 overflow-x-auto pb-1">
             {contacts.map((contact) => {
               const selected = selectedIds.includes(contact.id);
               return (
@@ -318,7 +318,7 @@ export function ShareWithFriendsOverlay({
         >
           Share via
         </h3>
-        <ul className="mt-4 flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul className="mt-4 flex gap-3 overflow-x-auto pb-1">
           {SHARE_APPS.map((app) => {
             const Icon = app.icon;
             return (

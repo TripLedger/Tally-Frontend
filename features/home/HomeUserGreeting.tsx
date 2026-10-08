@@ -12,7 +12,7 @@ export function HomeUserGreeting({
   displayName,
   className,
 }: HomeUserGreetingProps) {
-  const name = displayName.trim() || "there";
+  const name = displayName.trim() || "Jane Doe";
 
   return (
     <p className={cn("text-tabr-ink-paragraph-mini min-w-0 truncate", className)}>

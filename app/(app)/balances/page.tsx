@@ -171,7 +171,7 @@ export default function GlobalBalancesPage() {
         }}
       />
 
-      <header className="relative z-10 px-6 pb-2 pt-4 safe-top">
+      <header className="relative z-10 px-6 pb-2 pt-[calc(max(var(--safe-top),47px)+1rem)]">
         <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-[#475569]">
           Overview
         </p>

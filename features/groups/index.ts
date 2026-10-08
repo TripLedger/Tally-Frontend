@@ -1,5 +1,6 @@
 export { GroupDetailScreen } from "./GroupDetailScreen";
 export { GroupDetailHero } from "./GroupDetailHero";
+export { GroupDetailSheet } from "./GroupDetailSheet";
 export { GroupDetailTabs } from "./GroupDetailTabs";
 export { GroupFriendsPanel } from "./GroupFriendsPanel";
 export { GroupFriendRow } from "./GroupFriendRow";
