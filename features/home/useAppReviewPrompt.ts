@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  markAppReviewCompleted,
   markAppReviewDismissed,
   markAppReviewPromptShown,
   shouldPromptAppReview,
@@ -38,10 +37,6 @@ export function useAppReviewPrompt(enabled: boolean) {
     open,
     dismiss: () => {
       if (!forceReview) markAppReviewDismissed();
-      setOpen(false);
-    },
-    complete: (rating: number) => {
-      if (!forceReview) markAppReviewCompleted(rating);
       setOpen(false);
     },
   };

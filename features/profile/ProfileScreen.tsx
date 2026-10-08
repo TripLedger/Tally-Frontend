@@ -358,7 +358,7 @@ export function ProfileScreen() {
           />
           <SettingsRow
             label="Rate the app"
-            onClick={() => comingSoon("Rate the app is coming soon.")}
+            onClick={() => router.push("/profile/review")}
             showDivider
           />
           <SettingsRow

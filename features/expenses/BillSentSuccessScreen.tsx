@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { authStackCtaClass } from "@/features/auth";
 import {
-  markAppReviewCompleted,
   markAppReviewDismissed,
   markAppReviewPromptShown,
   shouldPromptAppReview,
@@ -78,10 +77,9 @@ export function BillSentSuccessScreen({ groupId }: BillSentSuccessScreenProps) {
           markAppReviewDismissed();
           setReviewOpen(false);
         }}
-        onTakeSurvey={(rating) => {
-          markAppReviewCompleted(rating);
+        onTakeSurvey={() => {
           setReviewOpen(false);
-          goToGroup();
+          router.push("/profile/review");
         }}
       />
     </>

@@ -121,13 +121,9 @@ export function ExistingUserHome({
       <AppReviewModal
         open={review.open}
         onClose={review.dismiss}
-        onTakeSurvey={(rating) => {
-          review.complete(rating);
-          addToast({
-            message: "Thanks for your feedback!",
-            variant: "success",
-            duration: 2500,
-          });
+        onTakeSurvey={() => {
+          review.dismiss();
+          router.push("/profile/review");
         }}
       />
     </>

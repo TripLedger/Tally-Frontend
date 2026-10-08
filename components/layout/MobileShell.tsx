@@ -16,6 +16,9 @@ function isImmersiveRoute(pathname: string): boolean {
   return (
     pathname === "/trips/new" ||
     pathname === "/trips/new/cover" ||
+    pathname === "/profile/review" ||
+    pathname === "/profile/review/survey" ||
+    pathname === "/profile/review/survey/complete" ||
     /^\/trips\/[^/]+\/trips\/new(\/[^/]+)?(\/(group|customise))?$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+\/expenses(\/(scan|new|split(\/(equal|items|success))?))?$/.test(

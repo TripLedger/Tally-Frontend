@@ -58,9 +58,10 @@ export function LightHomeOverlay({
         className={cn(
           "absolute inset-0",
           isCenter
-            ? /* Figma review: dim only — blur almost invisible */
+            ? /* Prompt popup: soft dim, blur almost invisible */
               "bg-[#15131A]/30 backdrop-blur-[0.5px]"
-            : "bg-[#15131A]/40 backdrop-blur-[2px]"
+            : /* Bottom sheets: dim with barely-there blur (Figma thank-you) */
+              "bg-[#15131A]/40 backdrop-blur-[1px]"
         )}
         onClick={dismissOnBackdrop ? onClose : undefined}
         aria-hidden

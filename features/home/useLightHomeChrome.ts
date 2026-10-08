@@ -11,6 +11,9 @@ export function useLightHomeChrome() {
     pathname === "/trips/new/cover" ||
     pathname === "/dashboard" ||
     pathname === "/profile" ||
+    pathname === "/profile/review" ||
+    pathname === "/profile/review/survey" ||
+    pathname === "/profile/review/survey/complete" ||
     pathname === "/notifications" ||
     pathname === "/explore" ||
     pathname === "/balances" ||
