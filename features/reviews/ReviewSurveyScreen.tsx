@@ -13,7 +13,7 @@ import {
 } from "./surveyQuestions";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 function isAnswerComplete(
   question: SurveyQuestion,
@@ -107,7 +107,7 @@ export function ReviewSurveyScreen() {
           aria-label={`Survey step ${step} of ${SURVEY_TOTAL_STEPS}`}
         >
           <div
-            className="h-full rounded-full bg-[#8B5CF6] transition-[width] duration-300 ease-out"
+            className="h-full rounded-full bg-[#5921B5] transition-[width] duration-300 ease-out"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -170,7 +170,7 @@ export function ReviewSurveyScreen() {
                 "px-4 py-3.5 text-[15px] font-normal leading-6 text-[#15131A]",
                 "placeholder:text-[#AEAEB2]",
                 "outline-none transition-shadow",
-                "focus:border-[#8B5CF6] focus:ring-2 focus:ring-[#8B5CF6]/20",
+                "focus:border-[#5921B5] focus:ring-2 focus:ring-[#5921B5]/20",
                 focusRing
               )}
             />
@@ -270,7 +270,7 @@ function ChoiceList({
                 "flex w-full items-start gap-3 rounded-[16px] border bg-white px-4 py-4 text-left",
                 "transition-colors duration-150",
                 active
-                  ? "border-[#C5ADFA] bg-[#FBF9FF]"
+                  ? "border-[#B39DD9] bg-[#F7F4FC]"
                   : "border-[#E5E5EA] hover:border-[#D4D4D8]",
                 focusRing
               )}
@@ -278,12 +278,12 @@ function ChoiceList({
               <span
                 className={cn(
                   "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
-                  active ? "border-[#8B5CF6]" : "border-[#C7C7CC]"
+                  active ? "border-[#5921B5]" : "border-[#C7C7CC]"
                 )}
                 aria-hidden
               >
                 {active ? (
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#8B5CF6]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#5921B5]" />
                 ) : null}
               </span>
               <span className="min-w-0 flex-1 text-[15px] font-normal leading-5 text-[#15131A]">

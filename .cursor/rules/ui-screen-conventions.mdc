@@ -5,6 +5,15 @@ alwaysApply: true
 
 # Screen layout conventions
 
+## Phone frame is global — never lock Figma canvas sizes
+
+Figma frames are often **390×844**. That is artboard size, **not** CSS.
+
+- Use the shared `.phone-shell` / `.mobile-frame` column (full device width, `min-height: 100dvh` / `100svh`).
+- Do **not** set `min-h-[844px]`, `w-[390px]`, or `max-w-[390px]` on screens.
+- On desktop/tablet the shell caps at `--phone-max-width` (430px) and centers.
+- Prefer `overflow-x-clip` over page-level `overflow-hidden` so tall content can still scroll.
+
 ## Headers never sit under the status bar
 
 Figma frames include a ~47px iOS status bar. Do not start headers, back arrows, or greetings at `pt-4` / `safe-top` only — on a live phone the OS chrome covers that.
@@ -28,7 +37,7 @@ Primary CTAs are one size everywhere: **52px height, full width, pill (`rounded-
 Reuse — do not restyle per screen:
 
 - `authControlBoxClass` — shared 52px pill box
-- `authStackCtaClass(enabled)` — purple CTA (`#8B5CF6`)
-- `authPrimaryBtnClass(enabled)` — same box, `#9367F9`
+- `authStackCtaClass(enabled)` — primary CTA (`var(--primary-500, #5921B5)`)
+- `authPrimaryBtnClass(enabled)` — same box, `var(--primary-500, #5921B5)`
 
 If the Figma button matches this control (Create group, Continue, Get started, etc.), import those helpers. Do not invent `h-12` / `sm:h-[52px]` variants.

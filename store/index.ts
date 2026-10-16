@@ -94,3 +94,11 @@ export {
   useActiveOnboardingSlide,
   useIntroCompleted,
 } from "./onboardingStore";
+
+export {
+  useLocaleStore,
+  useLocale,
+  useMessages,
+  useSetLocale,
+  useT,
+} from "./localeStore";

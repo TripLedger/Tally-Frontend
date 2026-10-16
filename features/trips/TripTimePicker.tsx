@@ -153,7 +153,7 @@ export function TripTimePicker({
                     "flex h-9 items-center justify-center rounded-[10px] text-[14px]",
                     "transition-colors",
                     active
-                      ? "bg-[#8B5CF6] font-semibold text-white"
+                      ? "bg-[#5921B5] font-semibold text-white"
                       : "bg-[#F5F5F5] text-[#15131A] hover:bg-[#EFEFEF]"
                   )}
                 >
@@ -180,7 +180,7 @@ export function TripTimePicker({
                     "flex h-9 items-center justify-center rounded-[10px] text-[14px]",
                     "transition-colors",
                     active
-                      ? "bg-[#8B5CF6] font-semibold text-white"
+                      ? "bg-[#5921B5] font-semibold text-white"
                       : "bg-[#F5F5F5] text-[#15131A] hover:bg-[#EFEFEF]"
                   )}
                 >
@@ -197,7 +197,7 @@ export function TripTimePicker({
         onClick={onClose}
         className={cn(
           "mt-3 flex h-11 w-full items-center justify-center rounded-full",
-          "bg-[#8B5CF6] text-[15px] font-semibold text-white",
+          "bg-[#5921B5] text-[15px] font-semibold text-white",
           "transition-transform active:scale-[0.98]"
         )}
       >

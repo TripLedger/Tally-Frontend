@@ -1,15 +1,13 @@
 import type { ReactNode } from "react";
 
 /**
- * Auth route shell — full-width on mobile; centered 430px column on large screens.
- * Individual screens own light/dark backgrounds.
+ * Auth phone column — same global `.mobile-frame` / `.phone-shell` as the app.
+ * Full-bleed on phones; capped + centered from tablet up. Screens paint their own bg.
  */
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-dvh w-full bg-white lg:flex lg:justify-center lg:bg-[#050508]">
-      <div className="min-h-dvh w-full lg:max-w-[430px] lg:bg-white">
-        {children}
-      </div>
+    <div className="min-h-dvh w-full bg-[#221C2B] md:bg-[#050508]">
+      <div className="phone-shell mobile-frame mobile-frame-auth">{children}</div>
     </div>
   );
 }

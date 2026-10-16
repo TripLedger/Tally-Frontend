@@ -9,6 +9,7 @@ import {
   AuthBackButton,
   AuthBody,
   AuthField,
+  AuthLogo,
   AuthPasswordInput,
   AuthPrimaryButton,
   AuthStackHeader,
@@ -61,6 +62,7 @@ export function ResetPasswordForm() {
   return (
     <AuthStackScreen>
       <AuthBackButton href="/forgot-password/otp" />
+      <AuthLogo />
       <AuthStackHeader
         title="Create new password"
         subtitle="Choose a new password"

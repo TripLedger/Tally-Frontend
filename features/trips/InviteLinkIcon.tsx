@@ -19,7 +19,7 @@ export function InviteLinkIcon({ className }: { className?: string }) {
           y2="8"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#7C3AED" />
+          <stop stopColor="#5921B5" />
           <stop offset="1" stopColor="#2563EB" />
         </linearGradient>
       </defs>

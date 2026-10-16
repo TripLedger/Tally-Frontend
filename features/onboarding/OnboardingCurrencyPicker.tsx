@@ -114,7 +114,7 @@ export function OnboardingCurrencyPicker({
             className={cn(
               "box-border h-[52px] w-full rounded-2xl border border-[#E0E0E0] bg-white",
               "pl-10 pr-4 text-[16px] text-[#0A0A0A] placeholder:text-[#C7C7CC]",
-              "focus:border-[#9367F9] focus:outline-none focus:ring-2 focus:ring-[#9367F9]/20"
+              "focus:border-[#5921B5] focus:outline-none focus:ring-2 focus:ring-[#5921B5]/20"
             )}
           />
         </div>

@@ -18,8 +18,8 @@ const config: Config = {
           surface: "#120D22",
           card: "#1A1330",
           border: "#2D2250",
-          primary: "#9367F9",
-          "primary-hover": "#8254F0",
+          primary: "#5921B5",
+          "primary-hover": "#4A1C96",
           text: "#F1EEF9",
           muted: "#8B7FB8",
           faint: "#4A4068",
@@ -32,7 +32,7 @@ const config: Config = {
           elevated: "#1C1C27",
         },
         accent: {
-          violet: "#7C3AED",
+          violet: "#5921B5",
           cobalt: "#2563EB",
         },
         semantic: {
@@ -56,6 +56,12 @@ const config: Config = {
           "Georgia",
           "serif",
         ],
+        bricolage: [
+          "var(--font-bricolage)",
+          "Bricolage Grotesque",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       borderRadius: {
         card: "16px",
@@ -71,13 +77,13 @@ const config: Config = {
         slow: "400ms",
       },
       maxWidth: {
-        mobile: "430px",
+        mobile: "var(--phone-max-width, 430px)",
       },
       backgroundImage: {
-        "accent-gradient": "linear-gradient(135deg, #7C3AED 0%, #2563EB 100%)",
+        "accent-gradient": "linear-gradient(135deg, #5921B5 0%, #2563EB 100%)",
       },
       boxShadow: {
-        glow: "0 0 24px rgba(124, 58, 237, 0.35)",
+        glow: "0 0 24px rgba(89, 33, 181, 0.35)",
         "float-nav": "0 -4px 24px rgba(0, 0, 0, 0.4)",
       },
     },

@@ -58,7 +58,7 @@ function CachedRateIndicator() {
       }}
       className={cn(
         "-my-1.5 -ml-1.5 -mr-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
       )}
     >
       <History className="h-3 w-3 text-[#94A3B8]" strokeWidth={2} />
@@ -86,7 +86,7 @@ export function ExpenseRow({
         "shadow-[inset_0_1px_0_#ffffff0c,0_1px_0_#ffffff06]",
         "transition-all duration-fast ease-tally",
         "hover:bg-[#1C1C27] active:scale-[0.985] active:bg-[#1C1C27]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]",
         isEntering && "animate-expense-row-enter"
       )}
     >

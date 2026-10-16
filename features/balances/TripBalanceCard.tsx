@@ -83,9 +83,9 @@ export function TripBalanceCard({
         "block w-full rounded-[20px] border border-[#ffffff0f] bg-[#13131A] p-5 text-left",
         "shadow-[inset_0_1px_0_#ffffff0a]",
         "transition-all duration-fast ease-tally",
-        "active:scale-[0.985] active:border-[#7C3AED60] active:bg-[#1C1C27]",
-        "hover:border-[#7C3AED60] hover:bg-[#1C1C27]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]",
+        "active:scale-[0.985] active:border-[#5921B560] active:bg-[#1C1C27]",
+        "hover:border-[#5921B560] hover:bg-[#1C1C27]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]",
         className
       )}
     >
@@ -102,7 +102,7 @@ export function TripBalanceCard({
       <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-normal">
         <span className="inline-flex min-w-0 items-center gap-1.5 text-[#94A3B8]">
           <MapPin
-            className="h-[13px] w-[13px] shrink-0 text-[#7C3AED]"
+            className="h-[13px] w-[13px] shrink-0 text-[#5921B5]"
             strokeWidth={2}
           />
           <span className="truncate">{trip.destination}</span>
@@ -127,8 +127,8 @@ export function TripBalanceCard({
         {unsettledCount > 0 ? (
           <span
             className={cn(
-              "shrink-0 rounded-full border border-[#7C3AED40] bg-[#7C3AED1a]",
-              "px-2 py-[3px] text-[11px] font-semibold text-[#7C3AED]"
+              "shrink-0 rounded-full border border-[#5921B540] bg-[#5921B51a]",
+              "px-2 py-[3px] text-[11px] font-semibold text-[#5921B5]"
             )}
           >
             {unsettledCount} unsettled

@@ -19,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 /** Figma preset covers the user can pick instead of uploading their own. */
 const PRESET_COVERS = [
@@ -149,7 +149,7 @@ export function UploadGroupCoverForm() {
     return (
       <AuthStackScreen>
         <div className="flex flex-1 items-center justify-center">
-          <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#8B5CF6]/30 border-t-[#8B5CF6]" />
+          <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#5921B5]/30 border-t-[#5921B5]" />
         </div>
       </AuthStackScreen>
     );
@@ -228,7 +228,7 @@ export function UploadGroupCoverForm() {
                       "aspect-square",
                       "transition-transform active:scale-95",
                       active
-                        ? "ring-2 ring-[#8B5CF6] ring-offset-2"
+                        ? "ring-2 ring-[#5921B5] ring-offset-2"
                         : "ring-0",
                       focusRing
                     )}
@@ -258,7 +258,7 @@ export function UploadGroupCoverForm() {
               focusRing
             )}
           >
-            <Upload className="h-4 w-4 shrink-0 text-[#8B5CF6]" strokeWidth={2} />
+            <Upload className="h-4 w-4 shrink-0 text-[#5921B5]" strokeWidth={2} />
             <span className="text-[13px] font-medium text-[#15131A]">
               Upload from your gallery
             </span>

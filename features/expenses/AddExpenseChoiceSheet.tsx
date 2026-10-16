@@ -13,7 +13,7 @@ const rowClasses = cn(
   "flex h-[72px] w-full items-center gap-4 rounded-[16px] px-4 text-left",
   "border border-[#ffffff0f] bg-[#13131A]",
   "transition-colors duration-fast ease-tally active:bg-[#1C1C27]",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
 );
 
 export function AddExpenseChoiceSheet({ tripId }: AddExpenseChoiceSheetProps) {
@@ -37,7 +37,7 @@ export function AddExpenseChoiceSheet({ tripId }: AddExpenseChoiceSheetProps) {
             x2="100%"
             y2="100%"
           >
-            <stop offset="0%" stopColor="#7C3AED" />
+            <stop offset="0%" stopColor="#5921B5" />
             <stop offset="100%" stopColor="#2563EB" />
           </linearGradient>
         </defs>
@@ -48,7 +48,7 @@ export function AddExpenseChoiceSheet({ tripId }: AddExpenseChoiceSheetProps) {
         onClick={() => go(`/trips/${tripId}/expenses/scan`)}
         className={rowClasses}
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#7C3AED1a]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#5921B51a]">
           <Camera
             className="h-6 w-6"
             stroke="url(#tally-scan-gradient)"

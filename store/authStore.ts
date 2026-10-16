@@ -34,6 +34,12 @@ interface AuthState {
   completeOnboarding: (displayName: string, homeCurrency: string) => void;
   updateDisplayName: (displayName: string) => Promise<boolean>;
   updateHomeCurrency: (homeCurrency: string) => Promise<boolean>;
+  updateProfile: (patch: {
+    displayName?: string;
+    handle?: string;
+    avatarUrl?: string | null;
+    language?: string;
+  }) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -91,6 +97,47 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isUpdatingProfile: true });
     try {
       const next = { ...current, homeCurrency: code };
+      writeMockUser(next);
+      set({ user: next });
+      return true;
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
+  },
+
+  updateProfile: async (patch) => {
+    const current = get().user;
+    if (!current) return false;
+
+    const displayName =
+      patch.displayName !== undefined
+        ? patch.displayName.trim()
+        : current.displayName;
+    if (patch.displayName !== undefined && displayName.length < 2) return false;
+
+    let handle = current.handle;
+    if (patch.handle !== undefined) {
+      const raw = patch.handle.trim().replace(/^@+/, "");
+      handle = raw ? `@${raw.toLowerCase()}` : undefined;
+    }
+
+    const language =
+      patch.language !== undefined
+        ? patch.language.trim() || current.language
+        : current.language;
+
+    set({ isUpdatingProfile: true });
+    try {
+      const next: AuthUser = {
+        ...current,
+        displayName,
+        handle,
+        language,
+        avatarUrl:
+          patch.avatarUrl === null
+            ? undefined
+            : (patch.avatarUrl ?? current.avatarUrl),
+      };
       writeMockUser(next);
       set({ user: next });
       return true;

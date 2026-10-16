@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authStackCtaClass } from "@/features/auth";
 import { AppReviewModal } from "@/features/expenses/AppReviewModal";
-import { useAddToast, useHomeCurrency } from "@/store";
+import { useHomeCurrency } from "@/store";
 import { HomeHeader } from "./HomeHeader";
 import { HomeTotalBalanceCard } from "./HomeTotalBalanceCard";
 import { GroupCard } from "./GroupCard";
@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import type { Trip, TripMember } from "@/types";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 interface ExistingUserHomeProps {
   displayName: string;
@@ -39,7 +39,6 @@ export function ExistingUserHome({
 }: ExistingUserHomeProps) {
   const router = useRouter();
   const homeCurrency = useHomeCurrency();
-  const addToast = useAddToast();
   const review = useAppReviewPrompt(trips.length > 0);
 
   useEffect(() => {
@@ -65,21 +64,8 @@ export function ExistingUserHome({
           <HomeTotalBalanceCard
             balanceMinor={0}
             currency={homeCurrency}
-            onAdd={() =>
-              addToast({
-                message: "Add funds is coming soon.",
-                variant: "info",
-                duration: 2500,
-              })
-            }
-            onSend={() =>
-              addToast({
-                message: "Send is coming soon.",
-                variant: "info",
-                duration: 2500,
-              })
-            }
-            onHistory={() => router.push("/balances")}
+            onAdd={() => router.push("/wallet/transfer")}
+            onHistory={() => router.push("/wallet/history")}
           />
 
           <section

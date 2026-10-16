@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { ReviewThanksModal } from "./ReviewThanksModal";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
 
 /**
  * Full-page Leave a review (Figma Profile → Reviews).
@@ -112,7 +112,7 @@ export function LeaveReviewScreen() {
               "px-4 py-3.5 text-[15px] font-normal leading-6 text-[#15131A]",
               "placeholder:text-[#AEAEB2]",
               "outline-none transition-shadow",
-              "focus:border-[#8B5CF6] focus:ring-2 focus:ring-[#8B5CF6]/20",
+              "focus:border-[#5921B5] focus:ring-2 focus:ring-[#5921B5]/20",
               focusRing
             )}
           />

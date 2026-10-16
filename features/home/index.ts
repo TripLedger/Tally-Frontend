@@ -4,6 +4,7 @@ export { ExploreEntryScreen } from "./ExploreEntryScreen";
 export { GroupCard } from "./GroupCard";
 export { HomeHeader } from "./HomeHeader";
 export { HomeTotalBalanceCard } from "./HomeTotalBalanceCard";
+export { MakeTransferScreen } from "./MakeTransferScreen";
 export {
   HomeNotificationsBell,
   HomeProfileAvatarLink,

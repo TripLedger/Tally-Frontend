@@ -397,7 +397,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
   return (
     <div
       className={cn(
-        "relative min-h-dvh overflow-hidden bg-[#0A0A0F]",
+        "relative min-h-dvh overflow-x-clip bg-[#0A0A0F]",
         exiting && "animate-slide-out-left"
       )}
     >
@@ -431,7 +431,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
               <div
                 className="animate-scan-sweep absolute left-2 right-2 top-2 h-[2px] rounded-full"
                 style={{
-                  background: "linear-gradient(90deg, #7C3AED 0%, #2563EB 100%)",
+                  background: "linear-gradient(90deg, #5921B5 0%, #2563EB 100%)",
                 }}
               />
             </div>
@@ -458,7 +458,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
               className={cn(
                 "ml-2 flex h-10 w-10 items-center justify-center rounded-full text-[#F8F8FF]",
                 "transition-colors hover:bg-[#1C1C27]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
               )}
             >
               <X className="h-[22px] w-[22px]" strokeWidth={2} />
@@ -476,7 +476,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
                 "flex h-[280px] w-[280px] flex-col items-center justify-center gap-4",
                 "rounded-[20px] border-2 border-dashed border-[#ffffff1a]",
                 "transition-colors duration-fast ease-tally active:bg-[#13131A]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
               )}
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1C1C27]">
@@ -514,7 +514,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
               className={cn(
                 "ml-5 mt-5 flex h-10 w-10 items-center justify-center rounded-full",
                 "text-white transition-colors hover:bg-white/10",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
               )}
             >
               <X className="h-[22px] w-[22px]" strokeWidth={2} />
@@ -542,7 +542,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
                 aria-label="Upload from gallery"
                 className={cn(
                   "absolute -left-[68px] flex h-11 w-11 items-center justify-center text-white",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] rounded-full"
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] rounded-full"
                 )}
               >
                 <ImageIcon className="h-[22px] w-[22px]" strokeWidth={2} />
@@ -554,7 +554,7 @@ export default function ScanReceiptPage({ params }: ScanPageProps) {
                 aria-label="Capture receipt"
                 className={cn(
                   "flex h-[72px] w-[72px] items-center justify-center rounded-full border-4 border-white",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 )}
               >
                 <span

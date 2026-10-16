@@ -12,29 +12,28 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/store/localeStore";
 
 type TabId = "home" | "groups" | "explore" | "wallet" | "profile";
 
 const tabs: {
   id: TabId;
   href: string;
-  label: string;
   Icon: LucideIcon;
 }[] = [
-  { id: "home", href: "/dashboard", label: "Home", Icon: Home },
+  { id: "home", href: "/dashboard", Icon: Home },
   {
     id: "groups",
     href: "/dashboard#your-groups",
-    label: "Groups",
     Icon: Users,
   },
-  { id: "explore", href: "/explore", label: "Explore", Icon: Search },
-  { id: "wallet", href: "/balances", label: "Wallet", Icon: Wallet },
-  { id: "profile", href: "/profile", label: "Profile", Icon: User },
+  { id: "explore", href: "/explore", Icon: Search },
+  { id: "wallet", href: "/balances", Icon: Wallet },
+  { id: "profile", href: "/profile", Icon: User },
 ];
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 function isGroupDetailPath(pathname: string): boolean {
   return /^\/trips\/[^/]+$/.test(pathname);
@@ -78,7 +77,15 @@ function scrollToGroups() {
 
 export function LightHomeNav() {
   const pathname = usePathname();
+  const t = useT();
   const [hash, setHash] = useState("");
+  const labels: Record<TabId, string> = {
+    home: t.nav.home,
+    groups: t.nav.groups,
+    explore: t.nav.explore,
+    wallet: t.nav.wallet,
+    profile: t.nav.profile,
+  };
 
   useEffect(() => {
     const sync = () => setHash(window.location.hash);
@@ -102,13 +109,14 @@ export function LightHomeNav() {
         {tabs.map((tab) => {
           const active = isTabActive(tab.id, pathname, hash);
           const Icon = tab.Icon;
+          const label = labels[tab.id];
 
           return (
             <Link
               key={tab.id}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              aria-label={tab.label}
+              aria-label={label}
               onClick={() => {
                 if (tab.id === "home") {
                   window.history.replaceState(null, "", "/dashboard");
@@ -132,8 +140,8 @@ export function LightHomeNav() {
                   className={cn(
                     "absolute left-1/2 top-[-22px] flex -translate-x-1/2",
                     "h-[58px] w-[58px] items-start justify-center gap-[10px]",
-                    "rounded-[29px] bg-[var(--primary-500,#8B5CF6)] p-[17px]",
-                    "text-white shadow-[0_8px_20px_rgba(139,92,246,0.35)]"
+                    "rounded-[29px] bg-[var(--primary-500,#5921B5)] p-[17px]",
+                    "text-white shadow-[0_8px_20px_rgba(89, 33, 181,0.35)]"
                   )}
                   aria-hidden
                 >
@@ -157,7 +165,7 @@ export function LightHomeNav() {
                     : "font-normal text-[#8E8E93]"
                 )}
               >
-                {tab.label}
+                {label}
               </span>
             </Link>
           );

@@ -34,7 +34,7 @@ export function GroupFriendRow({ member, email, onClick }: GroupFriendRowProps) 
         />
       ) : (
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F4F2FF] text-[14px] font-semibold text-[#8B5CF6]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F1ECF9] text-[14px] font-semibold text-[#5921B5]"
           aria-hidden
         >
           {member.displayName.charAt(0).toUpperCase()}
@@ -51,7 +51,7 @@ export function GroupFriendRow({ member, email, onClick }: GroupFriendRowProps) 
       </div>
 
       {isAdmin ? (
-        <span className="shrink-0 rounded-full bg-[var(--card-colour1,#F4F2FF)] px-2.5 py-1 text-[11px] font-medium leading-4 text-[#8B5CF6]">
+        <span className="shrink-0 rounded-full bg-[var(--card-colour1,#F1ECF9)] px-2.5 py-1 text-[11px] font-medium leading-4 text-[#5921B5]">
           Admin
         </span>
       ) : null}

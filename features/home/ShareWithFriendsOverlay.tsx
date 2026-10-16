@@ -22,7 +22,7 @@ import { LightHomeOverlay } from "./LightHomeOverlay";
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 const SHARE_APPS: {
   id: ShareChannel;
@@ -80,15 +80,15 @@ function ContactAvatar({
           height={56}
           className={cn(
             "h-14 w-14 rounded-full object-cover",
-            selected && "ring-2 ring-[#8B5CF6] ring-offset-2"
+            selected && "ring-2 ring-[#5921B5] ring-offset-2"
           )}
         />
       ) : (
         <span
           className={cn(
             "flex h-14 w-14 items-center justify-center rounded-full",
-            "bg-[#EDE9FE] text-[#8B5CF6]",
-            selected && "ring-2 ring-[#8B5CF6] ring-offset-2"
+            "bg-[#EDE7F6] text-[#5921B5]",
+            selected && "ring-2 ring-[#5921B5] ring-offset-2"
           )}
         >
           <UserRound className="h-6 w-6" strokeWidth={1.75} />
@@ -230,7 +230,7 @@ export function ShareWithFriendsOverlay({
               onClick={() => void pickContacts()}
               disabled={picking}
               className={cn(
-                "shrink-0 text-[13px] font-medium text-[#8B5CF6]",
+                "shrink-0 text-[13px] font-medium text-[#5921B5]",
                 "disabled:opacity-60",
                 focusRing
               )}
@@ -286,7 +286,7 @@ export function ShareWithFriendsOverlay({
               "disabled:opacity-50"
             )}
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#8B5CF6] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#5921B5] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
               <Plus className="h-5 w-5" strokeWidth={2} />
             </span>
             <span className="min-w-0">

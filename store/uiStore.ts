@@ -15,6 +15,8 @@ interface BottomSheetState {
   content: ReactNode | null;
   title?: string;
   height: "40" | "45" | "60" | "75";
+  /** Light = current Figma chrome; dark = legacy Tally sheet. */
+  variant: "light" | "dark";
 }
 
 interface UIState {
@@ -22,7 +24,11 @@ interface UIState {
   toasts: ToastItem[];
   openBottomSheet: (
     content: ReactNode,
-    options?: { title?: string; height?: "40" | "45" | "60" | "75" }
+    options?: {
+      title?: string;
+      height?: "40" | "45" | "60" | "75";
+      variant?: "light" | "dark";
+    }
   ) => void;
   closeBottomSheet: () => void;
   addToast: (toast: Omit<ToastItem, "id">) => void;
@@ -30,7 +36,13 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  bottomSheet: { isOpen: false, content: null, title: undefined, height: "60" },
+  bottomSheet: {
+    isOpen: false,
+    content: null,
+    title: undefined,
+    height: "60",
+    variant: "dark",
+  },
   toasts: [],
   openBottomSheet: (content, options) =>
     set({
@@ -39,6 +51,7 @@ export const useUIStore = create<UIState>((set) => ({
         content,
         title: options?.title,
         height: options?.height ?? "60",
+        variant: options?.variant ?? "dark",
       },
     }),
   closeBottomSheet: () =>
@@ -48,6 +61,7 @@ export const useUIStore = create<UIState>((set) => ({
         content: null,
         title: undefined,
         height: "60",
+        variant: "dark",
       },
     }),
   addToast: (toast) =>

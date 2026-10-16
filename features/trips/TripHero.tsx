@@ -8,7 +8,7 @@ import { cn, formatCompactDateRange } from "@/lib/utils";
 import type { Trip } from "@/types";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 interface TripHeroProps {
   trip: Trip;
@@ -50,7 +50,7 @@ export function TripHero({
         className="pointer-events-none absolute inset-x-0 top-0 h-[220px]"
         style={{
           background:
-            "linear-gradient(160deg, #7C3AED18 0%, #2563EB10 60%, transparent 100%)",
+            "linear-gradient(160deg, #5921B518 0%, #2563EB10 60%, transparent 100%)",
         }}
       />
       <div
@@ -58,7 +58,7 @@ export function TripHero({
         className="pointer-events-none absolute inset-x-0 top-0 h-[220px]"
         style={{
           background:
-            "radial-gradient(circle 260px at 195px 0px, rgba(124, 58, 237, 0.14), transparent 70%)",
+            "radial-gradient(circle 260px at 195px 0px, rgba(89, 33, 181, 0.14), transparent 70%)",
         }}
       />
 
@@ -115,7 +115,7 @@ export function TripHero({
         <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[14px] font-normal">
           <span className="inline-flex min-w-0 items-center gap-1.5 text-[#94A3B8]">
             <MapPin
-              className="h-3.5 w-3.5 shrink-0 text-[#7C3AED]"
+              className="h-3.5 w-3.5 shrink-0 text-[#5921B5]"
               strokeWidth={2}
             />
             <span className="truncate">{trip.destination}</span>
@@ -136,8 +136,8 @@ export function TripHero({
           </span>
           <span
             className={cn(
-              "inline-flex items-center rounded-full border border-[#7C3AED40] bg-[#7C3AED1a]",
-              "px-2.5 py-1 text-[12px] font-bold text-[#7C3AED]"
+              "inline-flex items-center rounded-full border border-[#5921B540] bg-[#5921B51a]",
+              "px-2.5 py-1 text-[12px] font-bold text-[#5921B5]"
             )}
           >
             {trip.baseCurrency}

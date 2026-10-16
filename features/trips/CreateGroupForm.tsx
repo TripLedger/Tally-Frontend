@@ -22,7 +22,7 @@ import { useAddToast, useCreateGroupDraftStore } from "@/store";
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 /** Figma create-group input — 40px pill, #E5E5E5, shadow-xs */
 const groupFieldClass = cn(
@@ -32,7 +32,7 @@ const groupFieldClass = cn(
   "shadow-[0_1px_2px_rgba(0,0,0,0.05)]",
   "appearance-none outline-none",
   "placeholder:font-normal placeholder:text-[#C7C7CC]",
-  "focus:border-[#9367F9] focus:outline-none focus:ring-2 focus:ring-[#9367F9]/20"
+  "focus:border-[#5921B5] focus:outline-none focus:ring-2 focus:ring-[#5921B5]/20"
 );
 
 export function CreateGroupForm() {

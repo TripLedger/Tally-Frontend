@@ -35,8 +35,8 @@ export function TripCard({
         isPast
           ? "opacity-60"
           : [
-              "hover:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#7C3AED60]",
-              "focus-visible:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#7C3AED60]",
+              "hover:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#5921B560]",
+              "focus-visible:shadow-[inset_0_1px_0_#ffffff0a,0_0_0_1px_#5921B560]",
             ],
         "focus-visible:outline-none",
         className
@@ -48,7 +48,7 @@ export function TripCard({
           aria-hidden
           className="absolute inset-y-0 left-0 w-[3px] rounded-l-[20px]"
           style={{
-            background: "linear-gradient(180deg, #7C3AED 0%, #2563EB 100%)",
+            background: "linear-gradient(180deg, #5921B5 0%, #2563EB 100%)",
           }}
         />
       )}
@@ -68,7 +68,7 @@ export function TripCard({
             "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-[0.02em]",
             isPast
               ? "border border-[#ffffff0f] bg-[#1C1C27] text-[#94A3B8]"
-              : "border border-[#7C3AED40] bg-[#7C3AED1a] text-[#7C3AED]"
+              : "border border-[#5921B540] bg-[#5921B51a] text-[#5921B5]"
           )}
         >
           {trip.baseCurrency}
@@ -80,7 +80,7 @@ export function TripCard({
         <MapPin
           className={cn(
             "h-3.5 w-3.5 shrink-0",
-            isPast ? "text-[#475569]" : "text-[#7C3AED]"
+            isPast ? "text-[#475569]" : "text-[#5921B5]"
           )}
           strokeWidth={2}
         />

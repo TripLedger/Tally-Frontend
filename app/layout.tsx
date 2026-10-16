@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { GeistSans, playfair } from "@/lib/fonts";
+import { GeistSans, bricolage, playfair } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { cn } from "@/lib/utils";
@@ -43,7 +43,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("dark", GeistSans.variable, playfair.variable)}
+      className={cn(
+        "dark",
+        GeistSans.variable,
+        playfair.variable,
+        bricolage.variable
+      )}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

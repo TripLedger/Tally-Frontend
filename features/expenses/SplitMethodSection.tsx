@@ -54,9 +54,9 @@ function MemberChip({
         "flex h-10 items-center gap-2 rounded-xl border px-[14px] py-2",
         "transition-all duration-fast ease-tally",
         selected
-          ? "border-[1.5px] border-[#7C3AED] bg-[#7C3AED1a] opacity-100"
+          ? "border-[1.5px] border-[#5921B5] bg-[#5921B51a] opacity-100"
           : "border border-[#ffffff0f] bg-[#13131A] opacity-40",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
       )}
     >
       <div
@@ -242,7 +242,7 @@ export function SplitMethodSection({
                       className={cn(
                         "h-10 w-full rounded-[10px] border border-[#ffffff0f] bg-[#1C1C27]",
                         "pr-2 pl-7 text-right text-[15px] font-semibold text-[#F8F8FF] tabular-nums",
-                        "focus:border-[1.5px] focus:border-[#7C3AED] focus:outline-none"
+                        "focus:border-[1.5px] focus:border-[#5921B5] focus:outline-none"
                       )}
                     />
                   </div>

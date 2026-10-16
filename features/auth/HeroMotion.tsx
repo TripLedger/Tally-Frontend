@@ -44,7 +44,7 @@ export function HeroMotion() {
         className="pointer-events-none absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(124, 58, 237, 0.18) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(89, 33, 181, 0.18) 0%, transparent 70%)",
         }}
         aria-hidden
       />

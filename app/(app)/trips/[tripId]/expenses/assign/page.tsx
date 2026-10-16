@@ -27,7 +27,7 @@ interface AssignItemsPageProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 function useAnimatedMinorUnits(value: number, durationMs = 300) {
   const [display, setDisplay] = useState(value);
@@ -231,7 +231,7 @@ export default function AssignItemsPage({ params }: AssignItemsPageProps) {
             className="h-full rounded-full transition-[width] duration-slow ease-tally"
             style={{
               width: `${progress}%`,
-              background: "linear-gradient(135deg, #7C3AED 0%, #2563EB 100%)",
+              background: "linear-gradient(135deg, #5921B5 0%, #2563EB 100%)",
             }}
           />
         </div>
@@ -267,7 +267,7 @@ export default function AssignItemsPage({ params }: AssignItemsPageProps) {
             "flex h-14 w-full items-center justify-center rounded-[14px] text-[15px] font-semibold",
             "transition-all duration-DEFAULT ease-tally",
             canSave
-              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_0_20px_#7C3AED50]"
+              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_0_20px_#5921B550]"
               : "cursor-not-allowed bg-[#1C1C27] text-[#475569]",
             focusRing
           )}

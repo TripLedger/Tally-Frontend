@@ -18,7 +18,7 @@ interface LineItemAssignCardProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 export function LineItemAssignCard({
   item,
@@ -106,8 +106,8 @@ export function LineItemAssignCard({
           type="button"
           onClick={onAssign}
           className={cn(
-            "animate-assign-pill-pulse shrink-0 rounded-full border border-[#7C3AED40] bg-[#7C3AED1a]",
-            "px-3.5 py-2 text-[13px] font-semibold text-[#7C3AED]",
+            "animate-assign-pill-pulse shrink-0 rounded-full border border-[#5921B540] bg-[#5921B51a]",
+            "px-3.5 py-2 text-[13px] font-semibold text-[#5921B5]",
             focusRing
           )}
         >

@@ -46,7 +46,7 @@ function TabButton({
       role="tab"
       className={cn(
         "relative px-4 pb-4 pt-3 text-center text-[15px] font-medium transition-colors sm:text-[16px]",
-        active ? "text-[#8B5CF6]" : "text-[#716D7D]",
+        active ? "text-[#5921B5]" : "text-[#716D7D]",
         groupDetailFocusRing
       )}
     >
@@ -55,7 +55,7 @@ function TabButton({
         aria-hidden
         className={cn(
           "absolute inset-x-6 bottom-0 h-[2px] rounded-full transition-colors",
-          active ? "bg-[#8B5CF6]" : "bg-transparent"
+          active ? "bg-[#5921B5]" : "bg-transparent"
         )}
       />
     </button>

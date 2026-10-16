@@ -18,7 +18,7 @@ export interface CategoryConfig {
 export const EXPENSE_CATEGORIES: CategoryConfig[] = [
   { id: "food", label: "Food", icon: UtensilsCrossed, color: "#F59E0B" },
   { id: "transport", label: "Transport", icon: Car, color: "#2563EB" },
-  { id: "lodging", label: "Lodging", icon: Bed, color: "#7C3AED" },
+  { id: "lodging", label: "Lodging", icon: Bed, color: "#5921B5" },
   { id: "activities", label: "Activities", icon: Ticket, color: "#10B981" },
   { id: "other", label: "Other", icon: MoreHorizontal, color: "#94A3B8" },
 ];

@@ -6,7 +6,7 @@ import { LightHomeOverlay } from "./LightHomeOverlay";
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 interface GroupCreatedOverlayProps {
   open: boolean;
@@ -57,7 +57,7 @@ export function GroupCreatedOverlay({
             type="button"
             onClick={onPlanTrip}
             className={cn(
-              "mt-3 w-full text-[15px] font-medium text-[#8B5CF6]",
+              "mt-3 w-full text-[15px] font-medium text-[#5921B5]",
               "transition-opacity active:opacity-80",
               focusRing,
               "rounded-sm py-2"

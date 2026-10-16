@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import {
   AuthBody,
+  AuthLogo,
   AuthPrimaryButton,
   AuthStackScreen,
 } from "./AuthScreen";
@@ -13,6 +14,7 @@ export function ResetPasswordSuccess() {
 
   return (
     <AuthStackScreen>
+      <AuthLogo />
       <AuthBody className="mt-0 flex-1 items-center justify-center gap-0 text-center">
         <div className="flex flex-col items-center">
           <div

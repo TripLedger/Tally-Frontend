@@ -21,7 +21,7 @@ interface LineItemMemberPickerSheetProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
 
 function CustomCheckbox({ checked }: { checked: boolean }) {
   return (
@@ -100,12 +100,12 @@ export function LineItemMemberPickerSheet({
           "mb-3 flex h-14 w-full shrink-0 items-center gap-3 rounded-[12px] border px-4",
           "transition-colors duration-fast ease-tally",
           allSelected
-            ? "border-[#7C3AED40] bg-[#7C3AED1a]"
+            ? "border-[#5921B540] bg-[#5921B51a]"
             : "border-[#ffffff0f] bg-[#13131A]",
           focusRing
         )}
       >
-        <Users className="h-[18px] w-[18px] shrink-0 text-[#7C3AED]" strokeWidth={2} />
+        <Users className="h-[18px] w-[18px] shrink-0 text-[#5921B5]" strokeWidth={2} />
         <span className="flex-1 text-left text-[15px] font-semibold text-[#F8F8FF]">
           Everyone
         </span>
@@ -162,7 +162,7 @@ export function LineItemMemberPickerSheet({
             "flex h-14 w-full items-center justify-center rounded-[14px] text-[15px] font-semibold",
             "transition-all duration-DEFAULT ease-tally",
             canConfirm
-              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_0_20px_#7C3AED50]"
+              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_0_20px_#5921B550]"
               : "cursor-not-allowed bg-[#1C1C27] text-[#475569]",
             focusRing
           )}

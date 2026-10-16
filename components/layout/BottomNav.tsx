@@ -47,7 +47,7 @@ export function BottomNav() {
               "relative -mt-6 flex h-14 w-14 items-center justify-center",
               "rounded-full bg-accent-gradient",
               // Dark ring lifts the FAB off the glass bar; inner glow blooms out
-              "ring-[2px] ring-[#0A0A0F] shadow-[0_0_20px_#7C3AED60]",
+              "ring-[2px] ring-[#0A0A0F] shadow-[0_0_20px_#5921B560]",
               "transition-transform duration-fast ease-tally active:scale-95"
             );
 
@@ -99,7 +99,7 @@ export function BottomNav() {
                   className="absolute -top-1 left-1/2 h-4 w-[3px] -translate-x-1/2 rounded-full"
                   style={{
                     background:
-                      "linear-gradient(180deg, #7C3AED 0%, #2563EB 100%)",
+                      "linear-gradient(180deg, #5921B5 0%, #2563EB 100%)",
                   }}
                 />
               )}

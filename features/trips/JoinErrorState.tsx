@@ -33,7 +33,7 @@ export function JoinErrorState({ className }: { className?: string }) {
           "mt-6 flex h-[52px] w-full max-w-[327px] items-center justify-center",
           "rounded-[12px] bg-[#1C1C27] text-[15px] font-semibold text-[#F8F8FF]",
           "transition-colors duration-fast ease-tally hover:bg-[#252532]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
         )}
       >
         Back to dashboard

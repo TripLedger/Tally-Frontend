@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { TabrLogo } from "./TabrLogo";
+import Image from "next/image";
 import { GoogleIcon } from "./GoogleIcon";
 import {
   authBackBtnClass,
@@ -91,10 +91,18 @@ export function AuthStackHeader({
   );
 }
 
+/** Tabr mark — ring logo centered on every light auth screen. */
 export function AuthLogo() {
   return (
     <div className={authLogoWrapClass}>
-      <TabrLogo className="h-10 w-auto" />
+      <Image
+        src="/tabr/brand/logo.png"
+        alt="Tabr"
+        width={84}
+        height={84}
+        priority
+        className="h-12 w-12 object-contain"
+      />
     </div>
   );
 }

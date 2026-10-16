@@ -58,7 +58,7 @@ function CurrencyReviewNotice({ onDismiss }: { onDismiss: () => void }) {
         aria-label="Dismiss currency notice"
         className={cn(
           "ml-2 flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
         )}
       >
         <X className="h-2.5 w-2.5 text-[#F43F5E]" strokeWidth={2.5} />
@@ -109,7 +109,7 @@ export function AmountHeroInput({
           "flex items-center gap-1 rounded-pill bg-[#1C1C27] px-[14px] py-1.5",
           "text-[14px] font-semibold text-[#94A3B8]",
           "transition-colors hover:bg-[#252532]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
         )}
       >
         {currency}

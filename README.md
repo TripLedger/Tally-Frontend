@@ -223,7 +223,7 @@ Hard-refresh the browser (`Ctrl+Shift+R`).
 ## Design notes
 
 - Dark canvas (`#0A0A0F`), surfaces `#13131A` / `#1C1C27`
-- Accent gradient `#7C3AED → #2563EB`
+- Brand primary `#5921B5` (`--primary-500`); accent gradient `#5921B5 → #2563EB`
 - Status: green `#10B981` (assigned / settled), rose `#F43F5E` (owed / left)
 - Built mobile-first; desktop centers a phone-width frame
 

@@ -23,7 +23,7 @@ const rowClasses = cn(
   "shadow-[inset_0_1px_0_#ffffff0a]",
   "transition-all duration-fast ease-tally",
   "active:scale-[0.98] active:bg-[#1C1C27]",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
 );
 
 export function SplitModeDecisionSheet({
@@ -84,13 +84,13 @@ export function SplitModeDecisionSheet({
           className={rowClasses}
         >
           <span
-            className="absolute -top-2 right-3 rounded-full border border-[#7C3AED40] bg-[#7C3AED1a] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#7C3AED]"
+            className="absolute -top-2 right-3 rounded-full border border-[#5921B540] bg-[#5921B51a] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#5921B5]"
             aria-hidden
           >
             Recommended
           </span>
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#7C3AED1a]">
-            <List className="h-5 w-5 text-[#7C3AED]" strokeWidth={2} />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#5921B51a]">
+            <List className="h-5 w-5 text-[#5921B5]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[15px] font-semibold text-[#F8F8FF]">

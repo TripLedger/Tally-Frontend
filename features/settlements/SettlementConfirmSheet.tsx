@@ -24,7 +24,7 @@ interface SettlementConfirmSheetProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
 
 export function SettlementConfirmSheet({
   tripId,
@@ -78,11 +78,11 @@ export function SettlementConfirmSheet({
       <div
         className={cn(
           "flex h-16 w-16 items-center justify-center rounded-[16px]",
-          isPayer ? "bg-[#7C3AED1a]" : "bg-[#1C1C2740]"
+          isPayer ? "bg-[#5921B51a]" : "bg-[#1C1C2740]"
         )}
       >
         <Handshake
-          className={cn("h-7 w-7", isPayer ? "text-[#7C3AED]" : "text-[#94A3B8]")}
+          className={cn("h-7 w-7", isPayer ? "text-[#5921B5]" : "text-[#94A3B8]")}
           strokeWidth={1.75}
         />
       </div>
@@ -115,7 +115,7 @@ export function SettlementConfirmSheet({
             className={cn(
               "mt-6 flex h-14 w-full items-center justify-center rounded-[12px]",
               "bg-accent-gradient text-[16px] font-semibold text-[#F8F8FF]",
-              "shadow-[0_0_24px_#7C3AED50]",
+              "shadow-[0_0_24px_#5921B550]",
               "transition-all duration-fast ease-tally active:scale-[0.97]",
               "disabled:opacity-70",
               focusRing

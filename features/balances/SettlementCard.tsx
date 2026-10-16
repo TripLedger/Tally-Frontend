@@ -93,7 +93,7 @@ export function SettlementCard({
       className={cn(
         "flex h-[76px] w-full items-center gap-3 rounded-[16px] border border-[#ffffff0f] bg-[#13131A] px-4 text-left",
         "transition-all duration-fast ease-tally active:scale-[0.98] active:bg-[#1C1C27]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]",
         "disabled:opacity-80",
         isEntering && "animate-settlement-row-enter"
       )}

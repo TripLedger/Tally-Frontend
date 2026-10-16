@@ -56,8 +56,8 @@ export function MemberRow({
           {member.role === "organizer" && (
             <span
               className={cn(
-                "shrink-0 rounded-full border border-[#7C3AED60] bg-[#7C3AED26]",
-                "px-2 py-[3px] text-[11px] font-bold text-[#7C3AED]"
+                "shrink-0 rounded-full border border-[#5921B560] bg-[#5921B526]",
+                "px-2 py-[3px] text-[11px] font-bold text-[#5921B5]"
               )}
             >
               Organizer

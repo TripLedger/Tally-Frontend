@@ -41,7 +41,7 @@ export function PayerSelectSheet({
               "flex h-16 w-full items-center px-0",
               index < members.length - 1 && "border-b border-[#ffffff0f]",
               "transition-colors duration-fast ease-tally",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]"
             )}
           >
             <div
@@ -62,7 +62,7 @@ export function PayerSelectSheet({
               {member.displayName}
             </span>
             {selected && (
-              <Check className="h-5 w-5 shrink-0 text-[#7C3AED]" strokeWidth={2.5} />
+              <Check className="h-5 w-5 shrink-0 text-[#5921B5]" strokeWidth={2.5} />
             )}
           </button>
         );
@@ -87,7 +87,7 @@ export function PayerRow({ member, onClick }: PayerRowProps) {
       className={cn(
         "flex h-14 w-full items-center rounded-[12px] border border-[#ffffff0f] bg-[#13131A] px-3",
         "transition-colors duration-fast ease-tally hover:bg-[#1C1C27]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
       )}
     >
       <div

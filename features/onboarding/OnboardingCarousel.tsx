@@ -217,9 +217,9 @@ export function OnboardingCarousel() {
             onClick={goToSignUp}
             className={cn(
               "mt-5 flex h-[52px] w-full items-center justify-center rounded-full",
-              "bg-[#9367F9] text-[16px] font-semibold leading-none text-white",
+              "bg-[var(--primary-500,#5921B5)] text-[16px] font-semibold leading-none text-white",
               "transition-[transform,background-color] duration-150",
-              "hover:bg-[#8254F0] active:scale-[0.98]",
+              "hover:bg-[#4A1C96] active:scale-[0.98]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             )}
           >

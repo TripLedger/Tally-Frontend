@@ -20,6 +20,7 @@ export { useAuthSession, AuthSessionHydrator } from "./useAuthSession";
 export { HeroMotion } from "./HeroMotion";
 export { GoogleIcon } from "./GoogleIcon";
 export { TabrLogo } from "./TabrLogo";
+export { SplashScreen } from "./SplashScreen";
 export { SignUpForm } from "./SignUpForm";
 export { SignInForm } from "./SignInForm";
 export { ForgotPasswordEmailForm } from "./ForgotPasswordEmailForm";

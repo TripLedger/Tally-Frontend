@@ -1,4 +1,4 @@
-import { Playfair_Display } from "next/font/google";
+import { Bricolage_Grotesque, Playfair_Display } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 
 /**
@@ -11,6 +11,14 @@ export const playfair = Playfair_Display({
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-playfair",
+  display: "swap",
+});
+
+/** Splash / brand wordmark — Bricolage Grotesque 700 */
+export const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-bricolage",
   display: "swap",
 });
 

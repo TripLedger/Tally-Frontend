@@ -9,11 +9,12 @@ import {
 import { cn } from "@/lib/utils";
 
 export function BottomSheet() {
-  const { isOpen, content, title, height } = useBottomSheet();
+  const { isOpen, content, title, height, variant } = useBottomSheet();
   const closeBottomSheet = useCloseBottomSheet();
   const sheetRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
+  const light = variant === "light";
 
   useEffect(() => {
     if (isOpen) {
@@ -51,7 +52,12 @@ export function BottomSheet() {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div
-        className="absolute inset-0 bg-[#0A0A0F]/60 backdrop-blur-[4px] transition-opacity duration-default"
+        className={cn(
+          "absolute inset-0 transition-opacity duration-default",
+          light
+            ? "bg-[#15131A]/40 backdrop-blur-[1px]"
+            : "bg-[#0A0A0F]/60 backdrop-blur-[4px]"
+        )}
         onClick={closeBottomSheet}
         aria-hidden
       />
@@ -61,32 +67,41 @@ export function BottomSheet() {
         aria-modal
         aria-label={title ?? "Sheet"}
         className={cn(
-          "relative z-10 w-full max-w-mobile",
-          "rounded-t-[20px] bg-[#13131A]",
-          "transition-transform duration-default ease-tally",
+          "relative z-10 flex w-full max-w-mobile flex-col overflow-hidden",
+          "rounded-t-[20px] transition-transform duration-default ease-tally",
+          "animate-sheet-in",
+          light ? "bg-white" : "bg-[#13131A]",
           height === "75"
             ? "h-[75dvh]"
             : height === "45"
               ? "h-[45dvh]"
               : height === "40"
                 ? "h-[40dvh]"
-                : "h-[60dvh]",
-          "overflow-hidden flex flex-col",
-          "animate-sheet-in"
+                : "h-[60dvh]"
         )}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         <div className="flex justify-center pt-3">
-          <div className="h-1 w-9 rounded-full bg-[#ffffff1a]" />
+          <div
+            className={cn(
+              "h-1 w-9 rounded-full",
+              light ? "bg-[#E5E5EA]" : "bg-[#ffffff1a]"
+            )}
+          />
         </div>
-        {title && (
-          <h2 className="px-6 pt-2 text-lg font-semibold text-text-primary">
+        {title ? (
+          <h2
+            className={cn(
+              "px-6 pt-2 text-lg font-semibold",
+              light ? "text-[#15131A]" : "text-text-primary"
+            )}
+          >
             {title}
           </h2>
-        )}
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-10 pt-1 safe-bottom">
+        ) : null}
+        <div className="safe-bottom flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-10 pt-1">
           {content}
         </div>
       </div>

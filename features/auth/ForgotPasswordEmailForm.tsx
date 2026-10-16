@@ -9,6 +9,7 @@ import {
   AuthBody,
   AuthField,
   AuthInput,
+  AuthLogo,
   AuthPrimaryButton,
   AuthStackHeader,
   AuthStackScreen,
@@ -40,6 +41,7 @@ export function ForgotPasswordEmailForm() {
   return (
     <AuthStackScreen>
       <AuthBackButton href="/sign-in" />
+      <AuthLogo />
       <AuthStackHeader
         title="Forgot password?"
         subtitle={"We all forget sometimes. Enter your email, we\u2019ll send a one-time code to reset your password"}

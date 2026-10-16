@@ -16,7 +16,7 @@ import type { Notification, NotificationType } from "@/types";
 import { NotificationActionMenu } from "./NotificationActionMenu";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
 
 function TypeIcon({ type }: { type: NotificationType }) {
   const config =
@@ -25,7 +25,7 @@ function TypeIcon({ type }: { type: NotificationType }) {
       : type === "settlement_confirmed"
         ? { bg: "#E8F8EF", fg: "#22C55E", Icon: Check }
         : type === "member_joined"
-          ? { bg: "#EDE9FE", fg: "#8B5CF6", Icon: Send }
+          ? { bg: "#EDE7F6", fg: "#5921B5", Icon: Send }
           : { bg: "#FEE2E2", fg: "#F43F5E", Icon: AlertCircle };
 
   return (
@@ -71,7 +71,7 @@ export function NotificationCard({
       <span
         className={cn(
           "h-2 w-2 shrink-0 rounded-full",
-          unread ? "bg-[#8B5CF6]" : "bg-transparent"
+          unread ? "bg-[#5921B5]" : "bg-transparent"
         )}
         aria-hidden
       />

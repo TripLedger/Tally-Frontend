@@ -48,7 +48,7 @@ function EmptyState() {
               y2="36"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#7C3AED" />
+              <stop stopColor="#5921B5" />
               <stop offset="1" stopColor="#2563EB" />
             </linearGradient>
           </defs>
@@ -160,7 +160,7 @@ export default function GlobalBalancesPage() {
   });
 
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#0A0A0F] pb-28">
+    <div className="relative flex min-h-dvh flex-col overflow-x-clip bg-[#0A0A0F] pb-28">
       {/* Ambient glow — cobalt tone for analysis/review context */}
       <div
         aria-hidden

@@ -107,7 +107,7 @@ export function DateRangePickerSheet({
           type="button"
           onClick={goPrevMonth}
           aria-label="Previous month"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[#94A3B8] transition-colors hover:bg-[#1C1C27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#94A3B8] transition-colors hover:bg-[#1C1C27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -118,7 +118,7 @@ export function DateRangePickerSheet({
           type="button"
           onClick={goNextMonth}
           aria-label="Next month"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[#94A3B8] transition-colors hover:bg-[#1C1C27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#94A3B8] transition-colors hover:bg-[#1C1C27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -149,13 +149,13 @@ export function DateRangePickerSheet({
               className="relative flex h-10 items-center justify-center"
             >
               {isBetween && (
-                <div className="absolute inset-0 bg-[#7C3AED26]" />
+                <div className="absolute inset-0 bg-[#5921B526]" />
               )}
               {isStart && hasRange && (
-                <div className="absolute inset-y-0 right-0 w-1/2 bg-[#7C3AED26]" />
+                <div className="absolute inset-y-0 right-0 w-1/2 bg-[#5921B526]" />
               )}
               {isEnd && (
-                <div className="absolute inset-y-0 left-0 w-1/2 bg-[#7C3AED26]" />
+                <div className="absolute inset-y-0 left-0 w-1/2 bg-[#5921B526]" />
               )}
               <button
                 type="button"
@@ -163,7 +163,7 @@ export function DateRangePickerSheet({
                 className={cn(
                   "relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-[14px] tabular-nums",
                   "transition-colors duration-fast ease-tally",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]",
                   isEdge
                     ? "bg-accent-gradient font-semibold text-white"
                     : "text-[#F8F8FF] hover:bg-[#1C1C27]"
@@ -192,9 +192,9 @@ export function DateRangePickerSheet({
           className={cn(
             "flex h-14 w-full items-center justify-center rounded-[12px]",
             "text-[16px] font-semibold transition-all duration-default ease-tally",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]",
             canConfirm
-              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#7C3AED40]"
+              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#5921B540]"
               : "bg-[#1C1C27] text-[#475569]"
           )}
         >

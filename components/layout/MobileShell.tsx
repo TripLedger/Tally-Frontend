@@ -16,9 +16,17 @@ function isImmersiveRoute(pathname: string): boolean {
   return (
     pathname === "/trips/new" ||
     pathname === "/trips/new/cover" ||
+    pathname === "/profile/edit" ||
+    pathname === "/profile/password" ||
+    pathname === "/profile/kyc" ||
+    pathname === "/profile/help" ||
+    pathname === "/profile/language" ||
+    pathname === "/profile/notifications" ||
     pathname === "/profile/review" ||
     pathname === "/profile/review/survey" ||
     pathname === "/profile/review/survey/complete" ||
+    pathname === "/wallet/transfer" ||
+    pathname === "/wallet/history" ||
     /^\/trips\/[^/]+\/trips\/new(\/[^/]+)?(\/(group|customise))?$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/outings\/[^/]+\/expenses(\/(scan|new|split(\/(equal|items|success))?))?$/.test(
@@ -38,7 +46,7 @@ export function MobileShell({ children, showNav = true }: MobileShellProps) {
   return (
     <div
       className={cn(
-        "mobile-frame flex min-h-dvh flex-col",
+        "phone-shell mobile-frame flex flex-col",
         lightHome && "mobile-frame-light bg-[#FAFAFA]"
       )}
     >
@@ -46,10 +54,10 @@ export function MobileShell({ children, showNav = true }: MobileShellProps) {
         className={
           navVisible
             ? cn(
-                "flex min-h-0 flex-1 flex-col",
+                "flex min-h-0 flex-1 flex-col overflow-x-clip",
                 lightHome ? "pb-24" : "pb-20"
               )
-            : "flex-1"
+            : "min-h-0 flex-1 overflow-x-clip"
         }
       >
         {children}

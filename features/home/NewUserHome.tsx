@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authStackCtaClass } from "@/features/auth";
 import { playfair } from "@/lib/fonts";
-import { useAddToast, useHomeCurrency } from "@/store";
+import { useHomeCurrency } from "@/store";
 import { FIGMA_USER_AVATAR_POOL } from "./figmaUserAvatars";
 import { HomeHeader } from "./HomeHeader";
 import { HomeTotalBalanceCard } from "./HomeTotalBalanceCard";
@@ -17,7 +17,7 @@ const CREW_AVATARS = FIGMA_USER_AVATAR_POOL.map((src) => ({
 }));
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 interface NewUserHomeProps {
   displayName: string;
@@ -32,7 +32,6 @@ export function NewUserHome({
 }: NewUserHomeProps) {
   const router = useRouter();
   const homeCurrency = useHomeCurrency();
-  const addToast = useAddToast();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,10 +42,6 @@ export function NewUserHome({
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, []);
-
-  const comingSoon = (message: string) => {
-    addToast({ message, variant: "info", duration: 2500 });
-  };
 
   return (
     <div className="flex min-h-full flex-1 flex-col overflow-y-auto bg-white text-[#15131A]">
@@ -60,9 +55,8 @@ export function NewUserHome({
         <HomeTotalBalanceCard
           balanceMinor={0}
           currency={homeCurrency}
-          onAdd={() => comingSoon("Add funds is coming soon.")}
-          onSend={() => comingSoon("Send is coming soon.")}
-          onHistory={() => router.push("/balances")}
+          onAdd={() => router.push("/wallet/transfer")}
+          onHistory={() => router.push("/wallet/history")}
         />
 
         <h1

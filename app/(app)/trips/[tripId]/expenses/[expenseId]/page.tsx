@@ -28,7 +28,7 @@ interface ExpenseDetailPageProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 function formatAbsoluteDate(iso: string): string {
   return new Date(iso).toLocaleString("en-US", {
@@ -190,7 +190,7 @@ export default function ExpenseDetailPage({ params }: ExpenseDetailPageProps) {
           <Link
             href={`/trips/${tripId}`}
             className={cn(
-              "mt-6 text-[14px] font-semibold text-[#7C3AED]",
+              "mt-6 text-[14px] font-semibold text-[#5921B5]",
               focusRing
             )}
           >
@@ -202,7 +202,7 @@ export default function ExpenseDetailPage({ params }: ExpenseDetailPageProps) {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#0A0A0F]">
+    <div className="relative flex min-h-dvh flex-col overflow-x-clip bg-[#0A0A0F]">
       {/* Category atmosphere — edge-to-edge glow, not a card */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[320px]"
@@ -330,7 +330,7 @@ export default function ExpenseDetailPage({ params }: ExpenseDetailPageProps) {
                       <p className="truncate text-[15px] font-medium text-[#F8F8FF]">
                         {row.name}
                         {row.userId === expense.payerId && (
-                          <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-[#7C3AED]">
+                          <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-[#5921B5]">
                             Payer
                           </span>
                         )}

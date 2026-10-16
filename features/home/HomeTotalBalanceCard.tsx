@@ -1,11 +1,11 @@
 "use client";
 
-import { History, Plus, Send } from "lucide-react";
+import { History, Plus } from "lucide-react";
 import { fromMinorUnits, getCurrencySymbol } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 function formatHomeBalance(minorUnits: number, currency: string): string {
   const symbol = getCurrencySymbol(currency);
@@ -23,41 +23,43 @@ interface HomeTotalBalanceCardProps {
   balanceMinor?: number;
   currency: string;
   onAdd?: () => void;
-  onSend?: () => void;
   onHistory?: () => void;
   className?: string;
 }
 
 /**
- * Figma home — Total balance card with Add / Send / History pills.
+ * Figma home — Total balance card with Add / History pills over the wallet BG.
  */
 export function HomeTotalBalanceCard({
   balanceMinor = 0,
   currency,
   onAdd,
-  onSend,
   onHistory,
   className,
 }: HomeTotalBalanceCardProps) {
   const actions = [
     { label: "Add", Icon: Plus, onClick: onAdd },
-    { label: "Send", Icon: Send, onClick: onSend },
     { label: "History", Icon: History, onClick: onHistory },
   ] as const;
 
   return (
     <section
       className={cn(
-        "box-border flex h-[170px] w-full max-w-[358px] flex-col justify-between",
-        "rounded-[24px] p-5",
-        "bg-gradient-to-br from-white via-[#F7F3FF] to-[#E8DEFF]",
-        "ring-1 ring-[#EDE9FE]",
-        "shadow-[0_4px_24px_rgba(139,92,246,0.08)]",
+        "relative box-border flex h-[170px] w-full max-w-[358px] flex-col justify-between",
+        "overflow-hidden rounded-[24px] p-5",
         className
       )}
       aria-label="Total balance"
     >
-      <div>
+      <img
+        src="/tabr/home/wallet-bg.svg"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        aria-hidden
+        draggable={false}
+      />
+
+      <div className="relative z-10">
         <p className="text-tabr-ink-paragraph-small">Total balance</p>
         <p
           className="text-tabr-ink-heading-2 mt-1 tabular-nums"
@@ -67,7 +69,7 @@ export function HomeTotalBalanceCard({
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="relative z-10 flex items-center gap-2">
         {actions.map(({ label, Icon, onClick }) => (
           <button
             key={label}

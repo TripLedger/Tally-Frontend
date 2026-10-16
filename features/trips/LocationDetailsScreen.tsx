@@ -22,10 +22,10 @@ const focusRing =
  */
 const createTripBtnClass = cn(
   "box-border inline-flex h-[52px] shrink-0 items-center justify-center",
-  "rounded-full bg-[#8B5CF6] px-6",
+  "rounded-full bg-[#5921B5] px-6",
   "text-[16px] font-semibold leading-none text-white",
   "transition-[transform,background-color] duration-150",
-  "hover:bg-[#7C4AED] active:scale-[0.98]",
+  "hover:bg-[#4A1C96] active:scale-[0.98]",
   focusRing
 );
 
@@ -78,7 +78,7 @@ export function LocationDetailsScreen({
   };
 
   return (
-    <div className="relative flex min-h-dvh w-full flex-col overflow-hidden bg-[#15131A]">
+    <div className="relative flex min-h-dvh w-full flex-col overflow-x-clip bg-[#15131A]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={heroSrc}

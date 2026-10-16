@@ -19,7 +19,7 @@ function parseISO(iso?: string): Date | null {
   return new Date(y, m - 1, d);
 }
 
-/** Figma: “9 September, 2026” */
+/** Display: “9 October, 2026” */
 export function formatCustomiseTripDate(iso: string): string {
   const date = parseISO(iso);
   if (!date) return "";
@@ -48,7 +48,7 @@ export function TripDatePicker({
   className,
 }: TripDatePickerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const initial = parseISO(selectedDate) ?? new Date(2026, 8, 9);
+  const initial = parseISO(selectedDate) ?? new Date();
   const [viewYear, setViewYear] = useState(initial.getFullYear());
   const [viewMonth, setViewMonth] = useState(initial.getMonth());
 

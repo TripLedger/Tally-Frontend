@@ -19,10 +19,9 @@ import {
   useTripStore,
   useUser,
 } from "@/store";
-import { DisplayNameSheet } from "./DisplayNameSheet";
+import { useT } from "@/store/localeStore";
 import {
   KYC_STATUS_COLOR,
-  KYC_STATUS_LABEL,
   normalizeKycStatus,
   type KycStatus,
 } from "./kyc";
@@ -31,7 +30,7 @@ const geistClass =
   "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
 
 const cardClass = cn(
   "w-full overflow-hidden rounded-[20px] bg-white",
@@ -118,6 +117,13 @@ function SettingsRow({
   );
 }
 
+function isUsableAvatar(src?: string): boolean {
+  if (!src) return false;
+  // blob: URLs from a prior edit session don't survive refresh
+  if (src.startsWith("blob:")) return false;
+  return true;
+}
+
 function ProfileAvatar({
   name,
   src,
@@ -128,19 +134,20 @@ function ProfileAvatar({
   onEdit: () => void;
 }) {
   const initial = getMemberInitial(name);
+  const photo = isUsableAvatar(src) ? src : undefined;
 
   return (
     <div className="relative h-[72px] w-[72px] shrink-0">
-      <div className="h-full w-full overflow-hidden rounded-full bg-[#EDE9FE]">
-        {src ? (
+      <div className="h-full w-full overflow-hidden rounded-full bg-[#EDE7F6]">
+        {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={name} className="h-full w-full object-cover" />
+          <img src={photo} alt={name} className="h-full w-full object-cover" />
         ) : (
           <div
             className="flex h-full w-full items-center justify-center"
             aria-hidden
           >
-            <span className="text-[28px] font-semibold leading-none text-[#8B5CF6]">
+            <span className="text-[28px] font-semibold leading-none text-[#5921B5]">
               {initial}
             </span>
           </div>
@@ -152,7 +159,7 @@ function ProfileAvatar({
         aria-label="Edit profile photo"
         className={cn(
           "absolute -bottom-0.5 -right-0.5 flex h-7 w-7 items-center justify-center",
-          "rounded-full bg-[#8B5CF6] text-white shadow-[0_2px_6px_rgba(139,92,246,0.35)]",
+          "rounded-full bg-[#5921B5] text-white shadow-[0_2px_6px_rgba(89, 33, 181,0.35)]",
           "transition-transform duration-150 active:scale-95",
           focusRing
         )}
@@ -184,6 +191,7 @@ export function ProfileScreen() {
   const router = useRouter();
   const openBottomSheet = useOpenBottomSheet();
   const addToast = useAddToast();
+  const t = useT();
   const updateHomeCurrency = useAuthStore((s) => s.updateHomeCurrency);
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -198,38 +206,42 @@ export function ProfileScreen() {
     [user?.handle, displayName, email]
   );
   const kycStatus: KycStatus = normalizeKycStatus(user?.kycStatus);
+  const kycLabel =
+    kycStatus === "verified"
+      ? t.kyc.verified
+      : kycStatus === "failed"
+        ? t.kyc.failed
+        : t.kyc.pending;
 
   const comingSoon = (message: string) => {
     addToast({ message, variant: "info", duration: 2500 });
   };
 
-  const openDisplayName = () => {
-    openBottomSheet(
-      <DisplayNameSheet currentName={user?.displayName ?? ""} />,
-      { title: "Display name", height: "40" }
-    );
+  const openEditProfile = () => {
+    router.push("/profile/edit");
   };
 
   const openHomeCurrency = () => {
     openBottomSheet(
       <CurrencyPickerSheet
         selectedCode={homeCurrency}
+        variant="light"
         onSelect={async (c) => {
           const ok = await updateHomeCurrency(c.code);
           if (!ok) {
             addToast({
-              message: "Couldn't update home currency. Please try again.",
+              message: t.currency.failed,
               variant: "error",
             });
             return;
           }
           addToast({
-            message: "Home currency updated",
+            message: t.currency.updated,
             variant: "success",
           });
         }}
       />,
-      { title: "Home currency", height: "75" }
+      { title: t.currency.title, height: "75", variant: "light" }
     );
   };
 
@@ -261,7 +273,7 @@ export function ProfileScreen() {
         <AuthBackButton href="/dashboard" label="Back to home" />
       </div>
 
-      <h1 className="mt-4 text-tabr-ink-heading-2">Profile</h1>
+      <h1 className="mt-4 text-tabr-ink-heading-2">{t.profile.title}</h1>
 
       {/* User card */}
       <section className={cn(cardClass, "mt-6 p-4")} aria-label="Account">
@@ -269,7 +281,7 @@ export function ProfileScreen() {
           <ProfileAvatar
             name={displayName}
             src={user?.avatarUrl}
-            onEdit={openDisplayName}
+            onEdit={openEditProfile}
           />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[17px] font-semibold leading-6 tracking-[-0.01em] text-[#15131A]">
@@ -289,30 +301,30 @@ export function ProfileScreen() {
         {/* Account */}
         <SettingsCard>
           <SettingsRow
-            label="Edit profile"
-            onClick={openDisplayName}
+            label={t.profile.editProfile}
+            onClick={openEditProfile}
           />
           <SettingsRow
-            label="Payment method"
+            label={t.profile.paymentMethod}
             onClick={() => comingSoon("Payment method is coming soon.")}
             showDivider
           />
           <SettingsRow
-            label="Password and Security"
-            onClick={() => comingSoon("Password and Security is coming soon.")}
+            label={t.profile.passwordSecurity}
+            onClick={() => router.push("/profile/password")}
             showDivider
           />
           <SettingsRow
-            label="KYC Status"
-            value={KYC_STATUS_LABEL[kycStatus]}
+            label={t.profile.kycStatus}
+            value={kycLabel}
             valueColor={KYC_STATUS_COLOR[kycStatus]}
-            onClick={() => comingSoon("KYC verification is coming soon.")}
+            onClick={() => router.push("/profile/kyc")}
             showDivider
           />
           <SettingsRow
-            label="Language"
+            label={t.profile.language}
             value={language}
-            onClick={() => comingSoon("Language settings are coming soon.")}
+            onClick={() => router.push("/profile/language")}
             showDivider
           />
         </SettingsCard>
@@ -320,11 +332,11 @@ export function ProfileScreen() {
         {/* Preferences */}
         <SettingsCard>
           <SettingsRow
-            label="Notifications"
-            onClick={() => router.push("/notifications")}
+            label={t.profile.notifications}
+            onClick={() => router.push("/profile/notifications")}
           />
           <SettingsRow
-            label="Currency"
+            label={t.profile.currency}
             value={homeCurrency}
             onClick={openHomeCurrency}
             showDivider
@@ -334,17 +346,17 @@ export function ProfileScreen() {
         {/* History */}
         <SettingsCard>
           <SettingsRow
-            label="Trip History"
+            label={t.profile.tripHistory}
             onClick={() => comingSoon("Trip History is coming soon.")}
           />
           <SettingsRow
-            label="Settlement reminder"
+            label={t.profile.settlementReminder}
             onClick={() => comingSoon("Settlement reminder is coming soon.")}
             showDivider
           />
           <SettingsRow
-            label="Transaction History"
-            onClick={() => comingSoon("Transaction History is coming soon.")}
+            label={t.profile.transactionHistory}
+            onClick={() => router.push("/wallet/history")}
             showDivider
           />
         </SettingsCard>
@@ -352,22 +364,21 @@ export function ProfileScreen() {
         {/* Support */}
         <SettingsCard>
           <SettingsRow
-            label="Help center"
-            chevron={false}
-            onClick={() => comingSoon("Help center is coming soon.")}
+            label={t.profile.helpCenter}
+            onClick={() => router.push("/profile/help")}
           />
           <SettingsRow
-            label="Rate the app"
+            label={t.profile.rateApp}
             onClick={() => router.push("/profile/review")}
             showDivider
           />
           <SettingsRow
-            label="Share with friends"
+            label={t.profile.shareFriends}
             onClick={() => comingSoon("Share with friends is coming soon.")}
             showDivider
           />
           <SettingsRow
-            label="About"
+            label={t.profile.about}
             onClick={() => comingSoon("About is coming soon.")}
             showDivider
           />
@@ -376,7 +387,7 @@ export function ProfileScreen() {
         {/* Sign out */}
         <SettingsCard>
           <SettingsRow
-            label="Sign out"
+            label={t.profile.signOut}
             chevron={false}
             destructive
             onClick={() => setSignOutOpen(true)}

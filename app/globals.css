@@ -14,6 +14,10 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
+  /* Tabr / Figma — brand primary */
+  --primary-500: #5921b5;
+  --rounded-full: 9999px;
+
   /* Tabr / Figma — text colors */
   --text-primary-500: #15131a;
   --text-secondary-500: #716d7d;
@@ -39,11 +43,15 @@
   --heading-3-ink-letter-spacing: -1px;
 
   /* Tabr / Figma — group card pastels */
-  --card-colour1: #f4f2ff;
+  --card-colour1: #F1ECF9;
   --card-colour2: #fff2fc;
   --card-colour3: #ebf5fd;
   --card-colour4: #fef6ef;
   --new-bg: #fafafa;
+  --New-BG: #fafafa;
+
+  /* Global phone column — Figma is 390×844; live UI uses full viewport, not that canvas. */
+  --phone-max-width: 430px;
 
   /* Tabr / Figma — paragraph small/regular (onboarding body) */
   --font-definitions-font-family-body: var(--font-geist-sans), Geist, system-ui,
@@ -68,11 +76,16 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    width: 100%;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-background text-text-primary font-sans;
+    width: 100%;
     min-height: 100dvh;
+    min-height: 100svh;
+    overflow-x: clip;
   }
 
   /* Mobile-app chrome: keep scroll, never show OS scrollbars. */
@@ -254,8 +267,8 @@
     border-radius: 9999px;
     background: linear-gradient(
       to right,
-      #8b5cf6 0%,
-      #8b5cf6 var(--assign-pct, 0%),
+      #5921B5 0%,
+      #5921B5 var(--assign-pct, 0%),
       #e8e8ed var(--assign-pct, 0%),
       #e8e8ed 100%
     );
@@ -270,7 +283,7 @@
     height: 18px;
     border-radius: 9999px;
     background: #ffffff;
-    border: 2px solid #8b5cf6;
+    border: 2px solid #5921B5;
     box-shadow: 0 1px 3px rgba(21, 19, 26, 0.12);
     cursor: pointer;
   }
@@ -280,7 +293,7 @@
     height: 18px;
     border-radius: 9999px;
     background: #ffffff;
-    border: 2px solid #8b5cf6;
+    border: 2px solid #5921B5;
     box-shadow: 0 1px 3px rgba(21, 19, 26, 0.12);
     cursor: pointer;
   }
@@ -570,7 +583,7 @@
 
 @keyframes invite-copy-flash {
   0% {
-    background-color: #7c3aed1a;
+    background-color: #5921B51a;
   }
   100% {
     background-color: #13131a;
@@ -851,16 +864,115 @@
   }
 }
 
-/* Desktop: centered mobile frame */
+/* Splash — 3D extruded logo + steady 360° Y-spin (4.5s / turn) */
+@keyframes splash-logo-spin-y {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.splash-logo-stage {
+  width: 120px;
+  height: 120px;
+  perspective: 900px;
+  perspective-origin: 50% 45%;
+}
+
+.splash-logo-spin {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.splash-logo-extrude {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+/* Stacked slices along Z → solid thickness when edge-on (not a paper cutout). */
+.splash-logo-slice {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  background: url("/tabr/brand/logo.png") center / contain no-repeat;
+  /* Depth + soft bevel taper toward the back */
+  transform: translate3d(0, 0, calc(var(--z) * 1.45px))
+    scale3d(
+      calc(1 - var(--t) * 0.03),
+      calc(1 - var(--t) * 0.03),
+      1
+    );
+  /* Soft bevel + side shade: front bright → depth falls to deeper violet */
+  filter: brightness(calc(1.04 - var(--t) * 0.42))
+    contrast(calc(1.01 + var(--t) * 0.08))
+    saturate(calc(1.02 - var(--t) * 0.12));
+}
+
+.splash-logo-slice-front {
+  background: none;
+  /* Facing surface slightly lifted; extrusion slices carry the edge shade */
+  filter: brightness(1.03) contrast(1.02);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .splash-logo-spin-active {
+    animation: splash-logo-spin-y 4.5s linear 1 forwards;
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo-spin-active {
+    animation: none !important;
+  }
+}
+
+/**
+ * Global phone shell — use on every route group (auth, app, join, legal).
+ * - Phones: full width + full dynamic viewport height (no fixed 390×844)
+ * - Tablet/desktop: centered column capped at --phone-max-width
+ * Screens keep their own background; this only sizes the column.
+ */
+.phone-shell,
+.mobile-frame {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
+  min-height: 100svh;
+  margin-inline: auto;
+  overflow-x: clip;
+}
+
 @media (min-width: 768px) {
+  .phone-shell,
   .mobile-frame {
-    @apply mx-auto min-h-dvh max-w-mobile border-x border-border-glass shadow-2xl;
-    background: #0A0A0F;
+    max-width: var(--phone-max-width);
+    border-left: 1px solid #ffffff0f;
+    border-right: 1px solid #ffffff0f;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .mobile-frame:not(.mobile-frame-light):not(.mobile-frame-auth) {
+    background: #0a0a0f;
   }
 
   .mobile-frame.mobile-frame-light {
     background: #fafafa;
     border-color: #edeaf3;
+    box-shadow: 0 0 40px rgba(21, 19, 26, 0.08);
+  }
+
+  .mobile-frame.mobile-frame-auth {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
   }
 }
 
@@ -871,5 +983,9 @@
 
   body:has(.mobile-frame-light) {
     background: #f4f2f8;
+  }
+
+  body:has(.mobile-frame-auth) {
+    background: #050508;
   }
 }

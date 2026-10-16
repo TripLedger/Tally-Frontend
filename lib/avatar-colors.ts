@@ -1,4 +1,4 @@
-const AVATAR_COLORS = ["#7C3AED", "#2563EB", "#10B981"] as const;
+const AVATAR_COLORS = ["#5921B5", "#2563EB", "#10B981"] as const;
 
 export function hashUserId(userId: string): number {
   let hash = 0;

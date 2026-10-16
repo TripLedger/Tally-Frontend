@@ -18,7 +18,7 @@ export function TripDetailHeader({ title, tripId }: TripDetailHeaderProps) {
         className={cn(
           "ml-2 flex h-10 w-10 items-center justify-center rounded-full text-[#F8F8FF]",
           "transition-colors hover:bg-[#1C1C27]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
         )}
       >
         <ChevronLeft className="h-6 w-6" />
@@ -39,7 +39,7 @@ export function TripDetailHeader({ title, tripId }: TripDetailHeaderProps) {
         className={cn(
           "ml-auto mr-5 flex h-10 w-10 items-center justify-center rounded-full text-[#F8F8FF]",
           "transition-colors hover:bg-[#1C1C27]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
         )}
       >
         <UserPlus className="h-[22px] w-[22px]" strokeWidth={2} />

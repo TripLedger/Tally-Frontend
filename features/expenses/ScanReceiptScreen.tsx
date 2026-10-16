@@ -22,7 +22,7 @@ const geistClass =
   "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 type PermissionPhase = "prompt" | "granted" | "denied";
 
@@ -174,7 +174,7 @@ export function ScanReceiptScreen({
             "transition-[transform,background-color,opacity] duration-150",
             "active:scale-95",
             (phase !== "granted" || !torchSupported) && "opacity-70",
-            flashOn && "bg-[#8B5CF6]",
+            flashOn && "bg-[#5921B5]",
             focusRing
           )}
         >

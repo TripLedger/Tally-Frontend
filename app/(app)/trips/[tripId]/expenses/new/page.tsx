@@ -42,7 +42,7 @@ interface NewExpensePageProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 export default function NewExpensePage({ params }: NewExpensePageProps) {
   const router = useRouter();
@@ -447,7 +447,7 @@ export default function NewExpensePage({ params }: NewExpensePageProps) {
             "text-[16px] font-semibold transition-all duration-default ease-tally",
             focusRing,
             canSave
-              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#7C3AED40] active:scale-[0.98]"
+              ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#5921B540] active:scale-[0.98]"
               : "bg-[#1C1C27] text-[#475569]"
           )}
         >

@@ -27,7 +27,7 @@ const variantConfig: Record<
   },
   info: {
     icon: Info,
-    accent: "text-[#8B5CF6]",
+    accent: "text-[#5921B5]",
   },
 };
 

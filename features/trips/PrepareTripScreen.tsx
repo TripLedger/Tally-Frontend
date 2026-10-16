@@ -16,7 +16,7 @@ import {
 } from "./mockExploreDestinations";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 const geistClass =
   "[font-family:var(--font-geist-sans),Geist,system-ui,sans-serif]";
@@ -176,7 +176,7 @@ export function PrepareTripScreen({
           onClick={onToggleCategories}
           aria-expanded={showAllCategories}
           className={cn(
-            "text-[14px] font-medium leading-5 text-[#8B5CF6]",
+            "text-[14px] font-medium leading-5 text-[#5921B5]",
             "transition-opacity active:opacity-80",
             focusRing,
             "rounded-sm"
@@ -218,7 +218,7 @@ export function PrepareTripScreen({
                   !showAllCategories && "snap-start",
                   focusRing,
                   active
-                    ? "bg-[#8B5CF6] font-medium text-white"
+                    ? "bg-[#5921B5] font-medium text-white"
                     : "bg-[#F5F5F5] font-normal text-[#15131A]"
                 )}
               >

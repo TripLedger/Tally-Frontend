@@ -18,7 +18,7 @@ interface DisplayNameSheetProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#13131A]";
 
 export function DisplayNameSheet({ currentName }: DisplayNameSheetProps) {
   const closeBottomSheet = useCloseBottomSheet();
@@ -72,7 +72,7 @@ export function DisplayNameSheet({ currentName }: DisplayNameSheetProps) {
             "transition-colors duration-fast ease-tally",
             errors.displayName
               ? "border-[#F43F5E50]"
-              : "focus:border-[#7C3AED]",
+              : "focus:border-[#5921B5]",
             focusRing
           )}
           {...register("displayName")}
@@ -92,7 +92,7 @@ export function DisplayNameSheet({ currentName }: DisplayNameSheetProps) {
           "text-[16px] font-semibold transition-all duration-fast ease-tally",
           "active:scale-[0.98]",
           isValid && !busy
-            ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#7C3AED40]"
+            ? "bg-accent-gradient text-[#F8F8FF] shadow-[0_4px_20px_#5921B540]"
             : "bg-[#1C1C27] text-[#475569]",
           focusRing
         )}

@@ -142,7 +142,7 @@ export function OtpInput({
             "caret-[#15131A]",
             error
               ? "border-[#DC2626] focus:border-[#DC2626]"
-              : "border-[#E0E0E0] focus:border-[#8B5CF6]",
+              : "border-[#E0E0E0] focus:border-[#5921B5]",
             "disabled:opacity-70"
           )}
         />

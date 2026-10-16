@@ -9,6 +9,7 @@ export function middleware(_request: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/splash",
     "/onboarding/:path*",
     "/sign-in",
     "/sign-up",
@@ -18,6 +19,7 @@ export const config = {
     "/trips/:path*",
     "/add/:path*",
     "/balances/:path*",
+    "/wallet/:path*",
     "/explore/:path*",
     "/profile/:path*",
     "/notifications/:path*",

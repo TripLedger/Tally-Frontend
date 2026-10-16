@@ -174,14 +174,14 @@ export function SignUpForm() {
               "Sign up"
             )}
           </AuthPrimaryButton>
+
+          <AuthSwitchLink
+            prompt="Already have an account?"
+            href="/sign-in"
+            label="Sign in"
+          />
         </form>
       </AuthBody>
-
-      <AuthSwitchLink
-        prompt="Already have an account?"
-        href="/sign-in"
-        label="Sign in"
-      />
     </AuthScreen>
   );
 }

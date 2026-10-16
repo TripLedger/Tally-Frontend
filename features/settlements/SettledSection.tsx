@@ -55,7 +55,7 @@ export function SettledSection({
             className={cn(
               "inline-flex h-11 items-center gap-1 text-[14px] font-medium text-[#94A3B8]",
               "transition-colors hover:text-[#F8F8FF]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5]"
             )}
           >
             View all

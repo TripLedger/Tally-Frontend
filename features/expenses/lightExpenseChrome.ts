@@ -16,7 +16,7 @@ export const lightExpenseShellClass = cn(
 /** Same column, locked to the screen so a bottom CTA stays visible. */
 export const lightExpensePinnedShellClass = cn(
   lightExpenseShellClass,
-  "h-dvh max-h-dvh min-h-0 overflow-hidden"
+  "h-dvh max-h-dvh min-h-0 overflow-x-clip overflow-y-hidden"
 );
 
 /**
@@ -35,4 +35,4 @@ export const lightExpenseSuccessFooterClass = cn(
 );
 
 export const lightExpenseFocusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFAFA]";

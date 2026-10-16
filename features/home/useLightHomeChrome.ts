@@ -11,6 +11,12 @@ export function useLightHomeChrome() {
     pathname === "/trips/new/cover" ||
     pathname === "/dashboard" ||
     pathname === "/profile" ||
+    pathname === "/profile/edit" ||
+    pathname === "/profile/password" ||
+    pathname === "/profile/kyc" ||
+    pathname === "/profile/help" ||
+    pathname === "/profile/language" ||
+    pathname === "/profile/notifications" ||
     pathname === "/profile/review" ||
     pathname === "/profile/review/survey" ||
     pathname === "/profile/review/survey/complete" ||
@@ -18,6 +24,8 @@ export function useLightHomeChrome() {
     pathname === "/explore" ||
     pathname === "/balances" ||
     pathname.startsWith("/balances/") ||
+    pathname === "/wallet/transfer" ||
+    pathname === "/wallet/history" ||
     /^\/trips\/[^/]+$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new$/.test(pathname) ||
     /^\/trips\/[^/]+\/trips\/new\/[^/]+$/.test(pathname) ||

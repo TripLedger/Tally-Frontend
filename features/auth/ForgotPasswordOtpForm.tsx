@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   AuthBackButton,
   AuthBody,
+  AuthLogo,
   AuthPrimaryButton,
   AuthStackHeader,
   AuthStackScreen,
@@ -75,6 +76,7 @@ export function ForgotPasswordOtpForm() {
   return (
     <AuthStackScreen>
       <AuthBackButton />
+      <AuthLogo />
       <AuthStackHeader
         title={"You\u2019ve got mail"}
         subtitle="Please enter the code sent to your email"
@@ -130,6 +132,7 @@ export function ForgotPasswordOtpFallback() {
   return (
     <AuthStackScreen>
       <div className="h-11 w-11" />
+      <AuthLogo />
       <AuthStackHeader
         title={"You\u2019ve got mail"}
         subtitle="Please enter the code sent to your email"

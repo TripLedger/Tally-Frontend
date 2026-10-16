@@ -11,14 +11,14 @@ export function TripEmptyIllustration() {
       {/* Dashed path */}
       <path
         d="M24 88 Q 60 40, 96 32"
-        stroke="#7C3AED"
+        stroke="#5921B5"
         strokeWidth="1.5"
         strokeDasharray="4 6"
         strokeLinecap="round"
         opacity="0.5"
       />
       {/* Map pin */}
-      <circle cx="96" cy="32" r="6" fill="#7C3AED" opacity="0.3" />
+      <circle cx="96" cy="32" r="6" fill="#5921B5" opacity="0.3" />
       <path
         d="M96 22, C96 96, 96 44, 96 44, C96 36, 88 32, 96 32, C104 32, 96 36, 96 44, Z"
         fill="#2563EB"

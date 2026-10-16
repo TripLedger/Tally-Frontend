@@ -146,10 +146,10 @@ export function TripItineraryScreen({ trip, events }: TripItineraryScreenProps) 
           onClick={() => comingSoon("Add event is coming soon.")}
           className={cn(
             "inline-flex min-h-[40px] shrink-0 items-center justify-center gap-2",
-            "rounded-full bg-[#8B5CF6] px-6 py-2.5",
+            "rounded-full bg-[#5921B5] px-6 py-2.5",
             "text-[16px] font-semibold leading-none text-white",
             "transition-[transform,background-color] duration-150",
-            "hover:bg-[#7C4AED] active:scale-[0.98]",
+            "hover:bg-[#4A1C96] active:scale-[0.98]",
             groupDetailFocusRing
           )}
         >
@@ -210,7 +210,7 @@ function PlusIconButton({
 
 function TripEventCard({ event }: { event: GroupEventView }) {
   return (
-    <article className="flex w-full min-w-0 items-center gap-3 rounded-[16px] bg-[var(--card-colour1,#F4F2FF)] p-3">
+    <article className="flex w-full min-w-0 items-center gap-3 rounded-[16px] bg-[var(--card-colour1,#F1ECF9)] p-3">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={event.coverSrc}

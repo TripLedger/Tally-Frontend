@@ -14,7 +14,7 @@ interface InvitePageProps {
 }
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]";
 
 function InvitePageContent({ tripId }: { tripId: string }) {
   const router = useRouter();
@@ -180,7 +180,7 @@ function InvitePageContent({ tripId }: { tripId: string }) {
         <div className="flex flex-col items-center text-center">
           <div className="relative flex h-[120px] w-[120px] items-center justify-center">
             <div
-              className="pointer-events-none absolute inset-[-12px] rounded-[32px] bg-[radial-gradient(circle_at_center,#7C3AED40_0%,transparent_70%)] animate-invite-glow"
+              className="pointer-events-none absolute inset-[-12px] rounded-[32px] bg-[radial-gradient(circle_at_center,#5921B540_0%,transparent_70%)] animate-invite-glow"
               aria-hidden
             />
             <div
@@ -270,7 +270,7 @@ function InvitePageContent({ tripId }: { tripId: string }) {
           className={cn(
             "flex h-14 w-full items-center justify-center rounded-[12px]",
             "bg-accent-gradient text-[16px] font-semibold text-[#F8F8FF]",
-            "shadow-[0_4px_20px_#7C3AED40]",
+            "shadow-[0_4px_20px_#5921B540]",
             "transition-all duration-default ease-tally active:scale-[0.98]",
             focusRing
           )}

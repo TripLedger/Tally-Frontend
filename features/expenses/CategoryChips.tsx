@@ -37,9 +37,9 @@ export function CategoryChips({ selected, onSelect }: CategoryChipsProps) {
                   "flex h-10 shrink-0 items-center gap-2 rounded-pill border px-3.5",
                   "transition-all duration-fast ease-tally",
                   active
-                    ? "border-[1.5px] border-[#7C3AED] bg-[#7C3AED1a] text-[#F8F8FF]"
+                    ? "border-[1.5px] border-[#5921B5] bg-[#5921B51a] text-[#F8F8FF]"
                     : "border border-[#ffffff0f] bg-[#13131A] text-[#94A3B8]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5921B5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0F]"
                 )}
               >
                 <Icon
